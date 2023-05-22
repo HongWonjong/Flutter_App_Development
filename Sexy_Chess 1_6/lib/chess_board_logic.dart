@@ -1,6 +1,36 @@
 import 'chess_pieces.dart';
 import 'package:flutter/material.dart';
 
+bool isWhiteTurn = true;
+
+void castleKingSide() {
+  // Check if it's white's turn and the white king and king-side rook have not moved
+  if (isWhiteTurn &&
+      !pieces[28].hasMoved && // White king-side rook
+      !pieces[60].hasMoved) { // White king
+    // Check if the squares between the king and rook are unoccupied
+    if (pieces[61] == null && pieces[62] == null) {
+      // Move the king and rook
+      movePiece(60, 62); // Move white king to g1
+      movePiece(63, 61); // Move white king-side rook to f1
+    }
+  }
+}
+
+void castleQueenSide() {
+  // Check if it's white's turn and the white king and queen-side rook have not moved
+  if (isWhiteTurn &&
+      !pieces[0].hasMoved && // White queen-side rook
+      !pieces[60].hasMoved) { // White king
+    // Check if the squares between the king and rook are unoccupied
+    if (pieces[57] == null && pieces[58] == null && pieces[59] == null) {
+      // Move the king and rook
+      movePiece(60, 58); // Move white king to c1
+      movePiece(56, 59); // Move white queen-side rook to d1
+    }
+  }
+}
+
 
 bool isCheck(List<Piece> pieces, bool isWhite) {
   // Find the King

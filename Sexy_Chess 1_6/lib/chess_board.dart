@@ -18,7 +18,6 @@ class _ChessBoardState extends State<ChessBoard> {
   List<int> possibleMoves = [];
   Duration elapsedTime = Duration.zero;
   Timer? moveTimer;
-  bool isWhiteTurn = true;
   int turnCounter = 1;
   User? user;
 
