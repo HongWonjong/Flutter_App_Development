@@ -49,7 +49,8 @@ class _ChessBoardState extends State<ChessBoard> {
         }
       });
     } else {
-      ScaffoldMessenger.of(context).removeCurrentSnackBar(); // Remove the existing SnackBar if it exists
+      ScaffoldMessenger.of(context)
+          .removeCurrentSnackBar(); // Remove the existing SnackBar if it exists
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -206,7 +207,10 @@ class _ChessBoardState extends State<ChessBoard> {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    final screenHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
     final chessBoardSize = screenHeight * 0.99;
 
     Widget googleIdText = const Text(
@@ -233,104 +237,32 @@ class _ChessBoardState extends State<ChessBoard> {
     }
 
     return Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: chessBoardSize,
-            height: chessBoardSize,
-            child: Padding(
-              padding: EdgeInsets.only(top: chessBoardSize * 0.07),
-              child: CustomScrollView(
-                slivers: [
-                  SliverGrid(
-                    gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 8,
-                      childAspectRatio: 1.08,
-                      mainAxisSpacing: 1.0,
-                      crossAxisSpacing: 1.0,
-                    ),
-                    delegate: SliverChildBuilderDelegate(
-                          (BuildContext context, int index) {
-                        int i = (index / 8).floor();
-                        int j = index % 8;
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: chessBoardSize,
+              height: chessBoardSize,
+              child: Padding(
+                padding: EdgeInsets.only(top: chessBoardSize * 0.07),
+                child: GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 8,
+                    childAspectRatio: 1.08,
+                    mainAxisSpacing: 1.0,
+                    crossAxisSpacing: 1.0,
+                  ),
+                  itemBuilder: (context, index) {
+                    int i = (index / 8).floor();
+                    int j = index % 8;
 
-                        for (int k = 0; k < pieces.length; k++) {
-                          if (index == pieces[k].position) {
-                            String imagePath = pieces[k].getImagePath();
+                    for (int k = 0; k < pieces.length; k++) {
+                      if (index == pieces[k].position) {
+                        String imagePath = pieces[k].getImagePath();
 
-                            return GestureDetector(
-                              onTap: () {
-                                if (possibleMoves.contains(index) &&
-                                    selectedPieceIndex != null) {
-                                  movePiece(selectedPieceIndex!, index);
-                                  setState(() {
-                                    selectedPieceIndex = null;
-                                    possibleMoves = [];
-                                  });
-                                } else {
-                                  selectPiece(
-                                      k); // if not a possible move, then select the piece
-                                }
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: isWhite(i, j)
-                                      ? Colors.white.withOpacity(0.8)
-                                      : Colors.brown.withOpacity(0.8),
-                                  border: Border.all(
-                                    width: 1.0,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                child: Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(12.0),
-                                      child: Image.asset(
-                                        imagePath,
-                                        width: chessBoardSize / 8,
-                                        height: chessBoardSize / 8,
-                                        fit: BoxFit.contain,
-                                        filterQuality: FilterQuality.high,
-                                        errorBuilder: (BuildContext context,
-                                            Object exception,
-                                            StackTrace? stackTrace,) {
-                                          return const Icon(Icons.error);
-                                        },
-                                      ),
-                                    ),
-                                    if (possibleMoves.contains(index))
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                              12.0),
-                                          color: selectedPieceIndex != null &&
-                                              pieces.any(
-                                                    (piece) =>
-                                                piece.position ==
-                                                    index &&
-                                                    piece.isWhite !=
-                                                        pieces[selectedPieceIndex!]
-                                                            .isWhite,
-                                              )
-                                              ? Colors.red.withOpacity(0.5)
-                                              : Colors.blueAccent.withOpacity(
-                                              0.5),
-                                        ),
-                                        width: chessBoardSize / 8,
-                                        height: chessBoardSize / 8,
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }
-                        }
-
-                        // If not a piece, then just an empty square
                         return GestureDetector(
                           onTap: () {
                             if (possibleMoves.contains(index) &&
@@ -340,87 +272,156 @@ class _ChessBoardState extends State<ChessBoard> {
                                 selectedPieceIndex = null;
                                 possibleMoves = [];
                               });
+                            } else {
+                              selectPiece(
+                                  k); // if not a possible move, then select the piece
                             }
                           },
                           child: Container(
-                            color: possibleMoves.contains(index)
-                                ? Colors.blueAccent.withOpacity(0.7)
-                                : (isWhite(i, j)
-                                ? Colors.white.withOpacity(0.8)
-                                : Colors.brown.withOpacity(0.8)),
+                            decoration: BoxDecoration(
+                              color: isWhite(i, j)
+                                  ? Colors.white.withOpacity(0.8)
+                                  : Colors.brown.withOpacity(0.8),
+                              border: Border.all(
+                                width: 1.0,
+                                color: Colors.white,
+                              ),
+                            ),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  child: Image.asset(
+                                    imagePath,
+                                    width: chessBoardSize / 8,
+                                    height: chessBoardSize / 8,
+                                    fit: BoxFit.contain,
+                                    filterQuality: FilterQuality.high,
+                                    errorBuilder: (BuildContext context,
+                                        Object exception,
+                                        StackTrace? stackTrace,) {
+                                      return const Icon(Icons.error);
+                                    },
+                                  ),
+                                ),
+                                if (possibleMoves.contains(index))
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12.0),
+                                      color: selectedPieceIndex != null &&
+                                          pieces.any(
+                                                (piece) =>
+                                            piece.position == index &&
+                                                piece.isWhite !=
+                                                    pieces[selectedPieceIndex!]
+                                                        .isWhite,
+                                          )
+                                          ? Colors.red.withOpacity(0.5)
+                                          : Colors.blueAccent.withOpacity(0.5),
+                                    ),
+                                    width: chessBoardSize / 8,
+                                    height: chessBoardSize / 8,
+                                  ),
+                              ],
+                            ),
                           ),
                         );
+                      }
+                    }
+
+                    // If not a piece, then just an empty square
+                    return GestureDetector(
+                      onTap: () {
+                        if (possibleMoves.contains(index) &&
+                            selectedPieceIndex != null) {
+                          movePiece(selectedPieceIndex!, index);
+                          setState(() {
+                            selectedPieceIndex = null;
+                            possibleMoves = [];
+                          });
+                        }
                       },
-                      childCount: 64,
-                    ),
-                  ),
-                ],
+                      child: Container(
+                        color: possibleMoves.contains(index)
+                            ? Colors.blueAccent.withOpacity(0.7)
+                            : (isWhite(i, j)
+                            ? Colors.white.withOpacity(0.8)
+                            : Colors.brown.withOpacity(0.8)),
+                      ),
+                    );
+                  },
+                  itemCount: 64,
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  color: isWhiteTurn ? Colors.white : Colors.black,
-                  border: Border.all(
-                    color: isWhiteTurn ? Colors.black : Colors.white,
+            const SizedBox(width: 10),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10.0),
+                  decoration: BoxDecoration(
+                    color: isWhiteTurn ? Colors.white : Colors.black,
+                    border: Border.all(
+                      color: isWhiteTurn ? Colors.black : Colors.white,
+                    ),
+                  ),
+                  child: Text(
+                    isCheckmate(pieces, isWhiteTurn)
+                        ? 'Checkmate!'
+                        : (isCheck(pieces, isWhiteTurn)
+                        ? 'Check!'
+                        : (isWhiteTurn ? 'White\'s turn' : 'Black\'s turn')),
+                    style: TextStyle(
+                      color: isWhiteTurn ? Colors.black : Colors.white,
+                      fontSize: 30,
+                      fontWeight: isCheckmate(pieces, isWhiteTurn)
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
                   ),
                 ),
-                child: Text(
-                  isCheckmate(pieces, isWhiteTurn)
-                      ? 'Checkmate!'
-                      : (isCheck(pieces, isWhiteTurn) ? 'Check!' : (isWhiteTurn
-                      ? 'White\'s turn'
-                      : 'Black\'s turn')),
-                  style: TextStyle(
-                    color: isWhiteTurn ? Colors.black : Colors.white,
+                const SizedBox(height: 10),
+                Text(
+                  'Turn: $turnCounter',
+                  style: const TextStyle(
                     fontSize: 30,
-                    fontWeight: isCheckmate(pieces, isWhiteTurn)
-                        ? FontWeight.bold
-                        : FontWeight.normal,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'Turn: $turnCounter',
-                style: const TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
+                const SizedBox(height: 30),
+                Text(
+                  (29 - elapsedTime.inSeconds <= 0.5)
+                      ? '시간 초과.'
+                      : 'Time remaining:',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 30),
-              Text(
-                (29 - elapsedTime.inSeconds <= 0.5)
-                    ? '시간 초과.'
-                    : 'Time remaining:',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                Text(
+                  (29 - elapsedTime.inSeconds <= 0)
+                      ? '00.00'
+                      : '${(29 - elapsedTime.inSeconds).toString().padLeft(
+                      2, '0')}.${(999 - elapsedTime.inMilliseconds % 1000)
+                      .toString().padLeft(3, '0')
+                      .substring(0, 2)} 초',
+                  style: TextStyle(
+                    fontSize: 50,
+                    color: elapsedTime.inSeconds <= 10
+                        ? Colors.black
+                        : elapsedTime.inSeconds <= 20
+                        ? Colors.yellow[700]
+                        : Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              Text(
-                (29 - elapsedTime.inSeconds <= 0)
-                    ? '00.00'
-                    : '${(29 - elapsedTime.inSeconds).toString().padLeft(2, '0')}.${(999 - elapsedTime.inMilliseconds % 1000).toString().padLeft(3, '0').substring(0, 2)} 초',
-                style: TextStyle(
-                  fontSize: 50,
-                  color: elapsedTime.inSeconds <= 10
-                      ? Colors.black
-                      : elapsedTime.inSeconds <= 20
-                      ? Colors.yellow[700]
-                      : Colors.red,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              if (widget.user != null) googleIdText,
-            ],
-          ),
-        ],
+                if (widget.user != null) googleIdText,
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
