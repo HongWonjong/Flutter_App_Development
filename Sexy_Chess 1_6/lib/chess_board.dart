@@ -5,6 +5,7 @@ import 'chess_board_logic.dart';
 import'package:firebase_auth/firebase_auth.dart';
 import 'waiting_screen.dart';
 import 'pieces/pawn.dart';
+import 'pieces/king.dart';
 
 class ChessBoard extends StatefulWidget {
   final User? user;
@@ -67,6 +68,13 @@ class _ChessBoardState extends State<ChessBoard> {
     setState(() {
       isWhiteTurn = !isWhiteTurn;
       turnCounter += 1;
+
+      // Check if a castling move was made and perform it.
+      if (pieces[index] is King &&
+          (newPosition - pieces[index].position).abs() == 2) {
+        (pieces[index] as King).performCastling(pieces, newPosition);
+      }
+
       pieces[index].position = newPosition;
 
       handleCapture(index, newPosition);
@@ -82,6 +90,7 @@ class _ChessBoardState extends State<ChessBoard> {
       handleMoveTimer();
     });
   }
+
 
   void handleEnPassantCapture(int index, int newPosition) {
     if (index < 0 || index >= pieces.length) {
@@ -211,7 +220,7 @@ class _ChessBoardState extends State<ChessBoard> {
         .of(context)
         .size
         .height;
-    final chessBoardSize = screenHeight * 0.99;
+    final chessBoardSize = screenHeight * 0.95;
 
     Widget googleIdText = const Text(
       '누구냐 넌',
@@ -245,8 +254,6 @@ class _ChessBoardState extends State<ChessBoard> {
             SizedBox(
               width: chessBoardSize,
               height: chessBoardSize,
-              child: Padding(
-                padding: EdgeInsets.only(top: chessBoardSize * 0.07),
                 child: GridView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -353,7 +360,6 @@ class _ChessBoardState extends State<ChessBoard> {
                   },
                   itemCount: 64,
                 ),
-              ),
             ),
             const SizedBox(width: 10),
             Column(

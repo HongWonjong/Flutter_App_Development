@@ -3,8 +3,8 @@ import 'chess_pieces.dart';
 class Pawn extends Piece {
   bool justMadeDoubleJump = false;
 
-  Pawn({required bool isWhite, required int position})
-      : super(isWhite: isWhite, position: position);
+  Pawn({required bool isWhite, required int position, required bool hasMoved})
+      : super(isWhite: isWhite, position: position, hasMoved: hasMoved);
 
   @override
   List<int> possibleMoves(List<Piece> pieces) {

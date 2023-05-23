@@ -8,8 +8,9 @@ import 'queen.dart';
 abstract class Piece {
   final bool isWhite;
   int position;
+  bool hasMoved = false; // Add this line
 
-  Piece({required this.isWhite, required this.position});
+  Piece({required this.isWhite, required this.position, required this.hasMoved});
 
   int coordToIndex(int x, int y) {
     return x + y * 8;
@@ -29,9 +30,25 @@ abstract class Piece {
     }
     return false;
   }
+  List<int> basicMoves(List<Piece> pieces) { // king의 기본 움직임.
+    List<int> moves = [];
+    List<int> moveOffsets = [-9, -8, -7, -1, 1, 7, 8, 9];
 
+    for (int offset in moveOffsets) {
+      int newPosition = position + offset;
 
+      if (newPosition >= 0 && newPosition < 64) {
+        int rowDiff = (newPosition ~/ 8 - position ~/ 8).abs();
+        int colDiff = (newPosition % 8 - position % 8).abs();
 
+        if (rowDiff <= 1 && colDiff <= 1) {
+          moves.add(newPosition);
+        }
+      }
+    }
+
+    return moves;
+  }
 
   String getImagePath() {
     String imagePath = '';

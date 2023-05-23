@@ -1,8 +1,8 @@
 import 'chess_pieces.dart';
 
 class Bishop extends Piece {
-  Bishop({required bool isWhite, required int position})
-      : super(isWhite: isWhite, position: position);
+  Bishop({required bool isWhite, required int position, required bool hasMoved})
+      : super(isWhite: isWhite, position: position, hasMoved: hasMoved);
 
   @override
   List<int> possibleMoves(List<Piece> pieces) {
