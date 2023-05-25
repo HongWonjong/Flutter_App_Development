@@ -96,4 +96,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore-ktx'
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
     implementation 'com.google.gms:google-services:4.3.15'
+    implementation 'com.squareup.okio:okio:3.3.0'
 }
+
+// 혹시 자바 라이브러리를 넣으라고 하면 여기 dependencies에 넣어주자.

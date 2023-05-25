@@ -9,8 +9,9 @@ import 'dart:convert';
 
 class WaitingScreen extends StatefulWidget {
   final User? user;
+  final String? appToken; // 앱 토큰 변수 추가
 
-  const WaitingScreen({Key? key, this.user}) : super(key: key);
+  const WaitingScreen({Key? key, this.user, this.appToken}) : super(key: key);
 
   @override
   _WaitingScreenState createState() => _WaitingScreenState();
