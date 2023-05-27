@@ -9,19 +9,16 @@ import 'package:sexy_chess/waiting_screen.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<UserCredential?> signInWithEmailPassword(
-      String email, String password, BuildContext context) async {
+  Future<UserCredential?> signInWithEmailPassword(String email, String password, BuildContext context) async {
     try {
-      UserCredential userCredential =
-      await _auth.signInWithEmailAndPassword(
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
 
       User? user = userCredential.user;
       if (user != null) {
-        final userRef =
-        FirebaseFirestore.instance.collection('users').doc(user.uid);
+        final userRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
 
         final docSnapshot = await userRef.get();
         if (!docSnapshot.exists) {
@@ -33,7 +30,7 @@ class AuthService {
         }
 
         // Add this part to get the appToken
-         var appToken = await fetchAppCheckToken();
+        var appToken = await fetchAppCheckToken();
 
         // Navigate to the WaitingScreen
         Navigator.of(context).pushReplacement(
@@ -48,13 +45,16 @@ class AuthService {
       return null;
     } catch (e) {
       if (e is FirebaseAuthException) {
-        // the rest of your existing code...
+        // Handle FirebaseAuthException
       } else {
         print('Error occurred using Email/Password Sign-In: $e');
       }
       return null;
     }
   }
+
+
+
   Future<UserCredential?> signUpWithEmailPassword(String email, String password) async {
     try {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
@@ -117,7 +117,7 @@ void showEmailSignIn(BuildContext context, VoidCallback handleSignUp) {
               await authService.signInWithEmailPassword(
                 emailController.text.trim(),
                 passwordController.text,
-                context,
+                context
               );
             },
             style: ElevatedButton.styleFrom(
@@ -139,6 +139,8 @@ void showEmailSignIn(BuildContext context, VoidCallback handleSignUp) {
     },
   );
 }
+
+
 
 
 class VideoPlayerWidget extends StatefulWidget {
