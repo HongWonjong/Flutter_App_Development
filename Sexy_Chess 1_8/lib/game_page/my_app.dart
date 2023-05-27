@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'chess_board.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'waiting_screen.dart';
+import '../waiting_screen.dart';
 import 'chess_board_logic.dart';
 
 class MyApp extends StatelessWidget {

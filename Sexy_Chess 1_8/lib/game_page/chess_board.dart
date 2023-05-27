@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'pieces/chess_pieces.dart';
+import '../pieces/chess_pieces.dart';
 import 'chess_board_logic.dart';
 import'package:firebase_auth/firebase_auth.dart';
-import 'waiting_screen.dart';
-import 'pieces/pawn.dart';
-import 'pieces/king.dart';
+import '../waiting_screen.dart';
+import '../pieces/pawn.dart';
+import '../pieces/king.dart';
 
 class ChessBoard extends StatefulWidget {
   final User? user;

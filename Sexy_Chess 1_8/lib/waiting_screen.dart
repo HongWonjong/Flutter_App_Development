@@ -1,10 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:just_audio/just_audio.dart';
-import 'my_app.dart';
+import 'game_page/my_app.dart';
 import 'dart:math';
 import 'dart:convert';
+
 
 
 class WaitingScreen extends StatefulWidget {
@@ -21,6 +23,7 @@ class _WaitingScreenState extends State<WaitingScreen> {
   List<String> characterImages = [];
   Random random = Random();
   String randomImagePath = '';
+  String displayName = ''; // 닉네임 변수 추가
   final player = AudioPlayer();
 
   @override
@@ -33,12 +36,32 @@ class _WaitingScreenState extends State<WaitingScreen> {
       });
     });
     initPlayer();
+    fetchDisplayName(); // 닉네임 가져오기
   }
 
   Future<void> initPlayer() async {
     await player.setAsset('assets/sounds/waiting_screen_music.mp3');
     player.setLoopMode(LoopMode.all);
     player.play();
+  }
+
+  Future<void> fetchDisplayName() async {
+    try {
+      final user = widget.user;
+      if (user != null) {
+        final userRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
+
+        final snapshot = await userRef.get();
+        if (snapshot.exists) {
+          final data = snapshot.data() as Map<String, dynamic>;
+          setState(() {
+            displayName = data['displayName'] ?? '';
+          });
+        }
+      }
+    } catch (e) {
+      print('Failed to fetch display name: $e');
+    }
   }
 
 
@@ -97,10 +120,6 @@ class _WaitingScreenState extends State<WaitingScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CircleAvatar(
-                          backgroundImage: NetworkImage(widget.user?.photoURL ?? ''),
-                          radius: 50,
-                        ),
                         const SizedBox(height: 20),
                         const Text(
                           '유저 프로필',
@@ -108,7 +127,7 @@ class _WaitingScreenState extends State<WaitingScreen> {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          '이름: ${widget.user?.displayName ?? ''}',
+                          '이름: $displayName',
                           style: const TextStyle(fontSize: 18),
                         ),
                         const Text(

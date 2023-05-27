@@ -1,11 +1,11 @@
-import 'pieces/chess_pieces.dart';
+import '../pieces/chess_pieces.dart';
 import 'package:flutter/material.dart';
-import 'pieces/rook.dart';
-import 'pieces/pawn.dart';
-import 'pieces/knight.dart';
-import 'pieces/bishop.dart';
-import 'pieces/king.dart';
-import 'pieces/queen.dart';
+import '../pieces/rook.dart';
+import '../pieces/pawn.dart';
+import '../pieces/knight.dart';
+import '../pieces/bishop.dart';
+import '../pieces/king.dart';
+import '../pieces/queen.dart';
 
 bool isWhiteTurn = true;
 
