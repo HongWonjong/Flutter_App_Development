@@ -338,10 +338,6 @@ class _CostCalculatorPageState extends State<CostCalculatorPage> {
               ),
             ),
           ),
-          const SizedBox(
-            width: 30,
-            height: 50,
-          )
         ],
       ),
     );
