@@ -16,8 +16,9 @@ dependencies:
   shared_preferences: ^2.1.1
   url_launcher: ^6.1.1
   cupertino_icons: ^1.0.2
-  flutter_localizations:   # 추가
-    sdk: flutter           # 추가
+  flutter_localizations:
+    sdk: flutter
+
 
 dev_dependencies:
   flutter_test:
@@ -26,4 +27,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  generate: true
+
 

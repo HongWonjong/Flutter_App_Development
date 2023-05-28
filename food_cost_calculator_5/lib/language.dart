@@ -1,5 +1,5 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'dart:ui';
+import 'package:flutter/material.dart';
 
 class Language extends StateNotifier<Locale> {
   Language() : super(const Locale('en', ''));
@@ -14,3 +14,5 @@ class Language extends StateNotifier<Locale> {
 }
 
 final languageProvider = StateNotifierProvider<Language, Locale>((ref) => Language());
+
+

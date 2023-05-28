@@ -37,7 +37,7 @@ class MyApp extends ConsumerWidget {
         Locale('ko', ''),
       ],
       routes: {
-        "/cost-input": (context) => const CostInputPage(),
+        "/cost-input": (context) => CostInputPage(),
         "/calculate": (context) {
           final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
           return CostCalculatorPage(costList: args['costList'], quantity: args['quantity'], foodPrice: args['itemPrice']);
