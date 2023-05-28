@@ -4,6 +4,7 @@ import '/cost_calculator_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'language.dart'; // Language 클래스가 있는 파일을 import 합니다.
 
 void main() {
@@ -14,38 +15,46 @@ void main() {
 }
 
 class MyApp extends ConsumerWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final locale = ref.watch(languageProvider); // 현재 언어 설정을 가져옵니다.
+    final locale = ref.watch(languageProvider) ?? const Locale('en');
+    final appLocalizations = AppLocalizations.of(context);
 
     return MaterialApp(
-      title: "원가 계산기",
+      title: appLocalizations?.costInputPage ?? '',
+      // Check for null value before accessing properties
       initialRoute: "/cost-input",
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blueGrey).copyWith(secondary: Colors.orange),
+        primaryColor: Colors.blueGrey,
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blueGrey)
+            .copyWith(secondary: Colors.orange),
       ),
-      locale: locale, // 언어 설정을 MaterialApp에 연결합니다.
+      locale: locale,
       localizationsDelegates: const [
+        AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('en', ''),
-        Locale('ko', ''),
-      ],
+      supportedLocales: AppLocalizations.supportedLocales,
       routes: {
-        "/cost-input": (context) => CostInputPage(),
+        "/cost-input": (context) => const CostInputPage(),
         "/calculate": (context) {
-          final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-          return CostCalculatorPage(costList: args['costList'], quantity: args['quantity'], foodPrice: args['itemPrice']);
+          final args = ModalRoute
+              .of(context)!
+              .settings
+              .arguments as Map<String, dynamic>;
+          return CostCalculatorPage(costList: args['costList'],
+              quantity: args['quantity'],
+              foodPrice: args['itemPrice']);
         },
       },
     );
   }
 }
+
 
 // 앱 실행 횟수를 증가시키는 함수
 void incrementLaunchCount() async {
