@@ -5,13 +5,37 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'language.dart'; // Language 클래스가 있는 파일을 import 합니다.
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await loadPreferredLanguage();
   incrementLaunchCount();
 
-  runApp(const ProviderScope(child: MyApp())); // Riverpod의 ProviderScope로 MyApp을 감쌉니다.
+  runApp(ProviderScope(child: MyApp()));
+}
+
+Future<void> loadPreferredLanguage() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? preferredLanguage = prefs.getString('preferredLanguage');
+  if (preferredLanguage != null) {
+    Locale locale = Locale(preferredLanguage);
+    // Save the preferred language in a globally accessible variable.
+    preferredLocale = locale;
+  }
+}
+
+// The provider and notifier for handling language
+final languageProvider = StateNotifierProvider<LanguageNotifier, Locale>((ref) {
+  // Use the preferred locale if it's not null, otherwise use 'en' as a default.
+  return LanguageNotifier(preferredLocale ?? Locale('en'));
+});
+
+class LanguageNotifier extends StateNotifier<Locale> {
+  LanguageNotifier(Locale state) : super(state);
+
+  void switchToLanguage(String languageCode) {
+    state = Locale(languageCode);
+  }
 }
 
 class MyApp extends ConsumerWidget {
@@ -19,12 +43,11 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final locale = ref.watch(languageProvider) ?? const Locale('en');
+    final locale = ref.watch(languageProvider);
     final appLocalizations = AppLocalizations.of(context);
 
     return MaterialApp(
       title: appLocalizations?.costInputPage ?? '',
-      // Check for null value before accessing properties
       initialRoute: "/cost-input",
       theme: ThemeData(
         primaryColor: Colors.blueGrey,
@@ -55,11 +78,17 @@ class MyApp extends ConsumerWidget {
   }
 }
 
-
-// 앱 실행 횟수를 증가시키는 함수
 void incrementLaunchCount() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   int launchCount = prefs.getInt('launchCount') ?? 0;
   await prefs.setInt('launchCount', launchCount + 1);
 }
+
+// Globally accessible variable to store the preferred language.
+Locale? preferredLocale;
+
+
+
+
+
 

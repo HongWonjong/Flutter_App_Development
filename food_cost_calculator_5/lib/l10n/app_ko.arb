@@ -23,5 +23,20 @@
   "dialogContent": "원가계산기 어플이 마음에 드신다면 별점을 남겨주세요! 혹은 개선해야 할 부분도 알려주시면 감사하겠습니다.",
   "giveStar": "별점 주기",
   "notNow": "그런거 안키워",
-  "snackBarContent": "원가 항목이 성공적으로 저장되었습니다."
+  "snackBarContent": "원가 항목이 성공적으로 저장되었습니다.",
+  "youShallNotPass": "계산에 필요한 정보를 입력해주세요",
+  "calculationPage_costCalculation": "원가 계산",
+  "calculationPage_salesVolume": "판매량",
+  "calculationPage_name_of_currency": "원",
+  "calculationPage_name_of_unit": "개",
+  "calculationPage_revenueAndCostRate": "의 매출액 & 원가율",
+  "calculationPage_revenue": "매출액",
+  "calculationPage_costRate": "원가율",
+  "calculationPage_fixedCost": "고정원가",
+  "calculationPage_variableCost": "변동원가",
+  "calculationPage_unitFixedCost": "개당 고정원가",
+  "calculationPage_total": "합계",
+  "calculationPage_totalRevenue": "총 매출액",
+  "calculationPage_totalCost": "총 원가",
+  "calculationPage_removeCostItem": "원가 항목 제거"
 }

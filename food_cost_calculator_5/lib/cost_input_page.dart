@@ -3,13 +3,14 @@ import '/cost_item.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import '/language.dart';
+import 'main.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CostInputPage extends ConsumerStatefulWidget {
   const CostInputPage({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _CostInputPageState createState() => _CostInputPageState();
 }
 
@@ -23,6 +24,7 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
   bool _isFixedCost = true;
   final List<CostItem> _costList = [];
 
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -35,29 +37,27 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
   void checkAndShowRatingDialog() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int launchCount = prefs.getInt('launchCount') ?? 0;
-    if (launchCount != 0 && launchCount % 5 == 0) {
+    if (launchCount != 0 && launchCount % 200 == 0) {
+      // ignore: use_build_context_synchronously
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text(
-                AppLocalizations.of(context)!.dialogTitle),
-                content: Text(
-                AppLocalizations.of(context)!.dialogContent),
+            title: Text(AppLocalizations.of(context)!.dialogTitle),
+            content: Text(AppLocalizations.of(context)!.dialogContent),
             actions: <Widget>[
               TextButton(
-                child: Text(
-                    AppLocalizations.of(context)!.giveStar),
+                child: Text(AppLocalizations.of(context)!.giveStar),
                 onPressed: () {
-                  launchUrl(Uri.parse(
-                      'https://play.google.com/store/apps/details?id=this.is.food_cost_calculator_3_0'));
+                  launchUrl(Uri.parse('https://play.google.com/store/apps/details?id=this.is.food_cost_calculator_3_0'));
                   Navigator.of(context).pop();
+                  incrementLaunchCount(); // 리뷰를 달았으므로 카운트 증가
                 },
               ),
               TextButton(
-                child: Text(
-                    AppLocalizations.of(context)!.notNow),
+                child: Text(AppLocalizations.of(context)!.notNow),
                 onPressed: () {
+                  incrementLaunchCount(); // 리뷰를 달지 않고도 카운트 증가
                   Navigator.of(context).pop();
                 },
               ),
@@ -65,8 +65,17 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
           );
         },
       );
+    } else {
+      incrementLaunchCount(); // 화면을 나가서 리뷰를 달지 않았지만 카운트 증가
     }
   }
+
+  void incrementLaunchCount() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int launchCount = prefs.getInt('launchCount') ?? 0;
+    await prefs.setInt('launchCount', launchCount + 1);
+  }
+
 
   void _addItem() {
     if (_formKey.currentState!.validate()) {
@@ -87,8 +96,8 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-                AppLocalizations.of(context)!.snackBarContent),
+            content: Text(AppLocalizations.of(context)!.snackBarContent),
+            duration: const Duration(milliseconds: 700), // 0.5초 지속 시간 설정
           ),
         );
       });
@@ -111,29 +120,51 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
         backgroundColor: Colors.blueGrey,
         actions: <Widget>[
           PopupMenuButton<String>(
-            onSelected: (String value) {
-              if (value == 'English') {
-                ref.watch(languageProvider.notifier).switchToEnglish();
-              } else if (value == 'Korean') {
-                ref.watch(languageProvider.notifier).switchToKorean();
-              }
+            icon: const Icon(Icons.language),
+            iconSize: 40,
+            onSelected: (String value) async {
+              ref.read(languageProvider.notifier).switchToLanguage(value);
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              await prefs.setString('preferredLanguage', value);
             },
             itemBuilder: (BuildContext context) {
               return [
                 const PopupMenuItem<String>(
-                  value: 'English',
+                  value: 'en',
                   child: Text('English'),
                 ),
                 const PopupMenuItem<String>(
-                  value: 'Korean',
+                  value: 'ko',
                   child: Text('Korean'),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'zh',
+                  child: Text('Mandarin'),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'es',
+                  child: Text('Spanish'),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'ja',
+                  child: Text('Japanese'),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'ru',
+                  child: Text('Russian'),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'pt',
+                  child: Text('Portuguese'),
                 ),
               ];
             },
           ),
         ],
       ),
-      body: Center(
+
+      body: SingleChildScrollView(
+      child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
@@ -145,7 +176,7 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
                   children: <Widget>[
                     // Name input field
                     TextFormField(
-                      controller: _nameController,
+                      controller: _foodTypeController,
                       decoration: InputDecoration(
                         labelText: lang.foodType,
                         labelStyle: const TextStyle(fontSize: 25.0),
@@ -158,64 +189,8 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
                         return null;
                       },
                     ),
+                    const SizedBox(height: 10),
                     // Cost input field
-                    TextFormField(
-                      controller: _costController,
-                      decoration: InputDecoration(
-                        labelText: lang.costItemPrice,
-                        labelStyle: const TextStyle(fontSize: 25.0),
-                        border: const OutlineInputBorder(),
-                      ),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return lang.costItemHint;
-                        }
-                        return null;
-                      },
-                    ),
-                    // Cost type radio buttons
-                    ListTile(
-                      title: Text(lang.fixedCost),
-                      leading: Radio<bool>(
-                        value: true,
-                        groupValue: _isFixedCost,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            _isFixedCost = value!;
-                          });
-                        },
-                      ),
-                    ),
-                    ListTile(
-                      title: Text(lang.variableCost),
-                      leading: Radio<bool>(
-                        value: false,
-                        groupValue: _isFixedCost,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            _isFixedCost = value!;
-                          });
-                        },
-                      ),
-                    ),
-                    // Quantity input field
-                    TextFormField(
-                      controller: _quantityController,
-                      decoration: InputDecoration(
-                        labelText: lang.salesVolume,
-                        labelStyle: const TextStyle(fontSize: 25.0),
-                        border: const OutlineInputBorder(),
-                      ),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return lang.salesVolumeHint;
-                        }
-                        return null;
-                      },
-                    ),
-                    // Food price input field
                     TextFormField(
                       controller: _foodPriceController,
                       decoration: InputDecoration(
@@ -231,57 +206,136 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
                         return null;
                       },
                     ),
-                    // Food type input field
+                    const SizedBox(height: 10),
                     TextFormField(
-                      controller: _foodTypeController,
+                      controller: _quantityController,
                       decoration: InputDecoration(
-                        labelText: lang.foodType,
+                        labelText: lang.salesVolume,
+                        labelStyle: const TextStyle(fontSize: 25.0),
+                        border: const OutlineInputBorder(),
+                      ),
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return lang.salesVolumeHint;
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      controller: _nameController,
+                      decoration: InputDecoration(
+                        labelText: lang.costItem,
                         labelStyle: const TextStyle(fontSize: 25.0),
                         border: const OutlineInputBorder(),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return lang.foodTypeHint;
+                          return lang.costItemHint;
                         }
                         return null;
                       },
                     ),
-                    // Add item button
+                    const SizedBox(height: 10),
+                    // Cost type radio buttons
+                    ListTile(
+                      title: Text(lang.fixedCost),
+                      leading: Radio<bool>(
+                        value: true,
+                        groupValue: _isFixedCost,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _isFixedCost = value ?? true;
+                          });
+                        },
+                      ),
+                    ),
+                    ListTile(
+                      title: Text(lang.variableCost),
+                      leading: Radio<bool>(
+                        value: false,
+                        groupValue: _isFixedCost,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _isFixedCost = value ?? true;
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    // Food price input field
+                    TextFormField(
+                      controller: _costController,
+                      decoration: InputDecoration(
+                        labelText: lang.costItemPrice,
+                        labelStyle: const TextStyle(fontSize: 25.0),
+                        border: const OutlineInputBorder(),
+                      ),
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return lang.costItemPriceHint;
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 10),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: ElevatedButton(
                         onPressed: () {
                           _addItem();
                         },
-                        child: Text(lang.saveCostItem),
+                        child: Text(lang.saveCostItem,
+                            style: const TextStyle(fontSize: 25),),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueGrey,
+                      ),
+                      onPressed: () {
+                        if (_costList.isEmpty ||
+                            _quantityController.text.isEmpty ||
+                            _foodPriceController.text.isEmpty) {
+                          // Show an alert dialog or a snack bar message
+                          ScaffoldMessenger.of(context).showSnackBar(
+                             SnackBar(
+                              content: Text(lang.youShallNotPass),
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        } else {
+                          Navigator.pushNamed(
+                            context,
+                            "/calculate",
+                            arguments: {
+                              'costList': _costList,
+                              'quantity': int.parse(_quantityController.text),
+                              'itemPrice': int.parse(_foodPriceController.text),
+                            },
+                          );
+                        }
+                      },
+                      child: Text(
+                        lang.checkCalculation,
+                        style: const TextStyle(fontSize: 25),
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _costList.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(_costList[index].name),
-                    subtitle: Text(
-                        '${_costList[index].unitCost} per ${_costList[index]
-                            .quantity}'),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () {
-                        setState(() {
-                          _costList.removeAt(index);
-                        });
-                      },
-                    ),
-                  );
-                },
-              ),
-            ),
           ],
+        ),
+      ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(lang.copyright),
         ),
       ),
     );

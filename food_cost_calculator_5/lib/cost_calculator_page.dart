@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import '/cost_item.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CostCalculatorPage extends StatefulWidget {
   final List<CostItem> costList;
@@ -9,8 +10,8 @@ class CostCalculatorPage extends StatefulWidget {
 
   const CostCalculatorPage({super.key,
     required this.costList,
-    required this.quantity,
-    required this.foodPrice,
+    this.quantity = 0, // 기본값 설정
+    this.foodPrice = 0, // 기본값 설정
   });
 
   @override
@@ -200,11 +201,13 @@ class _CostCalculatorPageState extends State<CostCalculatorPage> {
   }
   @override
   Widget build(BuildContext context) {
+    final lang = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "원가 계산",
-          style: TextStyle(
+        title: Text(
+          lang.calculationPage_costCalculation,
+          style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 30.0,
@@ -224,17 +227,17 @@ class _CostCalculatorPageState extends State<CostCalculatorPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(foodType),
-                          Text('판매량: ${formatNumber(_costListByFoodType[foodType]!.first.quantity)} 개'),
+                          Text('${lang.calculationPage_salesVolume}: ${formatNumber(_costListByFoodType[foodType]!.first.quantity)} ${lang.calculationPage_name_of_unit}'),
                         ],
                       ),
                       children: [
                         ListTile(
-                          title: Text("$foodType의 매출액 & 원가율"),
+                          title: Text("$foodType ${lang.calculationPage_revenueAndCostRate}"),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("매출액: ${formatCurrency(_costListByFoodType[foodType]!.first.foodPrice * _costListByFoodType[foodType]!.first.quantity)}원"),
-                              Text("원가율: ${formatCurrency(calculateFoodCostRate(foodType))}%"),
+                              Text("${lang.calculationPage_revenue} ${formatCurrency(_costListByFoodType[foodType]!.first.foodPrice * _costListByFoodType[foodType]!.first.quantity)} ${lang.calculationPage_name_of_currency}"),
+                              Text("${lang.calculationPage_costRate} ${formatCurrency(calculateFoodCostRate(foodType))} %"),
                             ],
                           ),
                         ),
@@ -245,16 +248,16 @@ class _CostCalculatorPageState extends State<CostCalculatorPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                costItem.isFixedCostPerUnit ? "고정원가" : "변동원가",
+                                costItem.isFixedCostPerUnit ? lang.calculationPage_fixedCost : lang.calculationPage_variableCost,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               Text(
-                                "${formatNumber(costItem.unitCost)}원",
+                                "${formatNumber(costItem.unitCost)} ${lang.calculationPage_name_of_currency}",
                               ),
                               if(costItem.isFixedCostPerUnit) Text(
-                                  "개당 고정원가: ${formatCurrency(costItem.unitCost.toDouble() / _costListByFoodType[foodType]!.first.quantity)}원"
+                                  "${lang.calculationPage_unitFixedCost}: ${formatCurrency(costItem.unitCost.toDouble() / _costListByFoodType[foodType]!.first.quantity)} ${lang.calculationPage_name_of_currency}"
                               ),
                             ],
                           ),
@@ -269,8 +272,8 @@ class _CostCalculatorPageState extends State<CostCalculatorPage> {
                               ),
                               Text(
                                 costItem.isFixedCostPerUnit
-                                    ? "합계: ${formatNumber(costItem.unitCost)}원"
-                                    : "합계: ${formatNumber(costItem.unitCost * _costListByFoodType[foodType]!.first.quantity)}원",
+                                    ? " ${formatNumber(costItem.unitCost)} ${lang.calculationPage_name_of_currency}"
+                                    : " ${formatNumber(costItem.unitCost * _costListByFoodType[foodType]!.first.quantity)} ${lang.calculationPage_name_of_currency}",
                               ),
                             ],
                           ),
@@ -284,15 +287,15 @@ class _CostCalculatorPageState extends State<CostCalculatorPage> {
           Card(
             child: ListTile(
               tileColor: Colors.blueGrey,
-              title: const Text(
-                "총 매출액",
-                style: TextStyle(
+              title: Text(
+                lang.calculationPage_totalRevenue,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
                 ),
               ),
               trailing: Text(
-                "${formatCurrency(calculateTotalRevenue())}원",
+                "${formatCurrency(calculateTotalRevenue())} ${lang.calculationPage_name_of_currency}",
                 style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18
@@ -303,15 +306,15 @@ class _CostCalculatorPageState extends State<CostCalculatorPage> {
           Card(
             child: ListTile(
               tileColor: Colors.blueGrey,
-              title: const Text(
-                "총 원가",
-                style: TextStyle(
+              title: Text(
+                lang.calculationPage_totalCost,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
                 ),
               ),
               trailing: Text(
-                "${formatNumber(calculateTotalCost())}원",
+                "${formatNumber(calculateTotalCost())} ${lang.calculationPage_name_of_currency}",
                 style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18
@@ -322,15 +325,15 @@ class _CostCalculatorPageState extends State<CostCalculatorPage> {
           Card(
             child: ListTile(
               tileColor: Colors.blueGrey,
-              title: const Text(
-                "원가율",
-                style: TextStyle(
+              title: Text(
+                lang.calculationPage_costRate,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
                 ),
               ),
               trailing: Text(
-                "${formatCurrency(calculateTotalCostRate())}%",
+                "${formatCurrency(calculateTotalCostRate())} %",
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,

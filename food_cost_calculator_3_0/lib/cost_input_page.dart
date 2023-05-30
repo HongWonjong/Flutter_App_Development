@@ -17,7 +17,6 @@ class _CostInputPageState extends State<CostInputPage> {
   final _costController = TextEditingController();
   final _quantityController = TextEditingController();
   final _foodPriceController = TextEditingController();
-  final _foodTypeController = TextEditingController();
   bool _isFixedCost = true;
   final List<CostItem> _costList = [];
 
@@ -259,3 +258,4 @@ class _CostInputPageState extends State<CostInputPage> {
     );
   }
 }
+  final _foodTypeController = TextEditingController();
