@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class Language extends StateNotifier<Locale> {
   Language() : super(const Locale('en', ''));
+  // 처음 앱을 받았을때는 영어로 시작한다.
 
   void switchToEnglish() {
     state = const Locale('en', '');

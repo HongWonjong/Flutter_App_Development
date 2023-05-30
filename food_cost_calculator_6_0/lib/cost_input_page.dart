@@ -104,7 +104,7 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
       });
     }
   }
-  List<Map<String, String>> languages = [
+  final languages = <Map<String, String>>[
     {'value': 'en', 'name': 'English'},
     {'value': 'ko', 'name': 'Korean'},
     {'value': 'zh', 'name': 'Mandarin'},
@@ -149,7 +149,7 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
                     width: 170,
                     height: 400,
                     child: Scrollbar(
-                      isAlwaysShown: true,
+                      thumbVisibility: true,
                       controller: ScrollController(),
                       thickness: 8.0, // 스크롤바의 두께 조절
                       child: ListView.builder(

@@ -11,7 +11,7 @@ void main() async {
   await loadPreferredLanguage();
   incrementLaunchCount();
 
-  runApp(ProviderScope(child: MyApp()));
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 Future<void> loadPreferredLanguage() async {
@@ -27,7 +27,7 @@ Future<void> loadPreferredLanguage() async {
 // The provider and notifier for handling language
 final languageProvider = StateNotifierProvider<LanguageNotifier, Locale>((ref) {
   // Use the preferred locale if it's not null, otherwise use 'en' as a default.
-  return LanguageNotifier(preferredLocale ?? Locale('en'));
+  return LanguageNotifier(preferredLocale ?? const Locale('en'));
 });
 
 class LanguageNotifier extends StateNotifier<Locale> {
