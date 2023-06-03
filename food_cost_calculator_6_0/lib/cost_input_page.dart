@@ -116,6 +116,9 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
     {'value': 'ar', 'name': 'Arabic'},
     {'value': 'hi', 'name': 'Hindi'},
     {'value': 'bn', 'name': 'Bengali'},
+    {'value': 'fr', 'name': 'French'},
+    {'value': 'it', 'name': 'Italian'},
+    {'value': 'nl', 'name': 'Dutch'},
   ];
 
   @override
@@ -131,7 +134,7 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
           style: const TextStyle(
               color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30.0),
         ),
-        backgroundColor: Colors.blueGrey,
+        backgroundColor: Colors.deepPurpleAccent,
         actions: <Widget>[
           PopupMenuButton<String>(
             icon: const Icon(Icons.language),
@@ -292,6 +295,9 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepPurpleAccent,
+                        ),
                         onPressed: () {
                           _addItem();
                         },
@@ -301,7 +307,7 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
                     ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueGrey,
+                        backgroundColor: Colors.deepPurpleAccent,
                       ),
                       onPressed: () {
                         if (_costList.isEmpty ||

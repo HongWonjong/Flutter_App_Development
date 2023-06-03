@@ -44,7 +44,17 @@ class Language extends StateNotifier<Locale> {
   void switchToBengali() {
     state = const Locale('bn', '');
   }
+  void switchToFrench() {
+    state = const Locale('fr', '');
+  }
+  void switchToItalian() {
+    state = const Locale('it', '');
+  }
+  void switchToDutch() {
+    state = const Locale('nl', '');
+  }
 }
+
 
 final languageProvider = StateNotifierProvider<Language, Locale>((ref) => Language());
 

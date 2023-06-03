@@ -213,7 +213,7 @@ class _CostCalculatorPageState extends State<CostCalculatorPage> {
             fontSize: 30.0,
           ),
         ),
-        backgroundColor: Colors.blueGrey,
+        backgroundColor: Colors.deepPurpleAccent,
       ),
       body: Column(
         children: [
@@ -286,7 +286,7 @@ class _CostCalculatorPageState extends State<CostCalculatorPage> {
           ),
           Card(
             child: ListTile(
-              tileColor: Colors.blueGrey,
+              tileColor: Colors.deepPurpleAccent,
               title: Text(
                 lang.calculationPage_totalRevenue,
                 style: const TextStyle(
@@ -305,7 +305,7 @@ class _CostCalculatorPageState extends State<CostCalculatorPage> {
           ),
           Card(
             child: ListTile(
-              tileColor: Colors.blueGrey,
+              tileColor: Colors.deepPurpleAccent,
               title: Text(
                 lang.calculationPage_totalCost,
                 style: const TextStyle(
@@ -324,7 +324,7 @@ class _CostCalculatorPageState extends State<CostCalculatorPage> {
           ),
           Card(
             child: ListTile(
-              tileColor: Colors.blueGrey,
+              tileColor: Colors.deepPurpleAccent,
               title: Text(
                 lang.calculationPage_costRate,
                 style: const TextStyle(
