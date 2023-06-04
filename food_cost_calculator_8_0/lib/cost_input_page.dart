@@ -8,7 +8,7 @@ import 'main.dart';
 import 'dart:io';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-
+import 'custom_appbar.dart';
 
 class CostInputPage extends ConsumerStatefulWidget {
   const CostInputPage({Key? key}) : super(key: key);
@@ -168,51 +168,7 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text(
-          lang.costInputPage,
-          style: const TextStyle(
-              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30.0),
-        ),
-        backgroundColor: Colors.deepPurpleAccent,
-        actions: <Widget>[
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.language),
-            iconSize: 40,
-            onSelected: (String value) async {
-              ref.read(languageProvider.notifier).switchToLanguage(value);
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              await prefs.setString('preferredLanguage', value);
-            },
-            itemBuilder: (BuildContext context) {
-              return [
-                PopupMenuItem<String>(
-                  value: null,
-                  child: SizedBox(
-                    width: 170,
-                    height: 400,
-                    child: Scrollbar(
-                      thumbVisibility: true,
-                      controller: ScrollController(),
-                      thickness: 8.0, // 스크롤바의 두께 조절
-                      child: ListView.builder(
-                        itemCount: languages.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final language = languages[index];
-                          return PopupMenuItem<String>(
-                            value: language['value'],
-                            child: Text(language['name']!),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ];
-            },
-          ),
-        ],
-      ),
+      appBar: MyAppBar(title: lang.costInputPage),
 
       body: SingleChildScrollView(
       child: Center(

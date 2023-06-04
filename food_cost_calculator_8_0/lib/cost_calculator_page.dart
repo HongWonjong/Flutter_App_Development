@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import '/cost_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'custom_appbar.dart';
 
 class CostCalculatorPage extends StatefulWidget {
   final List<CostItem> costList;
@@ -202,19 +203,8 @@ class _CostCalculatorPageState extends State<CostCalculatorPage> {
   @override
   Widget build(BuildContext context) {
     final lang = AppLocalizations.of(context)!;
-    final locale = Localizations.localeOf(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          lang.calculationPage_costCalculation,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 30.0,
-          ),
-        ),
-        backgroundColor: Colors.deepPurpleAccent,
-      ),
+      appBar: MyAppBar(title: lang.calculationPage_costCalculation),
       body: Column(
         children: [
           Expanded(
