@@ -7,22 +7,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:food_cost_calculator_3_0/big one/login_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+
 
 final loggedInUserProvider = StateProvider<User?>((ref) => null);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();  // Initialize Firebase
   MobileAds.instance.initialize();
   await loadPreferredLanguage();
   incrementLaunchCount();
 
-  runApp(ProviderScope(child: MyApp(),
-    overrides: [
-      loggedInUserProvider.overrideWith(User? StateProvider((ref) => FirebaseAuth.instance.currentUser)),
-    ],
-  ));
+  runApp(const ProviderScope(child: MyApp()));
 }
-
 
 Future<void> loadPreferredLanguage() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -34,9 +33,7 @@ Future<void> loadPreferredLanguage() async {
   }
 }
 
-// The provider and notifier for handling language
 final languageProvider = StateNotifierProvider<LanguageNotifier, Locale>((ref) {
-  // Use the preferred locale if it's not null, otherwise use 'en' as a default.
   return LanguageNotifier(preferredLocale ?? const Locale('en'));
 });
 
@@ -56,9 +53,13 @@ class MyApp extends ConsumerWidget {
     final locale = ref.watch(languageProvider);
     final appLocalizations = AppLocalizations.of(context);
 
+    // Check the login state of the user
+    final user = ref.watch(loggedInUserProvider.notifier).state;
+    String initialRoute = user != null ? "/cost-input" : "/login";
+
     return MaterialApp(
       title: appLocalizations?.costInputPage ?? '',
-      initialRoute: "/cost-input",
+      initialRoute: initialRoute,
       theme: ThemeData(
         primaryColor: Colors.blueGrey,
         colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blueGrey)
@@ -73,6 +74,7 @@ class MyApp extends ConsumerWidget {
       ],
       supportedLocales: AppLocalizations.supportedLocales,
       routes: {
+        "/login": (context) => const LoginPage(), // Add this
         "/cost-input": (context) => const CostInputPage(),
         "/calculate": (context) {
           final args = ModalRoute
@@ -94,8 +96,8 @@ void incrementLaunchCount() async {
   await prefs.setInt('launchCount', launchCount + 1);
 }
 
-// Globally accessible variable to store the preferred language.
 Locale? preferredLocale;
+
 
 
 

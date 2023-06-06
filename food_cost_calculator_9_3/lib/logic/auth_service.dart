@@ -1,15 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:food_cost_calculator_3_0/main.dart';
 
-final authService = Provider((ref) => AuthService(ref.read));
+final authService = Provider<AuthService>((ref) => AuthService(ref));
 
 class AuthService {
-  final Reader _read;
+  final ProviderRef<AuthService> _ref;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  AuthService(this._read);
+  AuthService(this._ref);
 
   Future<void> signInWithGoogle() async {
     try {
@@ -26,7 +27,7 @@ class AuthService {
 
       if (user != null) {
         // 로그인 처리 및 사용자 정보 가져오기
-        _read(loggedInUserProvider).state = user;
+        _ref.read(loggedInUserProvider.notifier).state = user;  // Here
       } else {
         // 로그인 실패 처리
       }
@@ -40,10 +41,15 @@ class AuthService {
       await _googleSignIn.signOut();
       await _firebaseAuth.signOut();
       // 로그아웃 처리
-      _read(loggedInUserProvider).state = null;
+      _ref.read(loggedInUserProvider.notifier).state = null; // And here
     } catch (error) {
       // 로그아웃 실패 처리
     }
   }
 }
+
+
+
+
+
 
