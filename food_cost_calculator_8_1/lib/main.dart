@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '/cost_input_page.dart';
-import '/cost_calculator_page.dart';
+import 'big one/cost_input_page.dart';
+import 'big one/cost_calculator_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';

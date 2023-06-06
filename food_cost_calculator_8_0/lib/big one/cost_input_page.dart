@@ -1,14 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import '/cost_item.dart';
+import '../logic/cost_item.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'main.dart';
+import '../entrypoint/main.dart';
 import 'dart:io';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'custom_appbar.dart';
+import '../small one/custom_appbar.dart';
 
 class CostInputPage extends ConsumerStatefulWidget {
   const CostInputPage({Key? key}) : super(key: key);

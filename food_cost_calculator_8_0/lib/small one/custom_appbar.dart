@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'main.dart';
-
+import '../entrypoint/main.dart';
+import 'menu_button.dart';
 
 class MyAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const MyAppBar({
@@ -27,13 +27,14 @@ class MyAppBar extends ConsumerWidget implements PreferredSizeWidget {
           fontSize: 30.0,
         ),
       ),
-      leading: IconButton(
-        onPressed: () {
-          Scaffold.of(context).openDrawer();
-        },
-        icon: const Icon(Icons.menu),
-      ),
-      backgroundColor: Colors.deepPurpleAccent,
+      leading: Builder(
+        builder: (BuildContext context) {
+      return CustomMenu();
+    },
+    ),
+
+
+    backgroundColor: Colors.deepPurpleAccent,
       actions: <Widget>[
         PopupMenuButton<String>(
           icon: const Icon(Icons.language),
@@ -71,6 +72,7 @@ class MyAppBar extends ConsumerWidget implements PreferredSizeWidget {
           },
         ),
       ],
+      automaticallyImplyLeading: true, // 뒤로가기 버튼 자동 표시
     );
   }
 }

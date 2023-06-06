@@ -1,8 +1,8 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import '/cost_item.dart';
+import '../logic/cost_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'custom_appbar.dart';
+import '../small one/custom_appbar.dart';
 
 class CostCalculatorPage extends StatefulWidget {
   final List<CostItem> costList;
@@ -207,6 +207,17 @@ class _CostCalculatorPageState extends State<CostCalculatorPage> {
       appBar: MyAppBar(title: lang.calculationPage_costCalculation),
       body: Column(
         children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(Icons.arrow_back),
+              ),
+            ],
+          ),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
