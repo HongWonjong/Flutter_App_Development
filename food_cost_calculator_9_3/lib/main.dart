@@ -6,6 +6,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+final loggedInUserProvider = StateProvider<User?>((ref) => null);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,8 +16,13 @@ void main() async {
   await loadPreferredLanguage();
   incrementLaunchCount();
 
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(ProviderScope(child: MyApp(),
+    overrides: [
+      loggedInUserProvider.overrideWith(User? StateProvider((ref) => FirebaseAuth.instance.currentUser)),
+    ],
+  ));
 }
+
 
 Future<void> loadPreferredLanguage() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -88,6 +96,7 @@ void incrementLaunchCount() async {
 
 // Globally accessible variable to store the preferred language.
 Locale? preferredLocale;
+
 
 
 
