@@ -9,6 +9,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../small one/custom_appbar.dart';
 import 'package:food_cost_calculator_3_0/small one/review_please.dart';
 import 'package:food_cost_calculator_3_0/small one/menu_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class CostInputPage extends ConsumerStatefulWidget {
   const CostInputPage({Key? key}) : super(key: key);
@@ -35,6 +36,19 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
   void initState() {
     super.initState();
     _loadBannerAd();
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null && user.displayName != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${user.displayName}님, 환영합니다.'),
+            duration: const Duration(milliseconds: 1500),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    });
   }
 
 
@@ -113,6 +127,7 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
   Widget build(BuildContext context) {
     final lang = AppLocalizations.of(context)!;
     checkAndShowRatingDialog(context, incrementLaunchCount);
+
 
     return Scaffold(
       backgroundColor: Colors.white,

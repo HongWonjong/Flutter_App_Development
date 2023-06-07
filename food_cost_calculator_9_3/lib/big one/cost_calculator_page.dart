@@ -4,6 +4,7 @@ import '../logic/cost_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../small one/custom_appbar.dart';
 import 'package:food_cost_calculator_3_0/small one/menu_button.dart';
+import 'package:food_cost_calculator_3_0/logic/upload_report.dart';
 class CostCalculatorPage extends StatefulWidget {
   final List<CostItem> costList;
   final int quantity;
@@ -350,13 +351,23 @@ class _CostCalculatorPageState extends State<CostCalculatorPage> {
               // 이 부분에 "보고서로 저장" 버튼 추가
               ElevatedButton(
                 onPressed: () {
-                  // 버튼이 눌렸을 때 실행될 코드를 여기에 작성합니다.
-                }, // 글자 크기를 조정합니다.
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Colors.deepPurpleAccent, // 버튼의 글자색을 변경합니다.
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10), // 버튼의 패딩을 조정하여 버튼의 크기를 변경합니다.
-                ),
-                child: const Text('보고서로 저장', style: TextStyle(fontSize: 20)),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => UploadReportPage(
+                        fixedCostByFoodType: _fixedCostByFoodType,
+                        variableCostByFoodType: _variableCostByFoodType,
+                        costListByFoodType: _costListByFoodType,
+                        totalRevenueByFoodType: _totalRevenueByFoodType,
+                        profitByFoodType: _profitByFoodType,
+                        totalCostRate: calculateTotalCostRate(),
+                        totalRevenue: calculateTotalRevenue(),
+                        totalCost: calculateTotalCost(),
+                      ),
+                    ),
+                  );
+                },
+                child: const Text('보고서로 저장'),
               ),
             ],
           )

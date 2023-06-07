@@ -7,9 +7,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 class LoginPage extends ConsumerWidget {
   const LoginPage({Key? key}) : super(key: key);
 
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(loggedInUserProvider.notifier).state;
+    final authService = Provider<AuthService>((ref) => AuthService(ref));
 
     return Scaffold(
       body: Center(
@@ -18,14 +19,19 @@ class LoginPage extends ConsumerWidget {
           children: [
             ElevatedButton(
               onPressed: () async {
-                if (user != null) {
+                if (ref.watch(loggedInUserProvider)?.displayName != null) {
                   // 유저가 로그인되어 있는 경우, cost_input 페이지로 이동
                   Navigator.pushReplacementNamed(context, '/cost-input');
                 } else {
                   // 유저가 로그인되어 있지 않은 경우, Google 로그인 실행
-                  await ref.read(authService).signInWithGoogle();
-                  ref.read(loggedInUserProvider.notifier).state =
-                      FirebaseAuth.instance.currentUser;
+                  UserCredential userCredential = await ref.read(authService).signInWithGoogle();
+                  User? user = userCredential.user;
+                  if (user != null && user.displayName != null) {
+                    ref.read(loggedInUserProvider.notifier).state = user;
+                    // 이제 cost_input 페이지로 이동
+                    // ignore: use_build_context_synchronously
+                    Navigator.pushReplacementNamed(context, '/cost-input');
+                  }
                 }
               },
               style: ElevatedButton.styleFrom(
