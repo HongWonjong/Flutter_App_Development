@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../logic/cost_item.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 class UploadReportPage extends StatefulWidget {
@@ -50,33 +51,76 @@ class _UploadReportPageState extends State<UploadReportPage> {
       'totalCost': widget.totalCost,
     };
 
-    await _firestore.collection('SalesReports').add({
-      'name': reportName,
-      'date': DateTime.now(),
-      'period': reportPeriod,
-      'data': reportData,
-    });
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final userId = user.uid;
 
-    _reportNameController.clear();
-    _reportPeriodController.clear();
+        final documentReference = await _firestore.collection('users').doc(userId).collection('SalesReports').add({
+          'name': reportName,
+          'date': DateTime.now(),
+          'period': reportPeriod,
+          'data': reportData,
+        });
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('보고서 저장'),
-          content: const Text('보고서가 성공적으로 저장되었습니다.'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('확인'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+        _reportNameController.clear();
+        _reportPeriodController.clear();
+
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('보고서 저장'),
+              content: const Text('보고서가 성공적으로 저장되었습니다.'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('확인'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
         );
-      },
-    );
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('보고서 저장'),
+              content: const Text('사용자 인증이 필요합니다.'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('확인'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('보고서 저장'),
+            content: const Text('보고서 저장 중에 오류가 발생했습니다.'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('확인'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   @override
