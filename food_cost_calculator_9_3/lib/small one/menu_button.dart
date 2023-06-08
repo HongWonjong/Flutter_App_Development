@@ -41,7 +41,7 @@ class CustomDrawer extends ConsumerWidget {
             ),
             ListTile(
               title: const Text(
-                'AI 분석',
+                'AI 분석(공사중...)',
                 style: TextStyle(color: Colors.white),
               ),
               onTap: () {
