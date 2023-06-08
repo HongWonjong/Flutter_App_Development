@@ -14,11 +14,78 @@ class SalesReportPage extends StatefulWidget {
 
 class _SalesReportPageState extends State<SalesReportPage> {
   List<bool> checkedList = [];
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final user = FirebaseAuth.instance.currentUser;
+
+  Future<void> _deleteReports(QuerySnapshot snapshot) async {
+    final reports = _firestore
+        .collection('users')
+        .doc(user?.uid)
+        .collection('SalesReports');
+
+    for (int i = 0; i < checkedList.length; i++) {
+      if (checkedList[i]) {
+        await reports.doc(snapshot.docs[i].id).delete();
+      }
+    }
+
+    setState(() {
+      checkedList = List.filled(snapshot.docs.length, false);
+    });
+  }
+
+  Future<void> _confirmDelete(QuerySnapshot snapshot) async {
+    // Check if any checkboxes are selected
+    if (!checkedList.contains(true)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('삭제할 보고서를 선택해주세요'),
+          duration: Duration(milliseconds: 1000),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('매출보고서 삭제'),
+          content: const Text('선택한 매출보고서를 삭제하시겠습니까?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('아니오'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('예'),
+              onPressed: () {
+                _deleteReports(snapshot);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _confirmDeleteReports() async {
+    final reportSnapshot = await _firestore
+        .collection('users')
+        .doc(user?.uid)
+        .collection('SalesReports')
+        .get();
+
+    _confirmDelete(reportSnapshot);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
-    final reportStream = FirebaseFirestore.instance
+    final reportStream = _firestore
         .collection('users')
         .doc(user?.uid)
         .collection('SalesReports')
@@ -91,9 +158,15 @@ class _SalesReportPageState extends State<SalesReportPage> {
           );
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _confirmDeleteReports,
+        backgroundColor: Colors.red,
+        child: const Icon(Icons.delete),
+      ),
     );
   }
 }
+
 
 
 

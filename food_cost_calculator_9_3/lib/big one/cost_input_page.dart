@@ -47,6 +47,12 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
             behavior: SnackBarBehavior.floating,
           ),
         );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('비로그인 사용자는 보고서 저장과 AI 분석을 사용할 수 없는 점 유의해주세요'),
+          duration: Duration(milliseconds: 3000),
+          behavior: SnackBarBehavior.floating,
+        ));
       }
     });
   }

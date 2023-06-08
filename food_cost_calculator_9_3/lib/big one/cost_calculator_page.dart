@@ -4,7 +4,7 @@ import '../logic/cost_item.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../small one/custom_appbar.dart';
 import 'package:food_cost_calculator_3_0/small one/menu_button.dart';
-import 'package:food_cost_calculator_3_0/logic/upload_report.dart';
+import 'package:food_cost_calculator_3_0/big%20one/upload_report.dart';
 class CostCalculatorPage extends StatefulWidget {
   final List<CostItem> costList;
   final int quantity;
@@ -350,6 +350,9 @@ class _CostCalculatorPageState extends State<CostCalculatorPage> {
 
               // 이 부분에 "보고서로 저장" 버튼 추가
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurpleAccent, // primary sets the background color
+                ),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -367,7 +370,8 @@ class _CostCalculatorPageState extends State<CostCalculatorPage> {
                     ),
                   );
                 },
-                child: const Text('보고서로 저장'),
+                child: const Text('계산 결과를 보고서로 저장',
+                style: TextStyle(fontSize: 20),),
               ),
             ],
           )

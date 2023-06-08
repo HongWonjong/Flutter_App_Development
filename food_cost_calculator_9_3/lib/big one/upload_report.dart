@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../logic/cost_item.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:food_cost_calculator_3_0/small one/custom_appbar.dart';
 
 
 class UploadReportPage extends StatefulWidget {
@@ -132,9 +133,7 @@ class _UploadReportPageState extends State<UploadReportPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('보고서 업로드'),
-      ),
+      appBar: const MyAppBar(title: "보고서 작성"),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -156,6 +155,9 @@ class _UploadReportPageState extends State<UploadReportPage> {
             const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: _saveReportToFirestore,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurpleAccent, // primary sets the background color
+              ),
               child: const Text('보고서로 저장'),
             ),
           ],
