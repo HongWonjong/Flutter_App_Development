@@ -14,4 +14,16 @@ class CostItem {
     required this.quantity,
     required this.foodPrice,
   });
+
+  // Add a method to convert CostItem to a Map.
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'isFixedCostPerUnit': isFixedCostPerUnit,
+      'unitCost': unitCost,
+      'foodType': foodType,
+      'foodPrice': foodPrice,
+      'quantity': quantity,
+    };
+  }
 }

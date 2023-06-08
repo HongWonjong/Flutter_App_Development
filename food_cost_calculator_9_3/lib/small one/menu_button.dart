@@ -1,22 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../big one/sales_report_page.dart';
 import '../big one/ai_analysis_page.dart';
+import '../logic/auth_service.dart';
+import '../main.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-
-class CustomDrawer extends StatelessWidget {
-  const CustomDrawer({super.key});
+class CustomDrawer extends ConsumerWidget {
+  const CustomDrawer({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authService = Provider<AuthService>((ref) => AuthService(ref));
+    User? currentUser = ref.watch(loggedInUserProvider.notifier).state;
+
+    String formatEmail(String email) {
+      if (email.length > 8) {
+        return '${email.substring(0, 8)}...';
+      } else {
+        return email;
+      }
+    }
+
     return Drawer(
-      child: Container(  // Container 추가
-        color: Colors.deepPurpleAccent,  // 배경색 설정
+      child: Container(
+        color: Colors.deepPurpleAccent,
         child: ListView(
           children: [
             ListTile(
               title: const Text(
                 '매출보고서',
-                style: TextStyle(color: Colors.white),  // 텍스트 색상 변경
+                style: TextStyle(color: Colors.white),
               ),
               onTap: () {
                 Navigator.push(
@@ -28,7 +42,7 @@ class CustomDrawer extends StatelessWidget {
             ListTile(
               title: const Text(
                 'AI 분석',
-                style: TextStyle(color: Colors.white),  // 텍스트 색상 변경
+                style: TextStyle(color: Colors.white),
               ),
               onTap: () {
                 Navigator.push(
@@ -37,12 +51,39 @@ class CustomDrawer extends StatelessWidget {
                 );
               },
             ),
+            ListTile(
+              title: Text(
+                currentUser == null
+                    ? '로그인'
+                    : '로그아웃 (${formatEmail(currentUser.email ?? '')})',
+                style: const TextStyle(color: Colors.white),
+              ),
+              onTap: () async {
+                if (currentUser == null) {
+                  // 로그인되어 있지 않은 경우, Google 로그인 실행
+                  UserCredential userCredential = await ref.read(authService).signInWithGoogle();
+                  User? user = userCredential.user;
+                  if (user != null && user.displayName != null) {
+                    ref.read(loggedInUserProvider.notifier).state = user;
+                  }
+                } else {
+                  // 로그인되어 있는 경우, 로그아웃 수행
+                  await FirebaseAuth.instance.signOut();
+                  ref.read(loggedInUserProvider.notifier).state = null;
+                }
+                // Drawer를 닫음
+                // ignore: use_build_context_synchronously
+                Navigator.pop(context);
+              },
+            ),
           ],
         ),
       ),
     );
   }
 }
+
+
 
 
 

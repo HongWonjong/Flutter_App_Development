@@ -49,11 +49,9 @@ class LoginPage extends ConsumerWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                if (ref.watch(loggedInUserProvider)?.displayName != null) {
-                  // 유저가 로그인되어 있는 경우, 로그아웃 수행
-                  await FirebaseAuth.instance.signOut();
-                  ref.read(loggedInUserProvider.notifier).state = null;
-                }
+                // 항상 로그아웃 수행
+                await FirebaseAuth.instance.signOut();
+                ref.read(loggedInUserProvider.notifier).state = null;
                 // "그냥 사용하기" 버튼을 누를 때 로그인 없이 cost_input 페이지로 이동
                 // ignore: use_build_context_synchronously
                 Navigator.pushReplacementNamed(context, '/cost-input');

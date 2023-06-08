@@ -9,9 +9,11 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:food_cost_calculator_3_0/big one/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
-
+import 'small one/loading_donut.dart';
 
 final loggedInUserProvider = StateProvider<User?>((ref) => null);
+final loadingProvider = StateProvider<bool>((ref) => false); // Loading Provider 추가
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -85,6 +87,16 @@ class MyApp extends ConsumerWidget {
               quantity: args['quantity'],
               foodPrice: args['itemPrice']);
         },
+      },
+      builder: (context, child) {
+        return Stack(
+          children: [
+            child!,
+            if (ref.watch(loadingProvider.notifier).state) ...[
+              const LoadingDonut(),
+            ],
+          ],
+        );
       },
     );
   }

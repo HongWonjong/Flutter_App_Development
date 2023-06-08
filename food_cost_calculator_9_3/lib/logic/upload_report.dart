@@ -40,11 +40,17 @@ class _UploadReportPageState extends State<UploadReportPage> {
     final reportName = _reportNameController.text;
     final reportPeriod = _reportPeriodController.text;
 
+    // Convert each CostItem in costListByFoodType to a Map.
+    final costListByFoodTypeMapped = widget.costListByFoodType.map((foodType, costList) => MapEntry(
+      foodType,
+      costList.map((costItem) => costItem.toMap()).toList(),
+    ));
+
     final reportData = <String, dynamic>{
       'totalRevenueByFoodType': widget.totalRevenueByFoodType,
       'fixedCostByFoodType': widget.fixedCostByFoodType,
       'variableCostByFoodType': widget.variableCostByFoodType,
-      'costListByFoodType': widget.costListByFoodType,
+      'costListByFoodType': costListByFoodTypeMapped,
       'profitByFoodType': widget.profitByFoodType,
       'totalCostRate': widget.totalCostRate,
       'totalRevenue': widget.totalRevenue,
