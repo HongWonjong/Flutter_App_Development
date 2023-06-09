@@ -13,30 +13,26 @@ class SalesReportPage extends StatefulWidget {
 }
 
 class _SalesReportPageState extends State<SalesReportPage> {
-  List<bool> checkedList = [];
+  List<String> checkedList = []; // Track document IDs
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final user = FirebaseAuth.instance.currentUser;
 
-  Future<void> _deleteReports(QuerySnapshot snapshot) async {
+  Future<void> _deleteReports() async {
     final reports = _firestore
         .collection('users')
         .doc(user?.uid)
         .collection('SalesReports');
 
-    for (int i = 0; i < checkedList.length; i++) {
-      if (checkedList[i]) {
-        await reports.doc(snapshot.docs[i].id).delete();
-      }
+    for (String docId in checkedList) {
+      await reports.doc(docId).delete();
     }
 
-    setState(() {
-      checkedList = List.filled(snapshot.docs.length, false);
-    });
+    checkedList = []; // Reset the list after deleting the documents
   }
 
-  Future<void> _confirmDelete(QuerySnapshot snapshot) async {
+  Future<void> _confirmDelete() async {
     // Check if any checkboxes are selected
-    if (!checkedList.contains(true)) {
+    if (checkedList.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('삭제할 보고서를 선택해주세요'),
@@ -63,7 +59,7 @@ class _SalesReportPageState extends State<SalesReportPage> {
             TextButton(
               child: const Text('예'),
               onPressed: () {
-                _deleteReports(snapshot);
+                _deleteReports();
                 Navigator.of(context).pop();
               },
             ),
@@ -71,16 +67,6 @@ class _SalesReportPageState extends State<SalesReportPage> {
         );
       },
     );
-  }
-
-  Future<void> _confirmDeleteReports() async {
-    final reportSnapshot = await _firestore
-        .collection('users')
-        .doc(user?.uid)
-        .collection('SalesReports')
-        .get();
-
-    _confirmDelete(reportSnapshot);
   }
 
   @override
@@ -105,8 +91,6 @@ class _SalesReportPageState extends State<SalesReportPage> {
             return const Center(child: CircularProgressIndicator());
           }
 
-          checkedList = List.filled(snapshot.data?.docs.length ?? 0, false);
-
           return ListView.builder(
             itemCount: snapshot.data?.docs.length ?? 0,
             itemBuilder: (context, index) {
@@ -123,10 +107,14 @@ class _SalesReportPageState extends State<SalesReportPage> {
                   children: [
                     Expanded(
                       child: Checkbox(
-                        value: checkedList[index],
+                        value: checkedList.contains(doc.id), // Use document ID
                         onChanged: (value) {
                           setState(() {
-                            checkedList[index] = value ?? false;
+                            if (value ?? false) {
+                              checkedList.add(doc.id); // Add document ID
+                            } else {
+                              checkedList.remove(doc.id); // Remove document ID
+                            }
                           });
                         },
                       ),
@@ -159,13 +147,14 @@ class _SalesReportPageState extends State<SalesReportPage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _confirmDeleteReports,
+        onPressed: _confirmDelete, // Call _confirmDelete
         backgroundColor: Colors.red,
         child: const Icon(Icons.delete),
       ),
     );
   }
 }
+
 
 
 

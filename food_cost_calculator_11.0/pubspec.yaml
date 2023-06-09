@@ -14,6 +14,7 @@ dependencies:
   provider: ^6.0.5
   riverpod: ^2.3.6
   hooks_riverpod: ^2.3.6
+  fl_chart: ^0.62.0
   shared_preferences: ^2.1.1
   cloud_firestore: ^4.8.0
   firebase_auth: ^4.6.2

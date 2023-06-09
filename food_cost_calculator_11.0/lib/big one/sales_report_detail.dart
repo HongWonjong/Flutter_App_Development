@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:food_cost_calculator_3_0/small one/custom_appbar.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class SalesReportDetailPage extends StatefulWidget {
   final String reportId;
@@ -12,6 +13,44 @@ class SalesReportDetailPage extends StatefulWidget {
   @override
   _SalesReportDetailPageState createState() => _SalesReportDetailPageState();
 }
+
+List<PieChartSectionData> generateData(Map<String, dynamic> costListByFoodType) {
+  List<PieChartSectionData> sections = [];
+  int i = 0;
+  costListByFoodType.forEach((key, value) {
+    double totalRevenue = 0.0;
+    for (var food in (value as List<dynamic>)) {
+      final foodMap = food as Map<String, dynamic>;
+      final costItems = foodMap['costItems'] as List<dynamic>? ?? [];
+      for (var item in costItems) {
+        final itemMap = item as Map<String, dynamic>;
+        final quantity = itemMap['quantity'] as int? ?? 0;
+        final foodPrice = itemMap['foodPrice'] as int? ?? 0;
+        totalRevenue += (quantity * foodPrice).toDouble();
+      }
+    }
+    sections.add(PieChartSectionData(
+      color: colors[i++ % colors.length],  // colors list의 크기를 초과하지 않도록 처리
+      value: totalRevenue,
+      title: key,
+      radius: 50,
+    ));
+  });
+  return sections;
+}
+
+
+
+List<Color> colors = [
+  Colors.red,
+  Colors.orange,
+  Colors.yellow,
+  Colors.green,
+  Colors.blue,
+  Colors.indigo,
+  Colors.purple,
+  // 필요한 만큼 다른 색상을 추가하세요.
+];
 
 class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
   late Future<DocumentSnapshot> futureReport;
@@ -27,6 +66,7 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
         .doc(widget.reportId)
         .get();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -95,6 +135,14 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
                   ),
                 ),
                 const SizedBox(height: 16.0),
+                SizedBox(
+                  height: 200,
+                  child: PieChart(
+                    PieChartData(
+                      sections: generateData(costListByFoodType),
+                    ),
+                  ),
+                ),
                 for (final entry in costListByFoodType.entries)
                   Card(
                     margin: const EdgeInsets.only(bottom: 10),
