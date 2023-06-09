@@ -3,7 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:food_cost_calculator_3_0/small one/custom_appbar.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:food_cost_calculator_3_0/logic/pie_chart_logic.dart';
+import 'package:food_cost_calculator_3_0/small one/pie_chart.dart';
+import 'package:food_cost_calculator_3_0/logic/chart_colors.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class SalesReportDetailPage extends StatefulWidget {
   final String reportId;
@@ -14,43 +18,6 @@ class SalesReportDetailPage extends StatefulWidget {
   _SalesReportDetailPageState createState() => _SalesReportDetailPageState();
 }
 
-List<PieChartSectionData> generateData(Map<String, dynamic> costListByFoodType) {
-  List<PieChartSectionData> sections = [];
-  int i = 0;
-  costListByFoodType.forEach((key, value) {
-    double totalRevenue = 0.0;
-    for (var food in (value as List<dynamic>)) {
-      final foodMap = food as Map<String, dynamic>;
-      final costItems = foodMap['costItems'] as List<dynamic>? ?? [];
-      for (var item in costItems) {
-        final itemMap = item as Map<String, dynamic>;
-        final quantity = itemMap['quantity'] as int? ?? 0;
-        final foodPrice = itemMap['foodPrice'] as int? ?? 0;
-        totalRevenue += (quantity * foodPrice).toDouble();
-      }
-    }
-    sections.add(PieChartSectionData(
-      color: colors[i++ % colors.length],  // colors list의 크기를 초과하지 않도록 처리
-      value: totalRevenue,
-      title: key,
-      radius: 50,
-    ));
-  });
-  return sections;
-}
-
-
-
-List<Color> colors = [
-  Colors.red,
-  Colors.orange,
-  Colors.yellow,
-  Colors.green,
-  Colors.blue,
-  Colors.indigo,
-  Colors.purple,
-  // 필요한 만큼 다른 색상을 추가하세요.
-];
 
 class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
   late Future<DocumentSnapshot> futureReport;
@@ -70,6 +37,9 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = AppLocalizations.of(context)!;
+    final formatCurrency = NumberFormat('#,##0', 'en_US');
+
     return Scaffold(
       appBar: const MyAppBar(title: "보고서 상세"),
       body: FutureBuilder<DocumentSnapshot>(
@@ -88,9 +58,13 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
 
             final name = data['name'] as String? ?? '제목 없음';
             final date = (data['date'] as Timestamp).toDate();
-            final period = data['period'] as String? ?? '기간 정보 없음';
+            final period = data['period'] as String? ?? '기간 정보 없음' ;
             final totalRevenue = data['data']['totalRevenue'] as double? ?? 0.0;
+            final totalRevenueFormatted = formatCurrency.format(totalRevenue);
             final costListByFoodType = data['data']['costListByFoodType'] as Map<String, dynamic>? ?? {};
+            final totalRevenueByFoodType = data['data']['totalRevenueByFoodType'] as Map<String, dynamic>? ?? {};
+            final profitByFoodType = data['data']['profitByFoodType'] as Map<String, dynamic>? ?? {};
+
 
             return ListView(
               padding: const EdgeInsets.all(16.0),
@@ -119,7 +93,7 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text('기간', style: Theme.of(context).textTheme.titleMedium),
-                            Text(period, style: Theme.of(context).textTheme.titleSmall),
+                            Text("$period 달", style: Theme.of(context).textTheme.titleSmall),
                           ],
                         ),
                         const Spacer(flex: 2),
@@ -131,17 +105,32 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
                 Card(
                   child: ListTile(
                     title: Text('총 수익', style: Theme.of(context).textTheme.titleMedium),
-                    subtitle: Text('$totalRevenue', style: Theme.of(context).textTheme.titleSmall),
+                    subtitle: Text('$totalRevenueFormatted', style: Theme.of(context).textTheme.titleSmall),
                   ),
                 ),
                 const SizedBox(height: 16.0),
-                SizedBox(
-                  height: 200,
-                  child: PieChart(
-                    PieChartData(
-                      sections: generateData(costListByFoodType),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,  // Aligns the children evenly in the row
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CustomPieChart(
+                          title: "메뉴 별 총 매출",
+                          sections: generateData(totalRevenueByFoodType, colors),
+                        ),
+                      ),
                     ),
-                  ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CustomPieChart(
+                          title: "메뉴 별 순이익",
+                          sections: generateData(profitByFoodType, colors),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 for (final entry in costListByFoodType.entries)
                   Card(
@@ -154,7 +143,7 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
                           Text(entry.key, style: Theme.of(context).textTheme.titleMedium),
                           const SizedBox(height: 8.0),
                           if ((entry.value as List<dynamic>).isNotEmpty)
-                            Text('총 판매량: ${(entry.value as List<dynamic>)[0]['quantity'] ?? '정보 없음'}, 음식 가격: ${(entry.value as List<dynamic>)[0]['foodPrice'] ?? '정보 없음'}', style: Theme.of(context).textTheme.bodyMedium),
+                            Text('총 판매량: ${(entry.value as List<dynamic>)[0]['quantity'] ?? '정보 없음'}, 음식 가격: ${formatCurrency.format((entry.value as List<dynamic>)[0]['foodPrice'] as double? ?? 0.0)}', style: Theme.of(context).textTheme.bodyMedium),
                           const SizedBox(height: 8.0),
                           ExpansionTile(
                             title: Text('원가항목:', style: Theme.of(context).textTheme.titleSmall),
@@ -162,7 +151,7 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
                               for (var costItemMap in (entry.value as List<dynamic>))
                                 ListTile(
                                   title: Text('항목명: ${costItemMap['name']}', style: TextStyle(color: (costItemMap['isFixedCostPerUnit'] ?? false) ? Colors.blue : Colors.red)),
-                                  subtitle: Text('원가 금액: ${costItemMap['unitCost']}'),
+                                  subtitle: Text('원가 금액: ${formatCurrency.format(costItemMap['unitCost'])}'),
                                 ),
                             ],
                           ),
@@ -180,5 +169,6 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
     );
   }
 }
+
 
 

@@ -5,6 +5,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../small one/custom_appbar.dart';
 import 'package:food_cost_calculator_3_0/small one/menu_button.dart';
 import 'package:food_cost_calculator_3_0/big%20one/upload_report_page.dart';
+
+
 class CostCalculatorPage extends StatefulWidget {
   final List<CostItem> costList;
   final int quantity;
