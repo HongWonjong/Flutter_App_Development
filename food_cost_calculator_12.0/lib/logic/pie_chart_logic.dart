@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:food_cost_calculator_3_0/logic/chart_colors.dart';
 
 List<PieChartSectionData> generateData(Map<String, dynamic> totalRevenueByFoodType, List<Color> colors) {
   List<PieChartSectionData> sections = [];
@@ -7,7 +8,7 @@ List<PieChartSectionData> generateData(Map<String, dynamic> totalRevenueByFoodTy
 
   totalRevenueByFoodType.forEach((foodName, totalRevenue) {
     sections.add(PieChartSectionData(
-      color: colors[i % colors.length],
+      color: getRandomColor(),
       value: totalRevenue.toDouble(),
       title: foodName,
       radius: 35,

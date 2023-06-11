@@ -7,7 +7,7 @@ import 'package:food_cost_calculator_3_0/logic/pie_chart_logic.dart';
 import 'package:food_cost_calculator_3_0/small one/pie_chart.dart';
 import 'package:food_cost_calculator_3_0/logic/chart_colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
+import 'package:food_cost_calculator_3_0/small one/cost_bar_graph.dart';
 
 class SalesReportDetailPage extends StatefulWidget {
   final String reportId;
@@ -17,7 +17,6 @@ class SalesReportDetailPage extends StatefulWidget {
   @override
   _SalesReportDetailPageState createState() => _SalesReportDetailPageState();
 }
-
 
 class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
   late Future<DocumentSnapshot> futureReport;
@@ -33,7 +32,6 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
         .doc(widget.reportId)
         .get();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +63,16 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
             final totalRevenueByFoodType = data['data']['totalRevenueByFoodType'] as Map<String, dynamic>? ?? {};
             final profitByFoodType = data['data']['profitByFoodType'] as Map<String, dynamic>? ?? {};
 
+            final costItems = (data['data']['costListByFoodType'] as Map<String, dynamic>? ?? {}).entries.expand((entry) {
+              return (entry.value as List<dynamic>).map((costItem) => MapEntry<String, double>(
+                costItem['name'] as String,
+                (costItem['unitCost'] as num).toDouble() * (costItem['isFixedCostPerUnit'] ?? false ? 1.0 : (costItem['quantity'] as num).toDouble() ?? 1.0),
+              ));
+            }).toList();
+
+
+            costItems.sort((a, b) => b.value.compareTo(a.value));
+            final top7CostItems = costItems.take(7).map((entry) => MapEntry(entry.key, entry.value.toDouble())).toList();
 
             return ListView(
               padding: const EdgeInsets.all(16.0),
@@ -84,7 +92,7 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('날짜', style: Theme.of(context).textTheme.titleMedium),
+                            Text('작성일자', style: Theme.of(context).textTheme.titleMedium),
                             Text(DateFormat('yyyy-MM-dd').format(date), style: Theme.of(context).textTheme.titleSmall),
                           ],
                         ),
@@ -92,7 +100,7 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text('기간', style: Theme.of(context).textTheme.titleMedium),
+                            Text('대상 기간', style: Theme.of(context).textTheme.titleMedium),
                             Text("$period 달", style: Theme.of(context).textTheme.titleSmall),
                           ],
                         ),
@@ -105,7 +113,7 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
                 Card(
                   child: ListTile(
                     title: Text('총 수익', style: Theme.of(context).textTheme.titleMedium),
-                    subtitle: Text('$totalRevenueFormatted', style: Theme.of(context).textTheme.titleSmall),
+                    subtitle: Text("$totalRevenueFormatted ${lang.calculationPage_name_of_currency}", style: Theme.of(context).textTheme.titleSmall),
                   ),
                 ),
                 const SizedBox(height: 16.0),
@@ -132,6 +140,12 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
                     ),
                   ],
                 ),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CostBarChart(data: top7CostItems),
+                  ),
+                ),
                 for (final entry in costListByFoodType.entries)
                   Card(
                     margin: const EdgeInsets.only(bottom: 10),
@@ -143,7 +157,7 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
                           Text(entry.key, style: Theme.of(context).textTheme.titleMedium),
                           const SizedBox(height: 8.0),
                           if ((entry.value as List<dynamic>).isNotEmpty)
-                            Text('총 판매량: ${(entry.value as List<dynamic>)[0]['quantity'] ?? '정보 없음'}, 음식 가격: ${formatCurrency.format((entry.value as List<dynamic>)[0]['foodPrice'] as double? ?? 0.0)}', style: Theme.of(context).textTheme.bodyMedium),
+                            Text('총 판매량: ${(entry.value as List<dynamic>)[0]['quantity'] ?? '정보 없음'} ${lang.salesVolume}, 음식 가격: ${formatCurrency.format((entry.value as List<dynamic>)[0]['foodPrice'] as double? ?? 0.0)} ${lang.calculationPage_name_of_currency}', style: Theme.of(context).textTheme.bodyMedium),
                           const SizedBox(height: 8.0),
                           ExpansionTile(
                             title: Text('원가항목:', style: Theme.of(context).textTheme.titleSmall),
@@ -151,7 +165,7 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
                               for (var costItemMap in (entry.value as List<dynamic>))
                                 ListTile(
                                   title: Text('항목명: ${costItemMap['name']}', style: TextStyle(color: (costItemMap['isFixedCostPerUnit'] ?? false) ? Colors.blue : Colors.red)),
-                                  subtitle: Text('원가 금액: ${formatCurrency.format(costItemMap['unitCost'])}'),
+                                  subtitle: Text('원가 금액: ${formatCurrency.format(costItemMap['unitCost'])} ${lang.calculationPage_name_of_currency}'),
                                 ),
                             ],
                           ),
@@ -169,6 +183,7 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
     );
   }
 }
+
 
 
 

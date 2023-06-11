@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'dart:io';
 import '../small one/custom_appbar.dart';
-import './sales_report_detail.dart'; // SalesReportDetailPage가 있는 경로를 입력하세요.
+import './sales_report_detail.dart';
 
 class SalesReportPage extends StatefulWidget {
   const SalesReportPage({Key? key}) : super(key: key);
@@ -13,25 +16,28 @@ class SalesReportPage extends StatefulWidget {
 }
 
 class _SalesReportPageState extends State<SalesReportPage> {
-  List<String> checkedList = []; // Track document IDs
+  List<String> checkedList = [];
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final user = FirebaseAuth.instance.currentUser;
+  BannerAd? _bannerAd;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBannerAd();
+  }
 
   Future<void> _deleteReports() async {
-    final reports = _firestore
-        .collection('users')
-        .doc(user?.uid)
-        .collection('SalesReports');
+    final reports = _firestore.collection('users').doc(user?.uid).collection('SalesReports');
 
     for (String docId in checkedList) {
       await reports.doc(docId).delete();
     }
 
-    checkedList = []; // Reset the list after deleting the documents
+    checkedList = [];
   }
 
   Future<void> _confirmDelete() async {
-    // Check if any checkboxes are selected
     if (checkedList.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -69,14 +75,46 @@ class _SalesReportPageState extends State<SalesReportPage> {
     );
   }
 
+  void _loadBannerAd() {
+    String adUnitId;
+
+    if (kReleaseMode) {
+      adUnitId = Platform.isAndroid
+          ? 'ca-app-pub-2047502466332917/9516752899'
+          : 'YOUR_IOS_BANNER_AD_UNIT_ID';
+    } else {
+      adUnitId = Platform.isAndroid
+          ? 'ca-app-pub-3940256099942544/6300978111'
+          : 'YOUR_IOS_TEST_BANNER_AD_UNIT_ID';
+    }
+
+    _bannerAd = BannerAd(
+      adUnitId: adUnitId,
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (Ad ad) {
+          print('BannerAd loaded.');
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          print('BannerAd failed to load: $error');
+          ad.dispose();
+        },
+      ),
+    );
+
+    _bannerAd?.load();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final reportStream = _firestore
-        .collection('users')
-        .doc(user?.uid)
-        .collection('SalesReports')
-        .orderBy('date', descending: true)
-        .snapshots();
+    final reportStream = _firestore.collection('users').doc(user?.uid).collection('SalesReports').orderBy('date', descending: true).snapshots();
 
     return Scaffold(
       appBar: const MyAppBar(title: '매출보고서'),
@@ -91,10 +129,21 @@ class _SalesReportPageState extends State<SalesReportPage> {
             return const Center(child: CircularProgressIndicator());
           }
 
-          return ListView.builder(
-            itemCount: snapshot.data?.docs.length ?? 0,
-            itemBuilder: (context, index) {
-              final doc = snapshot.data!.docs[index];
+          List<Widget> listItems = [];
+
+          if (_bannerAd != null) {
+            listItems.add(
+              Container(
+                alignment: Alignment.center,
+                height: 72.0,
+                margin: const EdgeInsets.only(bottom: 16.0),
+                child: AdWidget(ad: _bannerAd!),
+              ),
+            );
+          }
+
+          listItems.addAll(
+            snapshot.data!.docs.map((doc) {
               final data = doc.data() as Map<String, dynamic>;
               final name = data['name'] as String? ?? '제목 없음';
               final date = (data['date'] as Timestamp).toDate();
@@ -107,13 +156,13 @@ class _SalesReportPageState extends State<SalesReportPage> {
                   children: [
                     Expanded(
                       child: Checkbox(
-                        value: checkedList.contains(doc.id), // Use document ID
+                        value: checkedList.contains(doc.id),
                         onChanged: (value) {
                           setState(() {
                             if (value ?? false) {
-                              checkedList.add(doc.id); // Add document ID
+                              checkedList.add(doc.id);
                             } else {
-                              checkedList.remove(doc.id); // Remove document ID
+                              checkedList.remove(doc.id);
                             }
                           });
                         },
@@ -142,18 +191,23 @@ class _SalesReportPageState extends State<SalesReportPage> {
                   ],
                 ),
               );
-            },
+            }).toList(),
+          );
+
+          return ListView(
+            children: listItems,
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _confirmDelete, // Call _confirmDelete
+        onPressed: _confirmDelete,
         backgroundColor: Colors.red,
         child: const Icon(Icons.delete),
       ),
     );
   }
 }
+
 
 
 

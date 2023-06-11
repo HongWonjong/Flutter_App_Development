@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 List<Color> colors = [
   Colors.blue,
@@ -90,3 +91,9 @@ List<Color> colors = [
   Colors.pink,
   // 필요한 만큼 다른 색상을 추가하세요.
 ];
+
+Random random = Random();
+
+Color getRandomColor() {
+  return colors[random.nextInt(colors.length)];
+}

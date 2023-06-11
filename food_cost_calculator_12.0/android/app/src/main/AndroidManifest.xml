@@ -31,6 +31,8 @@
        <meta-data
            android:name="com.google.android.gms.ads.APPLICATION_ID"
            android:value="ca-app-pub-2047502466332917~5139215141" />
+       <!-- 여기에는 광고 아이디를 넣는게 아니라 앱의 아이디를 넣는거다-->
+
        <meta-data
            android:name="flutterEmbedding"
            android:value="2" />
