@@ -147,6 +147,7 @@ class _SalesReportPageState extends State<SalesReportPage> {
               final data = doc.data() as Map<String, dynamic>;
               final name = data['name'] as String? ?? '제목 없음';
               final date = (data['date'] as Timestamp).toDate();
+              final period = data['period'] as String ?? 0 ;
               final formattedDate = DateFormat('yyyy-MM-dd').format(date);
 
               return Card(
@@ -177,7 +178,13 @@ class _SalesReportPageState extends State<SalesReportPage> {
                       flex: 5,
                       child: ListTile(
                         title: Text(name, style: Theme.of(context).textTheme.titleLarge),
-                        subtitle: Text(formattedDate, style: Theme.of(context).textTheme.titleSmall),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text("작성일자: $formattedDate", style: Theme.of(context).textTheme.titleSmall),
+                            Text("기간: $period월", style: Theme.of(context).textTheme.titleSmall),  // 이 부분을 추가합니다.
+                          ],
+                        ),
                         onTap: () {
                           Navigator.push(
                             context,

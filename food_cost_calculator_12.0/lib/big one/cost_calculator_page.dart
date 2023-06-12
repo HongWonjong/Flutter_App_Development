@@ -150,6 +150,22 @@ class _CostCalculatorPageState extends State<CostCalculatorPage> {
     return totalCost;
   }
 
+  Map<String, double> calculateCostRateByFoodType() {
+    final costRateByFoodType = <String, double>{};
+    for (var entry in _fixedCostByFoodType.entries) {
+      final foodType = entry.key;
+      final fixedCost = entry.value;
+      final variableCost = _variableCostByFoodType[foodType] ?? 0;
+      final totalRevenue = _totalRevenueByFoodType[foodType] ?? 0;
+      if (totalRevenue > 0) {
+        costRateByFoodType[foodType] = (fixedCost + variableCost) / totalRevenue;
+      } else {
+        costRateByFoodType[foodType] = 0.0; // Or some other default value
+      }
+    }
+    return costRateByFoodType;
+  }
+
 
 
   String formatNumber(int value) {
@@ -365,6 +381,7 @@ class _CostCalculatorPageState extends State<CostCalculatorPage> {
                         costListByFoodType: _costListByFoodType,
                         totalRevenueByFoodType: _totalRevenueByFoodType,
                         profitByFoodType: _profitByFoodType,
+                        costRateByFoodType: calculateCostRateByFoodType(),
                         totalCostRate: calculateTotalCostRate(),
                         totalRevenue: calculateTotalRevenue(),
                         totalCost: calculateTotalCost(),

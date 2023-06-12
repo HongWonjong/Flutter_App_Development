@@ -62,6 +62,7 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
             final costListByFoodType = data['data']['costListByFoodType'] as Map<String, dynamic>? ?? {};
             final totalRevenueByFoodType = data['data']['totalRevenueByFoodType'] as Map<String, dynamic>? ?? {};
             final profitByFoodType = data['data']['profitByFoodType'] as Map<String, dynamic>? ?? {};
+            final costRateByFoodType = data['data']['costRateByFoodType'] as Map<String, dynamic>? ?? {};
 
             final costItems = (data['data']['costListByFoodType'] as Map<String, dynamic>? ?? {}).entries.expand((entry) {
               return (entry.value as List<dynamic>).map((costItem) => MapEntry<String, double>(
@@ -124,7 +125,7 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: CustomPieChart(
-                          title: "메뉴 별 총 매출",
+                          title: "매출액 기여도",
                           sections: generateData(totalRevenueByFoodType, colors),
                         ),
                       ),
@@ -133,7 +134,7 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: CustomPieChart(
-                          title: "메뉴 별 순이익",
+                          title: "순이익 기여도",
                           sections: generateData(profitByFoodType, colors),
                         ),
                       ),
@@ -157,7 +158,9 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
                           Text(entry.key, style: Theme.of(context).textTheme.titleMedium),
                           const SizedBox(height: 8.0),
                           if ((entry.value as List<dynamic>).isNotEmpty)
-                            Text('총 판매량: ${(entry.value as List<dynamic>)[0]['quantity'] ?? '정보 없음'} ${lang.salesVolume}, 음식 가격: ${formatCurrency.format((entry.value as List<dynamic>)[0]['foodPrice'] as double? ?? 0.0)} ${lang.calculationPage_name_of_currency}', style: Theme.of(context).textTheme.bodyMedium),
+                            Text('총 판매량: ${(entry.value as List<dynamic>)[0]['quantity'] ?? '정보 없음'} ${lang.calculationPage_name_of_unit}, 음식 가격: ${formatCurrency.format((entry.value as List<dynamic>)[0]['foodPrice'] as double? ?? 0.0)} ${lang.calculationPage_name_of_currency}', style: Theme.of(context).textTheme.bodyMedium),
+                            Text('원가율: ${((costRateByFoodType[entry.key] as double? ?? 0.0) * 100).toStringAsFixed(1)}%', style: Theme.of(context).textTheme.bodyMedium),
+
                           const SizedBox(height: 8.0),
                           ExpansionTile(
                             title: Text('원가항목:', style: Theme.of(context).textTheme.titleSmall),

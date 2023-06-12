@@ -11,6 +11,7 @@ class UploadReportPage extends StatefulWidget {
   final Map<String, List<CostItem>> costListByFoodType;
   final Map<String, int> totalRevenueByFoodType;
   final Map<String, int> profitByFoodType;
+  final Map<String, double> costRateByFoodType; // <-- New property
   final double totalCostRate;
   final double totalRevenue;
   final int totalCost;
@@ -22,6 +23,7 @@ class UploadReportPage extends StatefulWidget {
     required this.costListByFoodType,
     required this.totalRevenueByFoodType,
     required this.profitByFoodType,
+    required this.costRateByFoodType, // <-- New property
     required this.totalCostRate,
     required this.totalRevenue,
     required this.totalCost,
@@ -30,6 +32,7 @@ class UploadReportPage extends StatefulWidget {
   @override
   _UploadReportPageState createState() => _UploadReportPageState();
 }
+
 
 class _UploadReportPageState extends State<UploadReportPage> {
   final _reportNameController = TextEditingController();
@@ -53,10 +56,12 @@ class _UploadReportPageState extends State<UploadReportPage> {
       'variableCostByFoodType': widget.variableCostByFoodType,
       'costListByFoodType': costListByFoodTypeMapped,
       'profitByFoodType': widget.profitByFoodType,
+      'costRateByFoodType': widget.costRateByFoodType, // <-- New property
       'totalCostRate': widget.totalCostRate,
       'totalRevenue': widget.totalRevenue,
       'totalCost': widget.totalCost,
     };
+
 
     try {
       final user = FirebaseAuth.instance.currentUser;

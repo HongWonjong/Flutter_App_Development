@@ -97,3 +97,7 @@ Random random = Random();
 Color getRandomColor() {
   return colors[random.nextInt(colors.length)];
 }
+
+Color getSettledColor(int index) {
+  return colors[index % colors.length];
+}

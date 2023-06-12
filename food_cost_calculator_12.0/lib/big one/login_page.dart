@@ -72,6 +72,22 @@ class LoginPage extends ConsumerWidget {
                 style: TextStyle(fontSize: 20.0),
               ),
             ),
+            const SizedBox(height: 20),
+            // 공지사항 박스
+            Card(
+              color: Colors.yellow[200], // 배경색 설정
+              margin: const EdgeInsets.symmetric(horizontal: 20), // 좌우 여백 설정
+              child: const ListTile(
+                title: Text(
+                  "개발자로부터의 공지사항",
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(
+                  "버전 12 변경사항: \n 작성한 계산 사항을 보고서로 저장하여, 다양한 그래프와 함께 더 자세하게 분석할 수 있습니다. \n 추가 예정인 기능: 기존 보고서를 불러와서 수정하기, 보고서 여러개를 묶어서 볼 경우 시간의 흐름에 따라 매출 상황을 볼 수 있도록 할 예정 ",
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+            ),
           ],
         ),
       ),

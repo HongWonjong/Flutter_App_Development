@@ -2,7 +2,7 @@
     package="com.example.food_cost_calculator_3_0">
     <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="food_cost_calculator_3_0"
+        android:label="음식 원가율 계산기"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
