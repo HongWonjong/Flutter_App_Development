@@ -78,12 +78,13 @@ class _UploadReportPageState extends State<UploadReportPage> {
         _reportNameController.clear();
         _reportPeriodController.clear();
 
+        // ignore: use_build_context_synchronously
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('보고서 저장'),
-              content: const Text('보고서가 성공적으로 저장되었습니다.'),
+              content: const Text('보고서가 성공적으로 저장되었습니다. \n 메뉴버튼의 "매출보고서"에서 확인하실 수 있습니다.'),
               actions: <Widget>[
                 TextButton(
                   child: const Text('확인'),

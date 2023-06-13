@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'big one/cost_input_page.dart';
 import 'big one/cost_calculator_page.dart';
@@ -9,21 +10,35 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:food_cost_calculator_3_0/big one/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'small one/loading_donut.dart';
 
 final loggedInUserProvider = StateProvider<User?>((ref) => null);
 final loadingProvider = StateProvider<bool>((ref) => false); // Loading Provider 추가
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp();  // Initialize Firebase
+
+  // Initialize Firebase App Check after Firebase is initialized
+  FirebaseAppCheck appCheck = FirebaseAppCheck.instance;
+
+  if (kIsWeb) {
+    // For web platforms
+    await appCheck.activate();
+  } else {
+    // For other platforms (iOS, Android)
+    await appCheck.activate();
+  }
+
   MobileAds.instance.initialize();
   await loadPreferredLanguage();
   incrementLaunchCount();
 
   runApp(const ProviderScope(child: MyApp()));
 }
+
 
 Future<void> loadPreferredLanguage() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -109,6 +124,7 @@ void incrementLaunchCount() async {
 }
 
 Locale? preferredLocale;
+
 
 
 

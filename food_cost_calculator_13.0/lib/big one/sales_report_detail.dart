@@ -155,7 +155,7 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text(entry.key, style: Theme.of(context).textTheme.titleMedium),
+                          Text(entry.key, style: Theme.of(context).textTheme.titleLarge ),
                           const SizedBox(height: 8.0),
                           if ((entry.value as List<dynamic>).isNotEmpty)
                             Text('총 판매량: ${(entry.value as List<dynamic>)[0]['quantity'] ?? '정보 없음'} ${lang.calculationPage_name_of_unit}, 음식 가격: ${formatCurrency.format((entry.value as List<dynamic>)[0]['foodPrice'] as double? ?? 0.0)} ${lang.calculationPage_name_of_currency}', style: Theme.of(context).textTheme.bodyMedium),

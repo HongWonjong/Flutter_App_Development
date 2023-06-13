@@ -76,7 +76,7 @@ class LoginPage extends ConsumerWidget {
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
-                    "버전 13 변경사항: ",
+                    "버전 13 변경사항: 바 그래프의 금액을 만원 단위로 변경하여 UI 개선, 앱 기능 확장에 따른 도움말 페이지를 메뉴에 추가.",
                     style: TextStyle(fontSize: 20),
                   ),
                 ),

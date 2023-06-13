@@ -2,6 +2,11 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:food_cost_calculator_3_0/logic/chart_colors.dart';
 
+String formatCurrency(int amount) {
+  return (amount / 10000).toStringAsFixed(0);
+}
+
+
 class CostBarChart extends StatelessWidget {
   final List<MapEntry<String, double>> data;
 
@@ -15,7 +20,7 @@ class CostBarChart extends StatelessWidget {
         const Padding(
           padding: EdgeInsets.all(8.0),
           child: Text(
-            "주요 원가",
+            "주요 원가(단위: 만원)",
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
@@ -70,7 +75,7 @@ class CostBarChart extends StatelessWidget {
           int rodIndex,
           ) {
         return BarTooltipItem(
-          rod.toY.round().toString(),
+          formatCurrency(rod.toY.round()),
           const TextStyle(
             color: Colors.blue, // replace with your color
             fontWeight: FontWeight.bold,

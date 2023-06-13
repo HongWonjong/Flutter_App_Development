@@ -96,10 +96,6 @@ class _SalesReportPageState extends State<SalesReportPage> {
         onAdLoaded: (Ad ad) {
           print('BannerAd loaded.');
         },
-        onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          print('BannerAd failed to load: $error');
-          ad.dispose();
-        },
       ),
     );
 
@@ -122,7 +118,7 @@ class _SalesReportPageState extends State<SalesReportPage> {
         stream: reportStream,
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
-            return const Center(child: Text('오류가 발생했습니다.'));
+            return const Center(child: Text('보고서 관련 기능을 위해서 먼저 로그인을 해주세요.', style: TextStyle(fontSize: 17),));
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {

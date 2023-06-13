@@ -9,7 +9,7 @@ class AIAnalysisPage extends StatelessWidget {
     return const Scaffold(
       appBar: MyAppBar(title: 'AI 분석'),
       body: Center(
-        child: Text('AI Analysis Page'),
+        child: Text('아직 구현되지 않은 기능입니다.'),
       ),
     );
   }
