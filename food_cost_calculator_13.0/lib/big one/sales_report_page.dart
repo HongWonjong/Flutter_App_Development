@@ -7,6 +7,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'dart:io';
 import '../small one/custom_appbar.dart';
 import './sales_report_detail.dart';
+import 'package:food_cost_calculator_3_0/big one/period_sales_report_detail.dart';
 
 class SalesReportPage extends StatefulWidget {
   const SalesReportPage({Key? key}) : super(key: key);
@@ -202,10 +203,40 @@ class _SalesReportPageState extends State<SalesReportPage> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _confirmDelete,
-        backgroundColor: Colors.red,
-        child: const Icon(Icons.delete),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Stack(
+          children: <Widget>[
+            Align(
+              alignment: Alignment.bottomRight,
+              child: FloatingActionButton(
+                onPressed: _confirmDelete,
+                backgroundColor: Colors.red,
+                mini: false,  // 기본 크기의 플로팅 액션 버튼을 사용합니다.
+                child: const Icon(Icons.delete),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: FloatingActionButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SalesAnalysisPage(),
+                      settings: RouteSettings(
+                        arguments: checkedList,  // 선택된 보고서들의 ID를 전달
+                      ),  // 기간별 매출 분석 페이지로 이동
+                    ),
+                  );
+                },
+                backgroundColor: Colors.blue,
+                mini: false,  // 기본 크기의 플로팅 액션 버튼을 사용합니다.
+                child: const Icon(Icons.analytics),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
