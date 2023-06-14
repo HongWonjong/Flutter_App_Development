@@ -21,8 +21,10 @@ Future<List<Report>> getFutureSalesDataList(List<String> checkedList) async {
 
     if (doc.exists) {
       final totalSales = (doc.data()!['data']['totalRevenue'] as num?)?.toDouble() ?? 0;
-      final period = doc.data()!['period'] as String? ?? '0'; // 이 필드를 추가해줍니다.
-      reports.add(Report(reportId, totalSales, period));
+      final totalCost = (doc.data()!['data']['totalCost'] as num?)?.toDouble() ?? 0;
+      final period = doc.data()!['period'] as int ?? 0; // 이 필드를 추가해줍니다.
+      final netProfit = totalSales - totalCost; // calculate netProfit here
+      reports.add(Report(reportId, totalSales, period, netProfit));
     }
   }
 
@@ -49,7 +51,12 @@ class SalesAnalysisPage extends StatelessWidget {
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else {
-              return SalesLineChart(reports: snapshot.data!);
+              return Column(
+                children: [
+                  SalesLineChart(reports: snapshot.data!, title: "기간별 매출변화",),
+                  SalesLineChart(reports: snapshot.data!, title: "기간별 순이익변화",),
+                ],
+              );
             }
           },
         ),

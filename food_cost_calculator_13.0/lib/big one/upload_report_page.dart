@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../logic/cost_item.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:food_cost_calculator_3_0/small one/custom_appbar.dart';
-
+import 'package:flutter/services.dart';  // <- Required for input formatter
 
 class UploadReportPage extends StatefulWidget {
   final Map<String, int> fixedCostByFoodType;
@@ -42,7 +42,7 @@ class _UploadReportPageState extends State<UploadReportPage> {
 
   void _saveReportToFirestore() async {
     final reportName = _reportNameController.text;
-    final reportPeriod = _reportPeriodController.text;
+    final reportPeriod = int.tryParse(_reportPeriodController.text) ?? 0;  // <- Here we parse the period to an int
 
     // Convert each CostItem in costListByFoodType to a Map.
     final costListByFoodTypeMapped = widget.costListByFoodType.map((foodType, costList) => MapEntry(
@@ -157,6 +157,10 @@ class _UploadReportPageState extends State<UploadReportPage> {
               decoration: const InputDecoration(
                 labelText: '보고서 기간 (월)',
               ),
+              keyboardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly
+              ],
             ),
             const SizedBox(height: 16.0),
             ElevatedButton(
@@ -172,6 +176,7 @@ class _UploadReportPageState extends State<UploadReportPage> {
     );
   }
 }
+
 
 
 

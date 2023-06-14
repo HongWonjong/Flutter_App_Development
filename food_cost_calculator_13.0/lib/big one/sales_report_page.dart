@@ -144,7 +144,7 @@ class _SalesReportPageState extends State<SalesReportPage> {
               final data = doc.data() as Map<String, dynamic>;
               final name = data['name'] as String? ?? '제목 없음';
               final date = (data['date'] as Timestamp).toDate();
-              final period = data['period'] as String ?? 0 ;
+              final period = data['period'] as int ?? 0 ;
               final formattedDate = DateFormat('yyyy-MM-dd').format(date);
 
               return Card(

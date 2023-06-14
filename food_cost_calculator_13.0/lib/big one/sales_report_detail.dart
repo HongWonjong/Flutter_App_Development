@@ -56,7 +56,7 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
 
             final name = data['name'] as String? ?? '제목 없음';
             final date = (data['date'] as Timestamp).toDate();
-            final period = data['period'] as String? ?? '기간 정보 없음' ;
+            final period = data['period'] as int? ?? '기간 정보 없음' ;
             final totalRevenue = data['data']['totalRevenue'] as double? ?? 0.0;
             final totalRevenueFormatted = formatCurrency.format(totalRevenue);
             final costListByFoodType = data['data']['costListByFoodType'] as Map<String, dynamic>? ?? {};
