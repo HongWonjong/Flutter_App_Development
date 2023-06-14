@@ -204,20 +204,21 @@ class _SalesReportPageState extends State<SalesReportPage> {
         },
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(bottom: 20.0),
         child: Stack(
           children: <Widget>[
-            Align(
-              alignment: Alignment.bottomRight,
+            Positioned(
+              right: MediaQuery.of(context).size.width / 2 - 170, // 28은 버튼의 반지름입니다.
+              bottom: 0,
               child: FloatingActionButton(
                 onPressed: _confirmDelete,
                 backgroundColor: Colors.red,
-                mini: false,  // 기본 크기의 플로팅 액션 버튼을 사용합니다.
                 child: const Icon(Icons.delete),
               ),
             ),
-            Align(
-              alignment: Alignment.bottomLeft,
+            Positioned(
+              left: MediaQuery.of(context).size.width / 2 - 145, // 28은 버튼의 반지름입니다.
+              bottom: 0,
               child: FloatingActionButton(
                 onPressed: () {
                   Navigator.push(
@@ -226,12 +227,11 @@ class _SalesReportPageState extends State<SalesReportPage> {
                       builder: (context) => SalesAnalysisPage(),
                       settings: RouteSettings(
                         arguments: checkedList,  // 선택된 보고서들의 ID를 전달
-                      ),  // 기간별 매출 분석 페이지로 이동
+                      ),
                     ),
                   );
                 },
                 backgroundColor: Colors.blue,
-                mini: false,  // 기본 크기의 플로팅 액션 버튼을 사용합니다.
                 child: const Icon(Icons.analytics),
               ),
             ),
