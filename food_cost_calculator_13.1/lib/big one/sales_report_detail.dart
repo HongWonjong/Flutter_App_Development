@@ -102,7 +102,7 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text('대상 기간', style: Theme.of(context).textTheme.titleMedium),
-                            Text("$period 달", style: Theme.of(context).textTheme.titleSmall),
+                            Text("$period 월", style: Theme.of(context).textTheme.titleSmall),
                           ],
                         ),
                         const Spacer(flex: 2),
@@ -159,7 +159,7 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
                           const SizedBox(height: 8.0),
                           if ((entry.value as List<dynamic>).isNotEmpty)
                             Text('총 판매량: ${(entry.value as List<dynamic>)[0]['quantity'] ?? '정보 없음'} ${lang.calculationPage_name_of_unit}, 음식 가격: ${formatCurrency.format((entry.value as List<dynamic>)[0]['foodPrice'] as double? ?? 0.0)} ${lang.calculationPage_name_of_currency}', style: Theme.of(context).textTheme.bodyMedium),
-                            Text('원가율: ${((costRateByFoodType[entry.key] as double? ?? 0.0) * 100).toStringAsFixed(1)}%', style: Theme.of(context).textTheme.bodyMedium),
+                            Text('원가율: ${((costRateByFoodType[entry.key] as double? ?? 0.0)).toStringAsFixed(1)}%', style: Theme.of(context).textTheme.bodyMedium),
 
                           const SizedBox(height: 8.0),
                           ExpansionTile(

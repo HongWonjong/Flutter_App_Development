@@ -20,6 +20,15 @@ class SalesLineChart extends StatelessWidget {
           height: 300,
           child: LineChart(
             LineChartData(
+              gridData: FlGridData(
+                show: false, // Grid를 안보이게 설정하였습니다.
+              ),
+              titlesData: FlTitlesData(
+                show: true, // 타이틀을 보이게 설정하였습니다.
+              ),
+              borderData: FlBorderData(
+                show: false, // Border를 안보이게 설정하였습니다.
+              ),
               lineBarsData: [
                 LineChartBarData(
                   spots: reports
@@ -30,10 +39,18 @@ class SalesLineChart extends StatelessWidget {
                     ),
                   )
                       .toList(),
-                  // 그래프 디자인 코드...
+                  isCurved: true, // Line을 부드럽게 곡선으로 만들었습니다.
+                  color: Colors.blue, // Line의 색상을 파란색으로 설정하였습니다.
+                  barWidth: 4, // Line의 두께를 조절하였습니다.
+                  isStrokeCapRound: true, // Line 끝을 둥글게 만들었습니다.
+                  dotData: FlDotData(
+                    show: true, // 각 데이터 포인트에 점을 보이게 설정하였습니다.
+                  ),
+                  belowBarData: BarAreaData(
+                    show: false, // 바의 영역을 안보이게 설정하였습니다.
+                  ),
                 ),
               ],
-              // 그래프 디자인 코드...
             ),
           ),
         ),
@@ -41,5 +58,6 @@ class SalesLineChart extends StatelessWidget {
     );
   }
 }
+
 
 

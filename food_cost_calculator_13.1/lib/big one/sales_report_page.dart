@@ -17,7 +17,7 @@ class SalesReportPage extends StatefulWidget {
 }
 
 class _SalesReportPageState extends State<SalesReportPage> {
-  List<String> checkedList = [];
+  ValueNotifier<List<String>> checkedList = ValueNotifier([]);
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final user = FirebaseAuth.instance.currentUser;
   BannerAd? _bannerAd;
@@ -31,15 +31,15 @@ class _SalesReportPageState extends State<SalesReportPage> {
   Future<void> _deleteReports() async {
     final reports = _firestore.collection('users').doc(user?.uid).collection('SalesReports');
 
-    for (String docId in checkedList) {
+    for (String docId in checkedList.value) {
       await reports.doc(docId).delete();
     }
 
-    checkedList = [];
+    checkedList.value = [];
   }
 
   Future<void> _confirmDelete() async {
-    if (checkedList.isEmpty) {
+    if (checkedList.value.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('삭제할 보고서를 선택해주세요'),
@@ -153,17 +153,21 @@ class _SalesReportPageState extends State<SalesReportPage> {
                 child: Row(
                   children: [
                     Expanded(
-                      child: Checkbox(
-                        value: checkedList.contains(doc.id),
-                        onChanged: (value) {
-                          setState(() {
-                            if (value ?? false) {
-                              checkedList.add(doc.id);
-                            } else {
-                              checkedList.remove(doc.id);
-                            }
-                          });
-                        },
+                      child: ValueListenableBuilder(
+                          valueListenable: checkedList,
+                          builder: (context, List<String> checkedListValue, _) {
+                            return Checkbox(
+                              value: checkedListValue.contains(doc.id),
+                              onChanged: (value) {
+                                if (value ?? false) {
+                                  checkedListValue.add(doc.id);
+                                } else {
+                                  checkedListValue.remove(doc.id);
+                                }
+                                checkedList.value = List.from(checkedListValue);
+                              },
+                            );
+                          }
                       ),
                     ),
                     const VerticalDivider(
@@ -179,7 +183,7 @@ class _SalesReportPageState extends State<SalesReportPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text("작성일자: $formattedDate", style: Theme.of(context).textTheme.titleSmall),
-                            Text("기간: $period월", style: Theme.of(context).textTheme.titleSmall),  // 이 부분을 추가합니다.
+                            Text("기간: $period월", style: Theme.of(context).textTheme.titleSmall),
                           ],
                         ),
                         onTap: () {
@@ -203,44 +207,48 @@ class _SalesReportPageState extends State<SalesReportPage> {
           );
         },
       ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 20.0),
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-              right: MediaQuery.of(context).size.width / 2 - 170, // 28은 버튼의 반지름입니다.
-              bottom: 0,
-              child: FloatingActionButton(
+        bottomNavigationBar: Container(
+          padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0, top: 20.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              FloatingActionButton(
                 onPressed: _confirmDelete,
                 backgroundColor: Colors.red,
                 child: const Icon(Icons.delete),
               ),
-            ),
-            Positioned(
-              left: MediaQuery.of(context).size.width / 2 - 145, // 28은 버튼의 반지름입니다.
-              bottom: 0,
-              child: FloatingActionButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SalesAnalysisPage(),
-                      settings: RouteSettings(
-                        arguments: checkedList,  // 선택된 보고서들의 ID를 전달
+              FloatingActionButton(
+                onPressed: () async {
+                  if (checkedList.value.length < 2) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('적어도 두 개 이상의 보고서를 선택해주세요'),
+                        duration: Duration(milliseconds: 1000),
+                        behavior: SnackBarBehavior.floating,
                       ),
-                    ),
-                  );
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SalesAnalysisPage(),
+                        settings: RouteSettings(
+                          arguments: checkedList.value,
+                        ),
+                      ),
+                    );
+                  }
                 },
                 backgroundColor: Colors.blue,
                 child: const Icon(Icons.analytics),
               ),
-            ),
-          ],
-        ),
-      ),
+            ],
+    )
+      )
     );
   }
 }
+
 
 
 
