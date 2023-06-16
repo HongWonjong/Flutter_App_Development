@@ -128,6 +128,42 @@ class _SalesReportPageState extends State<SalesReportPage> {
 
           List<Widget> listItems = [];
 
+          listItems.add(
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue, // Set the button color to blue
+                  padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                  textStyle: TextStyle(fontSize: 20),
+                ),
+                onPressed: () async {
+                  if (checkedList.value.length < 2) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('적어도 두 개 이상의 보고서를 선택해주세요'),
+                        duration: Duration(milliseconds: 1000),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SalesAnalysisPage(),
+                        settings: RouteSettings(
+                          arguments: checkedList.value,
+                        ),
+                      ),
+                    );
+                  }
+                },
+                child: const Text("기간별 보고서 분석"),
+              ),
+            ),
+          );
+
           if (_bannerAd != null) {
             listItems.add(
               Container(
@@ -216,31 +252,6 @@ class _SalesReportPageState extends State<SalesReportPage> {
                 onPressed: _confirmDelete,
                 backgroundColor: Colors.red,
                 child: const Icon(Icons.delete),
-              ),
-              FloatingActionButton(
-                onPressed: () async {
-                  if (checkedList.value.length < 2) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('적어도 두 개 이상의 보고서를 선택해주세요'),
-                        duration: Duration(milliseconds: 1000),
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SalesAnalysisPage(),
-                        settings: RouteSettings(
-                          arguments: checkedList.value,
-                        ),
-                      ),
-                    );
-                  }
-                },
-                backgroundColor: Colors.blue,
-                child: const Icon(Icons.analytics),
               ),
             ],
     )

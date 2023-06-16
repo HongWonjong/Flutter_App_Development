@@ -264,52 +264,80 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
                       },
                     ),
                     const SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepPurpleAccent,
-                        ),
-                        onPressed: () {
-                          _addItem();
-                        },
-                        child: Text(lang.saveCostItem,
-                            style: const TextStyle(fontSize: 25),),
-                      ),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurpleAccent,
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: ElevatedButton(
                       onPressed: () {
-                        if (_costList.isEmpty ||
-                            _quantityController.text.isEmpty ||
-                            _foodPriceController.text.isEmpty) {
-                          // Show an alert dialog or a snack bar message
-                          ScaffoldMessenger.of(context).showSnackBar(
-                             SnackBar(
-                              content: Text(lang.youShallNotPass),
-                              duration: const Duration(seconds: 2),
-                            ),
-                          );
-                        } else {
-                          Navigator.pushNamed(
-                            context,
-                            "/calculate",
-                            arguments: {
-                              'costList': _costList,
-                              'quantity': int.parse(_quantityController.text),
-                              'itemPrice': int.parse(_foodPriceController.text),
-                            },
-                          );
-                        }
+                        _addItem();
                       },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Colors.white),  // Set background color to white
+                        padding: MaterialStateProperty.all(
+                          const EdgeInsets.symmetric(
+                            vertical: 16.0,
+                            horizontal: 24.0,
+                          ),
+                        ),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            side: const BorderSide(color: Colors.deepPurpleAccent, width: 2.0),  // Increase width to create a thicker border
+                          ),
+                        ),
+                        overlayColor: MaterialStateProperty.all(Colors.deepPurpleAccent.withOpacity(0.1)),  // Add a overlay color to create a slight hover effect
+                      ),
                       child: Text(
-                        lang.checkCalculation,
-                        style: const TextStyle(fontSize: 25),
+                        lang.saveCostItem,
+                        style: const TextStyle(fontSize: 25.0, color: Colors.deepPurpleAccent),  // Set text color to deepPurpleAccent
                       ),
                     ),
-                  ],
+                  ),
+                  ElevatedButton(
+                  onPressed: () {
+                    if (_costList.isEmpty ||
+                        _quantityController.text.isEmpty ||
+                        _foodPriceController.text.isEmpty) {
+                      // Show an alert dialog or a snack bar message
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(lang.youShallNotPass),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    } else {
+                      Navigator.pushNamed(
+                        context,
+                        "/calculate",
+                        arguments: {
+                          'costList': _costList,
+                          'quantity': int.parse(_quantityController.text),
+                          'itemPrice': int.parse(_foodPriceController.text),
+                        },
+                      );
+                    }
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.white),  // Set background color to white
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(
+                        vertical: 16.0,
+                        horizontal: 24.0,
+                      ),
+                    ),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        side: const BorderSide(color: Colors.deepPurpleAccent, width: 2.0),  // Increase width to create a thicker border
+                      ),
+                    ),
+                    overlayColor: MaterialStateProperty.all(Colors.deepPurpleAccent.withOpacity(0.1)),  // Add a overlay color to create a slight hover effect
+                  ),
+                  child: Text(
+                    lang.checkCalculation,
+                    style: const TextStyle(fontSize: 25.0, color: Colors.deepPurpleAccent),  // Set text color to deepPurpleAccent
+                  ),
+                ),
+                ],
                 ),
               ),
             ),

@@ -34,21 +34,30 @@ class LoginPage extends ConsumerWidget {
                       }
                     }
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurpleAccent,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16.0,
-                      horizontal: 24.0,
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.white),  // Set background color to white
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(
+                        vertical: 16.0,
+                        horizontal: 24.0,
+                      ),
                     ),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        side: const BorderSide(color: Colors.deepPurpleAccent, width: 2.0),  // Increase width to create a thicker border
+                      ),
+                    ),
+                    overlayColor: MaterialStateProperty.all(Colors.deepPurpleAccent.withOpacity(0.1)),  // Add a overlay color to create a slight hover effect
                   ),
                   child: const Text(
                     'Sign in with Google',
-                    style: TextStyle(fontSize: 20.0),
+                    style: TextStyle(fontSize: 20.0, color: Colors.deepPurpleAccent),  // Set text color to deepPurpleAccent
                   ),
                 ),
               ),
               const SizedBox(height: 20),
-              Container(
+              SizedBox(
                 width: 250, // 원하는 너비로 변경
                 height: 60, // 원하는 높이로 변경
                 child: ElevatedButton(
@@ -57,28 +66,37 @@ class LoginPage extends ConsumerWidget {
                     ref.read(loggedInUserProvider.notifier).state = null;
                     Navigator.pushReplacementNamed(context, '/cost-input');
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurpleAccent,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16.0,
-                      horizontal: 24.0,
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.white),  // Set background color to white
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(
+                        vertical: 16.0,
+                        horizontal: 24.0,
+                      ),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      side: const BorderSide(color: Colors.deepPurpleAccent),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        side: const BorderSide(color: Colors.deepPurpleAccent, width: 2.0),  // Increase width to create a thicker border
+                      ),
                     ),
+                    overlayColor: MaterialStateProperty.all(Colors.deepPurpleAccent.withOpacity(0.1)),  // Add a overlay color to create a slight hover effect
                   ),
                   child: const Text(
                     '로그인 없이 기본기능만',
-                    style: TextStyle(fontSize: 20.0),
+                    style: TextStyle(fontSize: 20.0, color: Colors.deepPurpleAccent),  // Set text color to deepPurpleAccent
                   ),
                 ),
               ),
               const SizedBox(height: 20),
-              Card(
-                color: Colors.yellow[200],
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                child: const ListTile(
+              const Card(
+                color: Colors.white,
+                shape:
+                RoundedRectangleBorder(
+                  side: BorderSide(color: Colors.deepPurpleAccent),
+                ),
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                child: ListTile(
                   title: Text(
                     "개발자 공지사항",
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),

@@ -163,14 +163,30 @@ class _UploadReportPageState extends State<UploadReportPage> {
               ],
             ),
             const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: _saveReportToFirestore,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurpleAccent, // primary sets the background color
+        ElevatedButton(
+          onPressed: _saveReportToFirestore,
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.white),  // Set background color to white
+            padding: MaterialStateProperty.all(
+              const EdgeInsets.symmetric(
+                vertical: 16.0,
+                horizontal: 24.0,
               ),
-              child: const Text('보고서로 저장'),
             ),
-          ],
+            shape: MaterialStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                side: const BorderSide(color: Colors.deepPurpleAccent, width: 2.0),  // Increase width to create a thicker border
+              ),
+            ),
+            overlayColor: MaterialStateProperty.all(Colors.deepPurpleAccent.withOpacity(0.1)),  // Add a overlay color to create a slight hover effect
+          ),
+          child: const Text(
+            '보고서로 저장',
+            style: TextStyle(fontSize: 20.0, color: Colors.deepPurpleAccent),  // Set text color to deepPurpleAccent
+          ),
+        ),
+        ],
         ),
       ),
     );

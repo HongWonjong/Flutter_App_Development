@@ -308,57 +308,69 @@ class _CostCalculatorPageState extends State<CostCalculatorPage> {
             ),
           ),
           Card(
+            color: Colors.white,  // Set background color to white
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0),
+              side: const BorderSide(color: Colors.deepPurpleAccent, width: 2.0),  // Increase width to create a thicker border
+            ),
             child: ListTile(
-              tileColor: Colors.deepPurpleAccent,
               title: Text(
                 lang.calculationPage_totalRevenue,
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: Colors.deepPurpleAccent,  // Set text color to deepPurpleAccent
                   fontSize: 18,
                 ),
               ),
               trailing: Text(
                 "${formatCurrency(calculateTotalRevenue())} ${lang.calculationPage_name_of_currency}",
                 style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18
+                  color: Colors.deepPurpleAccent,  // Set text color to deepPurpleAccent
+                  fontSize: 18,
                 ),
               ),
             ),
           ),
           Card(
+            color: Colors.white,  // Set background color to white
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0),
+              side: const BorderSide(color: Colors.deepPurpleAccent, width: 2.0),  // Increase width to create a thicker border
+            ),
             child: ListTile(
-              tileColor: Colors.deepPurpleAccent,
               title: Text(
                 lang.calculationPage_totalCost,
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: Colors.deepPurpleAccent,  // Set text color to deepPurpleAccent
                   fontSize: 18,
                 ),
               ),
               trailing: Text(
                 "${formatNumber(calculateTotalCost())} ${lang.calculationPage_name_of_currency}",
                 style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18
+                  color: Colors.deepPurpleAccent,  // Set text color to deepPurpleAccent
+                  fontSize: 18,
                 ),
               ),
             ),
           ),
           Card(
+            color: Colors.white,  // Set background color to white
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0),
+              side: const BorderSide(color: Colors.deepPurpleAccent, width: 2.0),  // Increase width to create a thicker border
+            ),
             child: ListTile(
-              tileColor: Colors.deepPurpleAccent,
               title: Text(
                 lang.calculationPage_costRate,
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: Colors.deepPurpleAccent,  // Set text color to deepPurpleAccent
                   fontSize: 18,
                 ),
               ),
               trailing: Text(
                 "${formatCurrency(calculateTotalCostRate())} %",
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: Colors.deepPurpleAccent,  // Set text color to deepPurpleAccent
                   fontSize: 18,
                 ),
               ),
@@ -366,35 +378,48 @@ class _CostCalculatorPageState extends State<CostCalculatorPage> {
           ),
           Column(
             children: <Widget>[
-              // 기존 원가 계산 위젯들...
 
-              // 이 부분에 "보고서로 저장" 버튼 추가
               ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurpleAccent, // primary sets the background color
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => UploadReportPage(
-                        fixedCostByFoodType: _fixedCostByFoodType,
-                        variableCostByFoodType: _variableCostByFoodType,
-                        costListByFoodType: _costListByFoodType,
-                        totalRevenueByFoodType: _totalRevenueByFoodType,
-                        profitByFoodType: _profitByFoodType,
-                        costRateByFoodType: calculateCostRateByFoodType(),
-                        totalCostRate: calculateTotalCostRate(),
-                        totalRevenue: calculateTotalRevenue(),
-                        totalCost: calculateTotalCost(),
-                      ),
-                    ),
-                  );
-                },
-                child: const Text('계산 결과를 보고서로 저장',
-                style: TextStyle(fontSize: 20),),
-              ),
-            ],
+              onPressed: () {
+    Navigator.push(
+    context,
+    MaterialPageRoute(
+    builder: (context) => UploadReportPage(
+    fixedCostByFoodType: _fixedCostByFoodType,
+    variableCostByFoodType: _variableCostByFoodType,
+    costListByFoodType: _costListByFoodType,
+    totalRevenueByFoodType: _totalRevenueByFoodType,
+    profitByFoodType: _profitByFoodType,
+    costRateByFoodType: calculateCostRateByFoodType(),
+    totalCostRate: calculateTotalCostRate(),
+    totalRevenue: calculateTotalRevenue(),
+    totalCost: calculateTotalCost(),
+    ),
+    ),
+    );
+    },
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.white),  // Set background color to white
+        padding: MaterialStateProperty.all(
+          const EdgeInsets.symmetric(
+            vertical: 16.0,
+            horizontal: 24.0,
+          ),
+        ),
+        shape: MaterialStateProperty.all(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            side: const BorderSide(color: Colors.deepPurpleAccent, width: 2.0),  // Increase width to create a thicker border
+          ),
+        ),
+        overlayColor: MaterialStateProperty.all(Colors.deepPurpleAccent.withOpacity(0.1)),  // Add a overlay color to create a slight hover effect
+      ),
+      child: const Text(
+        '계산 결과를 보고서로 저장',
+        style: TextStyle(fontSize: 20.0, color: Colors.deepPurpleAccent),  // Set text color to deepPurpleAccent
+      ),
+    ),
+    ],
           )
 
         ],
