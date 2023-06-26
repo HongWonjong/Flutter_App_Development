@@ -5,8 +5,16 @@ import 'package:food_cost_calculator_3_0/logic/report.dart';
 class SalesLineChart extends StatelessWidget {
   final List<Report> reports;
   final String title;
+  final double Function(Report) getY;
+  final Color lineColor;
 
-  const SalesLineChart({Key? key, required this.reports, required this.title}) : super(key: key);
+  const SalesLineChart({
+    Key? key,
+    required this.reports,
+    required this.title,
+    required this.getY,
+    required this.lineColor,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,33 +29,33 @@ class SalesLineChart extends StatelessWidget {
           child: LineChart(
             LineChartData(
               gridData: FlGridData(
-                show: false, // Grid를 안보이게 설정하였습니다.
+                show: false,
               ),
               titlesData: FlTitlesData(
-                show: true, // 타이틀을 보이게 설정하였습니다.
+                show: true,
               ),
               borderData: FlBorderData(
-                show: false, // Border를 안보이게 설정하였습니다.
+                show: false,
               ),
               lineBarsData: [
                 LineChartBarData(
                   spots: reports
                       .map(
                         (report) => FlSpot(
-                      report.period.toDouble(), // x 축으로 쓸거임
-                      report.totalSales, // y축이겠지?
+                      report.period.toDouble(),
+                      getY(report),
                     ),
                   )
                       .toList(),
-                  isCurved: true, // Line을 부드럽게 곡선으로 만들었습니다.
-                  color: Colors.blue, // Line의 색상을 파란색으로 설정하였습니다.
-                  barWidth: 4, // Line의 두께를 조절하였습니다.
-                  isStrokeCapRound: true, // Line 끝을 둥글게 만들었습니다.
+                  isCurved: true,
+                  color: lineColor,
+                  barWidth: 4,
+                  isStrokeCapRound: false,
                   dotData: FlDotData(
-                    show: true, // 각 데이터 포인트에 점을 보이게 설정하였습니다.
+                    show: true,
                   ),
                   belowBarData: BarAreaData(
-                    show: false, // 바의 영역을 안보이게 설정하였습니다.
+                    show: false,
                   ),
                 ),
               ],
@@ -58,6 +66,7 @@ class SalesLineChart extends StatelessWidget {
     );
   }
 }
+
 
 
 

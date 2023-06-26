@@ -131,35 +131,63 @@ class _SalesReportPageState extends State<SalesReportPage> {
           listItems.add(
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue, // Set the button color to blue
-                  padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                  textStyle: TextStyle(fontSize: 20),
-                ),
-                onPressed: () async {
-                  if (checkedList.value.length < 2) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('적어도 두 개 이상의 보고서를 선택해주세요'),
-                        duration: Duration(milliseconds: 1000),
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SalesAnalysisPage(),
-                        settings: RouteSettings(
-                          arguments: checkedList.value,
+              child: SizedBox(
+                width: 250,  // 원하는 너비로 변경
+                height: 60,  // 원하는 높이로 변경
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (checkedList.value.length < 2) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('적어도 두 개 이상의 보고서를 선택해주세요'),
+                          duration: Duration(milliseconds: 1000),
+                          behavior: SnackBarBehavior.floating,
                         ),
+                      );
+                    } else {
+                      final reports = _firestore.collection('users').doc(user?.uid).collection('SalesReports');
+                      Map<String, DateTime> reportDates = {};
+                      for (String docId in checkedList.value) {
+                        final doc = await reports.doc(docId).get();
+                        final data = doc.data() as Map<String, dynamic>;
+                        final date = (data['date'] as Timestamp).toDate();
+                        reportDates[docId] = date;
+                      }
+
+                      checkedList.value.sort((a, b) => reportDates[a]!.compareTo(reportDates[b]!));
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SalesAnalysisPage(),
+                          settings: RouteSettings(
+                            arguments: checkedList.value,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.white),  // Set background color to white
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(
+                        vertical: 16.0,
+                        horizontal: 24.0,
                       ),
-                    );
-                  }
-                },
-                child: const Text("기간별 보고서 분석"),
+                    ),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        side: const BorderSide(color: Colors.deepPurpleAccent, width: 2.0),  // Increase width to create a thicker border
+                      ),
+                    ),
+                    overlayColor: MaterialStateProperty.all(Colors.deepPurpleAccent.withOpacity(0.1)),  // Add a overlay color to create a slight hover effect
+                  ),
+                  child: const Text(
+                    '기간별 보고서 분석',
+                    style: TextStyle(fontSize: 20.0, color: Colors.deepPurpleAccent),  // Set text color to deepPurpleAccent
+                  ),
+                ),
               ),
             ),
           );
@@ -206,27 +234,19 @@ class _SalesReportPageState extends State<SalesReportPage> {
                           }
                       ),
                     ),
-                    const VerticalDivider(
-                      width: 2,
-                      thickness: 2,
-                      color: Colors.deepPurpleAccent,
-                    ),
                     Expanded(
-                      flex: 5,
+                      flex: 8,
                       child: ListTile(
-                        title: Text(name, style: Theme.of(context).textTheme.titleLarge),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text("작성일자: $formattedDate", style: Theme.of(context).textTheme.titleSmall),
-                            Text("기간: $period월", style: Theme.of(context).textTheme.titleSmall),
-                          ],
-                        ),
+                        title: Text(name),
+                        subtitle: Text('$formattedDate ($period 월)'),
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => SalesReportDetailPage(reportId: doc.id),
+                              settings: RouteSettings(
+                                arguments: doc.id,
+                              ),
                             ),
                           );
                         },
@@ -239,26 +259,19 @@ class _SalesReportPageState extends State<SalesReportPage> {
           );
 
           return ListView(
+            padding: const EdgeInsets.only(bottom: 72),
             children: listItems,
           );
         },
       ),
-        bottomNavigationBar: Container(
-          padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0, top: 20.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              FloatingActionButton(
-                onPressed: _confirmDelete,
-                backgroundColor: Colors.red,
-                child: const Icon(Icons.delete),
-              ),
-            ],
-    )
-      )
+      floatingActionButton: FloatingActionButton(
+        onPressed: _confirmDelete,
+        child: const Icon(Icons.delete),
+      ),
     );
   }
 }
+
 
 
 

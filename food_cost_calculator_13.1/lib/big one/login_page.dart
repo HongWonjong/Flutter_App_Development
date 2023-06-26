@@ -98,7 +98,7 @@ class LoginPage extends ConsumerWidget {
                 margin: EdgeInsets.symmetric(horizontal: 20),
                 child: ListTile(
                   title: Text(
-                    "개발자 공지사항",
+                    "공지사항",
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(

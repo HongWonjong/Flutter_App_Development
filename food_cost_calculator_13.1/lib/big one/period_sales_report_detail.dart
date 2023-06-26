@@ -5,6 +5,7 @@ import 'package:food_cost_calculator_3_0/small one/sales_line_chart.dart';
 import 'package:food_cost_calculator_3_0/logic/report.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:food_cost_calculator_3_0/small one/sales_line_overview.dart';
 
 
 Future<List<Report>> getFutureSalesDataList(List<String> checkedList) async {
@@ -24,7 +25,7 @@ Future<List<Report>> getFutureSalesDataList(List<String> checkedList) async {
       final totalCost = (doc.data()!['data']['totalCost'] as num?)?.toDouble() ?? 0;
       final period = doc.data()!['period'] as int ?? 0; // 이 필드를 추가해줍니다.
       final netProfit = totalSales - totalCost; // calculate netProfit here
-      reports.add(Report(reportId, totalSales, period, netProfit));
+      reports.add(Report(reportId, totalSales, period, netProfit, totalCost));
     }
   }
 
@@ -34,7 +35,6 @@ Future<List<Report>> getFutureSalesDataList(List<String> checkedList) async {
 class SalesAnalysisPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // ModalRoute를 통해 전달받은 checkedList를 사용합니다.
     final checkedList = ModalRoute.of(context)!.settings.arguments as List<String>;
 
     return Scaffold(
@@ -51,11 +51,15 @@ class SalesAnalysisPage extends StatelessWidget {
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else {
-              return Column(
-                children: [
-                  SalesLineChart(reports: snapshot.data!, title: "매출 변화",),
-                  SalesLineChart(reports: snapshot.data!, title: "순이익 변화",),
-                ],
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SalesLineChart(reports: snapshot.data!, title: "매출 변화 (단위: 만원)", getY: (report) => report.totalSales / 10000, lineColor: Colors.deepPurpleAccent,),// 만원 단위로 표시하자
+                    SalesLineChart(reports: snapshot.data!, title: "순이익 변화 (단위: 만원)", getY: (report) => report.netProfit / 10000, lineColor: Colors.orangeAccent,),
+                    SalesLineChart(reports: snapshot.data!, title: "총 원가 변화 (단위: 만원)", getY: (report) => report.totalCost / 10000, lineColor: Colors.blueGrey,),
+                    SalesLineOverview(reports: snapshot.data!, title: "매출-순이익-총 원가 변화", getY1: (report) => report.totalSales / 10000, getY2: (report) => report.netProfit / 10000, getY3: (report) => report.totalCost / 10000),
+                  ],
+                ),
               );
             }
           },
