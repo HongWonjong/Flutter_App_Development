@@ -102,7 +102,7 @@ class LoginPage extends ConsumerWidget {
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
-                    "버전 13 변경사항: 바 그래프의 금액을 만원 단위로 변경하여 UI 개선, 앱 기능 확장에 따른 도움말 페이지를 메뉴에 추가. \n 보고서 여러개를 체크하여 좌측 하단을 클릭하면 여러 보고서를 연동하여 기간별 매출 관련 정보들을 보여주는 기능 추가.\n 매출보고서 페이지 UI 개선",
+                    "버전 14 변경사항: 이제 GPT를 이용해서 기존에 작성한 보고서들에 대한 조언과 분석을 요청할 수 있습니다. \n",
                     style: TextStyle(fontSize: 20),
                   ),
                 ),

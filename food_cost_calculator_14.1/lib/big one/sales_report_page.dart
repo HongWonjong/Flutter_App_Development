@@ -130,7 +130,7 @@ class _SalesReportPageState extends State<SalesReportPage> {
 
           listItems.add(
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(8.0),
               child: SizedBox(
                 width: 250,  // 원하는 너비로 변경
                 height: 60,  // 원하는 높이로 변경
@@ -184,7 +184,58 @@ class _SalesReportPageState extends State<SalesReportPage> {
                     overlayColor: MaterialStateProperty.all(Colors.deepPurpleAccent.withOpacity(0.1)),  // Add a overlay color to create a slight hover effect
                   ),
                   child: const Text(
-                    '기간별 보고서 분석',
+                    '보고서 기간별로 보기',
+                    style: TextStyle(fontSize: 20.0, color: Colors.deepPurpleAccent),  // Set text color to deepPurpleAccent
+                  ),
+                ),
+              ),
+            ),
+          );
+          listItems.add(
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                width: 250,  // 원하는 너비로 변경
+                height: 60,  // 원하는 높이로 변경
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (checkedList.value.length != 1) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('한 개의 보고서만 선택해주세요. 현재 보고서는 개별적으로만 분석 가능합니다.'),
+                          duration: Duration(milliseconds: 1000),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    } else {
+                      final reports = _firestore.collection('users').doc(user?.uid).collection('SalesReports');
+                      final reportDoc = await reports.doc(checkedList.value[0]).get();  // Assume checkedList.value[0] is document ID of selected report
+
+                      final gptReplies = _firestore.collection('users').doc(user?.uid).collection('gpt_Replies');
+                      await gptReplies.add({
+                        'prompt': reportDoc.data(),  // Use report data as the prompt
+                        'parentMessageId': '(Optional) Message ID coming from API to track conversations'
+                      });
+                    }
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.white),  // Set background color to white
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(
+                        vertical: 16.0,
+                        horizontal: 24.0,
+                      ),
+                    ),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        side: const BorderSide(color: Colors.deepPurpleAccent, width: 2.0),  // Increase width to create a thicker border
+                      ),
+                    ),
+                    overlayColor: MaterialStateProperty.all(Colors.deepPurpleAccent.withOpacity(0.1)),  // Add a overlay color to create a slight hover effect
+                  ),
+                  child: const Text(
+                    'AI에게 분석 요청(개별 보고서)',
                     style: TextStyle(fontSize: 20.0, color: Colors.deepPurpleAccent),  // Set text color to deepPurpleAccent
                   ),
                 ),

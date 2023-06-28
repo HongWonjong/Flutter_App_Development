@@ -2,8 +2,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter/material.dart';
 
 class Language extends StateNotifier<Locale> {
-  Language() : super(const Locale('en', ''));
-  // 처음 앱을 받았을때는 영어로 시작한다.
+  Language() : super(const Locale('ko', ''));
+  // 처음 앱을 받았을때는 한국어로 시작한다.
 
   void switchToEnglish() {
     state = const Locale('en', '');
