@@ -51,7 +51,7 @@ class CustomDrawer extends ConsumerWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const AIAnalysisPage()),
+                        MaterialPageRoute(builder: (context) => AIAnalysisPage()),
                       );
                     },
                   ),

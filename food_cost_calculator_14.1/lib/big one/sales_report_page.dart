@@ -211,11 +211,33 @@ class _SalesReportPageState extends State<SalesReportPage> {
                       final reports = _firestore.collection('users').doc(user?.uid).collection('SalesReports');
                       final reportDoc = await reports.doc(checkedList.value[0]).get();  // Assume checkedList.value[0] is document ID of selected report
 
+                      // Convert the report data into a single string
+                      Map<String, dynamic>? reportData = reportDoc.data();
+                      String prompt = "";
+                      String reportName = "";
+                      reportData?.forEach((key, value) {
+                        if (key == "name") {
+                          reportName = value;
+                        }
+                        prompt += "$key: $value\n";
+                      });
+                      // Add the required sentence to the end of the prompt
+                      prompt += "내가 제공해 준 내용을 바탕으로, 이번 달의 가게 매출이 어떤지 분석해주고 추가로 너의 조언을 세줄 정도로 들려줘. 한국말로 문단마다 띄어쓰기 해서 대답해줘.";
+
+
                       final gptReplies = _firestore.collection('users').doc(user?.uid).collection('gpt_Replies');
                       await gptReplies.add({
-                        'prompt': reportDoc.data(),  // Use report data as the prompt
+                        'prompt': prompt,  // Use report data as the prompt
+                        'reportName': reportName, // Add report name to the document
                         'parentMessageId': '(Optional) Message ID coming from API to track conversations'
                       });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('서버에 보고서를 전달했습니다. 잠시 후에 AI분석 내역에서 확인하실 수 있습니다.'),
+                          duration: Duration(milliseconds: 5000),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
                     }
                   },
                   style: ButtonStyle(
