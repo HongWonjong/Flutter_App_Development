@@ -6,7 +6,7 @@ import 'package:food_cost_calculator_3_0/logic/report.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:food_cost_calculator_3_0/small one/sales_line_overview.dart';
-
+import 'package:intl/intl.dart';
 
 Future<List<Report>> getFutureSalesDataList(List<String> checkedList) async {
   final user = FirebaseAuth.instance.currentUser;
@@ -23,7 +23,9 @@ Future<List<Report>> getFutureSalesDataList(List<String> checkedList) async {
     if (doc.exists) {
       final totalSales = (doc.data()!['data']['totalRevenue'] as num?)?.toDouble() ?? 0;
       final totalCost = (doc.data()!['data']['totalCost'] as num?)?.toDouble() ?? 0;
-      final period = doc.data()!['period'] as int ?? 0; // 이 필드를 추가해줍니다.
+      final periodStr = doc.data()!['period'] as String?; // 이 필드를 추가해줍니다.
+      // '2023-01' 같은 문자열을 DateTime 객체로 변환하고, 이를 milliseconds 단위의 timestamp로 변환
+      final period = periodStr != null ? DateTime.parse(periodStr + '-01').millisecondsSinceEpoch : 0;
       final netProfit = totalSales - totalCost; // calculate netProfit here
       reports.add(Report(reportId, totalSales, period, netProfit, totalCost));
     }
@@ -31,6 +33,7 @@ Future<List<Report>> getFutureSalesDataList(List<String> checkedList) async {
 
   return reports;
 }
+
 
 class SalesAnalysisPage extends StatelessWidget {
   @override
@@ -68,5 +71,6 @@ class SalesAnalysisPage extends StatelessWidget {
     );
   }
 }
+
 
 

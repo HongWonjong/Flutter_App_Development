@@ -36,13 +36,13 @@ class UploadReportPage extends StatefulWidget {
 
 class _UploadReportPageState extends State<UploadReportPage> {
   final _reportNameController = TextEditingController();
-  final _reportPeriodController = TextEditingController();
+  final _reportPeriodController = TextEditingController();  // <- No need for parsing to int
 
   final _firestore = FirebaseFirestore.instance;
 
   void _saveReportToFirestore() async {
     final reportName = _reportNameController.text;
-    final reportPeriod = int.tryParse(_reportPeriodController.text) ?? 0;  // <- Here we parse the period to an int
+    final reportPeriod = _reportPeriodController.text;  // <- No need for parsing to int
 
     // Convert each CostItem in costListByFoodType to a Map.
     final costListByFoodTypeMapped = widget.costListByFoodType.map((foodType, costList) => MapEntry(
@@ -152,46 +152,73 @@ class _UploadReportPageState extends State<UploadReportPage> {
               ),
             ),
             const SizedBox(height: 16.0),
-            TextField(
+            TextFormField(
               controller: _reportPeriodController,
               decoration: const InputDecoration(
-                labelText: '보고서 기간 (월)',
+                labelText: '보고서 기간 (년-월)',
+                hintText: '예: 202x-01', // 힌트를 추가합니다.
               ),
-              keyboardType: TextInputType.number,
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly
-              ],
+              keyboardType: TextInputType.datetime,
+              validator: (value) {
+                if (value == null || !RegExp(r'^\d{4}-\d{2}$').hasMatch(value)) {
+                  return '년-월 형식을 따라주세요(2023-01)';
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 16.0),
-        ElevatedButton(
-          onPressed: _saveReportToFirestore,
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(Colors.white),  // Set background color to white
-            padding: MaterialStateProperty.all(
-              const EdgeInsets.symmetric(
-                vertical: 16.0,
-                horizontal: 24.0,
+            ElevatedButton(
+              onPressed: () {
+                if (_reportPeriodController.text == null || !RegExp(r'^\d{4}-\d{2}$').hasMatch(_reportPeriodController.text)) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('보고서 저장 오류'),
+                        content: const Text('2023-01의 형식으로 년-월을 작성해주세요.'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text('확인'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  _saveReportToFirestore();
+                }
+              },
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.white),  // Set background color to white
+                padding: MaterialStateProperty.all(
+                  const EdgeInsets.symmetric(
+                    vertical: 16.0,
+                    horizontal: 24.0,
+                  ),
+                ),
+                shape: MaterialStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    side: const BorderSide(color: Colors.deepPurpleAccent, width: 2.0),  // Increase width to create a thicker border
+                  ),
+                ),
+                overlayColor: MaterialStateProperty.all(Colors.deepPurpleAccent.withOpacity(0.1)),  // Add a overlay color to create a slight hover effect
+              ),
+              child: const Text(
+                '보고서로 저장',
+                style: TextStyle(fontSize: 20.0, color: Colors.deepPurpleAccent),  // Set text color to deepPurpleAccent
               ),
             ),
-            shape: MaterialStateProperty.all(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                side: const BorderSide(color: Colors.deepPurpleAccent, width: 2.0),  // Increase width to create a thicker border
-              ),
-            ),
-            overlayColor: MaterialStateProperty.all(Colors.deepPurpleAccent.withOpacity(0.1)),  // Add a overlay color to create a slight hover effect
-          ),
-          child: const Text(
-            '보고서로 저장',
-            style: TextStyle(fontSize: 20.0, color: Colors.deepPurpleAccent),  // Set text color to deepPurpleAccent
-          ),
-        ),
-        ],
+          ],
         ),
       ),
     );
   }
 }
+
 
 
 
