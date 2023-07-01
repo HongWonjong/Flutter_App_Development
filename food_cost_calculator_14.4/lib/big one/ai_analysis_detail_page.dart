@@ -25,7 +25,7 @@ class _AnalysisDetailPageState extends State<AnalysisDetailPage> {
     } catch (e) {
       // If an error occurs, the fields are populated with an error message
       createdAt = DateTime.now();
-      response = '이 문구가 뜬다면 아직 GPT가 요청에 응답 중입니다...보통 20초 이내에 응답이 완료됩니다.';
+      response = '아직 GPT가 요청에 응답 중입니다...잠시 후 다시 들어와주세요.';
     }
 
     return Scaffold(
@@ -38,7 +38,7 @@ class _AnalysisDetailPageState extends State<AnalysisDetailPage> {
             const SizedBox(height: 16.0),
             Text('응답 내용:', style: Theme.of(context).textTheme.titleLarge),
             SwitchListTile(
-              title: const Text('글자 크기'),
+              title: const Text('큰 글자'),
               value: _isLargeText,
               onChanged: (bool value) {
                 setState(() {

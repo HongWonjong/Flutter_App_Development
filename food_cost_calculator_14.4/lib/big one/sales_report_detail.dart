@@ -163,12 +163,17 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
 
                           const SizedBox(height: 8.0),
                           ExpansionTile(
-                            title: Text('원가항목:', style: Theme.of(context).textTheme.titleSmall),
+                            title: Text('세부 원가 보기:', style: Theme.of(context).textTheme.titleSmall),
                             children: [
                               for (var costItemMap in (entry.value as List<dynamic>))
                                 ListTile(
-                                  title: Text('항목명: ${costItemMap['name']}', style: TextStyle(color: (costItemMap['isFixedCostPerUnit'] ?? false) ? Colors.blue : Colors.red)),
-                                  subtitle: Text('원가 금액: ${formatCurrency.format(costItemMap['unitCost'])} ${lang.calculationPage_name_of_currency}'),
+                                  title: Text(
+                                    '항목명: ${costItemMap['name']}',
+                                    style: TextStyle(color: (costItemMap['isFixedCostPerUnit'] ?? false) ? Colors.blue : Colors.red),
+                                  ),
+                                  subtitle: Text(
+                                    '${(costItemMap['isFixedCostPerUnit'] ?? false) ? '원가 금액(고정)' : '원가 금액'}: ${formatCurrency.format(costItemMap['unitCost'])} ${lang.calculationPage_name_of_currency}',
+                                  ),
                                 ),
                             ],
                           ),
