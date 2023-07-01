@@ -69,7 +69,7 @@ class PeriodReportButton extends StatelessWidget {
             overlayColor: MaterialStateProperty.all(Colors.deepPurpleAccent.withOpacity(0.1)),  // Add a overlay color to create a slight hover effect
           ),
           child: const Text(
-            '보고서 묶어 보기',
+            '여러 보고서 함께 보기',
             style: TextStyle(fontSize: 20.0, color: Colors.deepPurpleAccent),  // Set text color to deepPurpleAccent
           ),
         ),
