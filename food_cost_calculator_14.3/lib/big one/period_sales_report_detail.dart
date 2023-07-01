@@ -23,9 +23,8 @@ Future<List<Report>> getFutureSalesDataList(List<String> checkedList) async {
     if (doc.exists) {
       final totalSales = (doc.data()!['data']['totalRevenue'] as num?)?.toDouble() ?? 0;
       final totalCost = (doc.data()!['data']['totalCost'] as num?)?.toDouble() ?? 0;
-      final periodStr = doc.data()!['period'] as String?; // 이 필드를 추가해줍니다.
+      final period = doc.data()!['period'] as String; // 이 필드를 추가해줍니다.
       // '2023-01' 같은 문자열을 DateTime 객체로 변환하고, 이를 milliseconds 단위의 timestamp로 변환
-      final period = periodStr != null ? DateTime.parse(periodStr + '-01').millisecondsSinceEpoch : 0;
       final netProfit = totalSales - totalCost; // calculate netProfit here
       reports.add(Report(reportId, totalSales, period, netProfit, totalCost));
     }
@@ -57,10 +56,10 @@ class SalesAnalysisPage extends StatelessWidget {
               return SingleChildScrollView(
                 child: Column(
                   children: [
-                    SalesLineChart(reports: snapshot.data!, title: "매출 변화 (단위: 만원)", getY: (report) => report.totalSales / 10000, lineColor: Colors.deepPurpleAccent,),// 만원 단위로 표시하자
-                    SalesLineChart(reports: snapshot.data!, title: "순이익 변화 (단위: 만원)", getY: (report) => report.netProfit / 10000, lineColor: Colors.orangeAccent,),
-                    SalesLineChart(reports: snapshot.data!, title: "총 원가 변화 (단위: 만원)", getY: (report) => report.totalCost / 10000, lineColor: Colors.blueGrey,),
-                    SalesLineOverview(reports: snapshot.data!, title: "매출-순이익-총 원가 변화", getY1: (report) => report.totalSales / 10000, getY2: (report) => report.netProfit / 10000, getY3: (report) => report.totalCost / 10000),
+                    SalesBarChart(reports: snapshot.data!, title: "매출 변화 (단위: 만원)", getY: (report) => report.totalSales / 10000, barColor: Colors.deepPurpleAccent),// 만원 단위로 표시하자
+                    SalesBarChart(reports: snapshot.data!, title: "순이익 변화 (단위: 만원)", getY: (report) => report.netProfit / 10000, barColor: Colors.orangeAccent,),
+                    SalesBarChart(reports: snapshot.data!, title: "총 원가 변화 (단위: 만원)", getY: (report) => report.totalCost / 10000, barColor: Colors.greenAccent,),
+                    SalesBarOverview(reports: snapshot.data!, title: "매출-순이익-총 원가 변화", getY1: (report) => report.totalSales / 10000, getY2: (report) => report.netProfit / 10000, getY3: (report) => report.totalCost / 10000),
                   ],
                 ),
               );

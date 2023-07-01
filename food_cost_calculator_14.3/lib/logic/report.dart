@@ -1,7 +1,7 @@
 class Report {
   final String id;
   final double totalSales;
-  final int period;
+  final String period;
   final double netProfit;
   final double totalCost;
 

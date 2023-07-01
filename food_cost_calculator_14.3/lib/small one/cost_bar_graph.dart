@@ -89,7 +89,7 @@ class CostBarChart extends StatelessWidget {
     show: true,
     bottomTitles: AxisTitles(
       sideTitles: SideTitles(
-        showTitles: true,
+        showTitles: false,
         reservedSize: 30,
       ),
     ),
