@@ -187,7 +187,13 @@ class _SalesReportPageState extends State<SalesReportPage> {
                       flex: 8,
                       child: ListTile(
                         title: Text(name),
-                        subtitle: Text('$formattedDate ($period 월)'),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text('작성일자: $formattedDate'),
+                            Text('대상 기간: $period 월'),
+                          ],
+                        ),
                         onTap: () {
                           Navigator.push(
                             context,

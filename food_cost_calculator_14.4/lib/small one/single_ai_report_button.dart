@@ -53,29 +53,47 @@ class SingleReportAnalysisButton extends StatelessWidget {
                       child: AlertDialog(
                         title: const Text('gpt에게 질문하고 싶은 부분은?'),
                         content: Container(
-                          height: 150.0, // Adjust this to change the height of the TextField
+                          height: 150.0,
                           child: TextField(
                             controller: questionController,
-                            decoration: const InputDecoration(hintText: "여기에 질문을 입력하세요"),
-                            maxLines: null, // null makes it auto-expand vertically, or set a specific number for maximum lines
-                            keyboardType: TextInputType.multiline, // This makes the keyboard more suitable for multiline input
+                            decoration: const InputDecoration(
+                              hintText: "여기에 질문을 입력하세요",
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.deepPurpleAccent, width: 1.0),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.deepPurpleAccent, width: 2.0),
+                              ),
+                            ),
+                            maxLines: null,
+                            keyboardType: TextInputType.multiline,
                           ),
                         ),
                         actions: <Widget>[
                           TextButton(
                             child: const Text('취소'),
+                            style: TextButton.styleFrom(
+                              primary: Colors.deepPurpleAccent,
+                              backgroundColor: Colors.white,
+                              side: const BorderSide(color: Colors.deepPurpleAccent, width: 2.0),
+                            ),
                             onPressed: () {
-                              Navigator.of(context).pop(false);  // Return false when 'Cancel' is clicked
+                              Navigator.of(context).pop(false);
                             },
                           ),
                           TextButton(
                             child: const Text('전송'),
+                            style: TextButton.styleFrom(
+                              primary: Colors.deepPurpleAccent,
+                              backgroundColor: Colors.white,
+                              side: const BorderSide(color: Colors.deepPurpleAccent, width: 2.0),
+                            ),
                             onPressed: () {
-                              Navigator.of(context).pop(true);  // Return true when 'Submit' is clicked
+                              Navigator.of(context).pop(true);
                             },
                           ),
                         ],
-                      ),
+                      )
                     );
                   }
               );

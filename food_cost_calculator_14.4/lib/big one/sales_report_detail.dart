@@ -58,6 +58,9 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
             final date = (data['date'] as Timestamp).toDate();
             final period = data['period'] as String? ?? '기간 정보 없음';
             final totalRevenue = data['data']['totalRevenue'] as double? ?? 0.0;
+            final totalCost = (data['data']['totalCost'] as num? ?? 0.0).toInt();
+            final preTaxProfit = totalRevenue - totalCost;
+            final preTaxProfitFormatted = formatCurrency.format(preTaxProfit);
             final totalRevenueFormatted = formatCurrency.format(totalRevenue);
             final costListByFoodType = data['data']['costListByFoodType'] as Map<String, dynamic>? ?? {};
             final totalRevenueByFoodType = data['data']['totalRevenueByFoodType'] as Map<String, dynamic>? ?? {};
@@ -73,12 +76,15 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
 
 
             costItems.sort((a, b) => b.value.compareTo(a.value));
-            final top7CostItems = costItems.take(7).map((entry) => MapEntry(entry.key, entry.value.toDouble())).toList();
+            final top10CostItems = costItems.take(10).map((entry) => MapEntry(entry.key, entry.value.toDouble())).toList();
 
             return ListView(
               padding: const EdgeInsets.all(16.0),
               children: <Widget>[
                 Card(
+                  shape: const RoundedRectangleBorder(
+                    side: BorderSide(color: Colors.deepPurpleAccent, width: 2.0),
+                  ),
                   child: ListTile(
                     title: Text('이름', style: Theme.of(context).textTheme.titleMedium),
                     subtitle: Text(name, style: Theme.of(context).textTheme.headlineSmall),
@@ -86,6 +92,9 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
                 ),
                 const SizedBox(height: 8.0),
                 Card(
+                  shape: const RoundedRectangleBorder(
+                    side: BorderSide(color: Colors.deepPurpleAccent, width: 2.0),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
@@ -112,9 +121,20 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
                 ),
                 const SizedBox(height: 8.0),
                 Card(
-                  child: ListTile(
-                    title: Text('총 수익', style: Theme.of(context).textTheme.titleMedium),
-                    subtitle: Text("$totalRevenueFormatted ${lang.calculationPage_name_of_currency}", style: Theme.of(context).textTheme.titleSmall),
+                  shape: const RoundedRectangleBorder(
+                    side: BorderSide(color: Colors.deepPurpleAccent, width: 2.0),
+                  ),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        title: Text('총 매출액', style: Theme.of(context).textTheme.titleMedium),
+                        subtitle: Text("$totalRevenueFormatted ${lang.calculationPage_name_of_currency}", style: Theme.of(context).textTheme.titleSmall),
+                      ),
+                      ListTile(
+                        title: Text('세전 순이익', style: Theme.of(context).textTheme.titleMedium),
+                        subtitle: Text("$preTaxProfitFormatted ${lang.calculationPage_name_of_currency}", style: Theme.of(context).textTheme.titleSmall),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 16.0),
@@ -144,11 +164,14 @@ class _SalesReportDetailPageState extends State<SalesReportDetailPage> {
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: CostBarChart(data: top7CostItems),
+                    child: CostBarChart(data: top10CostItems),
                   ),
                 ),
                 for (final entry in costListByFoodType.entries)
                   Card(
+                    shape: const RoundedRectangleBorder(
+                      side: BorderSide(color: Colors.deepPurpleAccent, width: 2.0),
+                    ),
                     margin: const EdgeInsets.only(bottom: 10),
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
