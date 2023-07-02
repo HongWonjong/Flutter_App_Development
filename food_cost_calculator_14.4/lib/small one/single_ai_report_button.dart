@@ -108,13 +108,14 @@ class SingleReportAnalysisButton extends StatelessWidget {
                 prompt += "\n\n$userQuestion";
               }
 
-              prompt += "\n\n 니가 자영업자에게 500자 이내로 매출분석을 해주는 회계사라고 생각해. 앞의 내용을 바탕으로 현재 가게 운영의 장점과 단점을 말해줘. 대답 시 한국말로 문단마다 띄어쓰기 해줘. 지금까지 기본 설정이었고, 이 다음 내용은 실제 사용자의 질문이니까 질문이 적힌 경우 장점과 단점은 생략하고 그걸 중점으로 답해줘.";
+              prompt += "\n\n 니가 자영업자에게 매출분석을 해주는 회계사라고 생각해. 앞의 내용을 바탕으로 현재 가게 운영 상황을 분석해서 한국말로 문단마다 띄어쓰기 해줘. 지금까지 기본 설정이었고, 이 다음 내용은 실제 사용자의 질문내용이니까 그 질문에 우선적으로 답해줘.";
 
               final gptReplies = _firestore.collection('users').doc(user?.uid).collection('gpt_Replies');
               await gptReplies.add({
                 'prompt': prompt,
+                'question': userQuestion, // Add this line to store the user's question
                 'reportName': reportName,
-                'parentMessageId': '(Optional) Message ID coming from API to track conversations'
+                'parentMessageId': '${user?.uid}_${DateTime.now().millisecondsSinceEpoch}'
               });
               // ignore: use_build_context_synchronously
               ScaffoldMessenger.of(context).showSnackBar(
