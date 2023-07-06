@@ -105,7 +105,7 @@ class LoginPage extends ConsumerWidget {
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
-                    "버전 14 변경사항: 이제 AI에게 기존에 작성한 보고서에 대한 조언과 분석을 사용자가 직접 질문을 통해 요청할 수 있습니다. \n 질문이 없을 경우 기본적으로 설정된 분석을 제공합니다. ",
+                    "버전 15 변경사항: 이제 AI에게 기존에 작성한 보고서에 대한 조언과 분석을 사용자가 직접 질문을 통해 요청할 수 있습니다. \n 질문이 없을 경우 기본적으로 설정된 분석을 제공합니다. \n 앱 아이콘이 생겼습니다. \n 한번 AI에게 답변을 받고 추가적인 대화를 같은 AI와 이어서 나눌 수 있도록 작업 중에 있습니다.(현재 형태만 작성됨.)\n 아직 AI 분석 기능에 제한을 걸어두지 않았으니 많은 사용 부탁드립니다. ",
                     style: TextStyle(fontSize: 20),
                   ),
                 ),
