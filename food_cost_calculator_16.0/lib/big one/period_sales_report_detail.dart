@@ -6,7 +6,7 @@ import 'package:food_cost_calculator_3_0/logic/report.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:food_cost_calculator_3_0/small one/sales_line_overview.dart';
-import 'package:intl/intl.dart';
+import 'package:food_cost_calculator_3_0/small one/sales_analysis_table.dart';
 
 Future<List<Report>> getFutureSalesDataList(List<String> checkedList) async {
   final user = FirebaseAuth.instance.currentUser;
@@ -60,6 +60,7 @@ class SalesAnalysisPage extends StatelessWidget {
                     SalesBarChart(reports: snapshot.data!, title: "순이익 변화 (단위: 만원)", getY: (report) => report.netProfit / 10000, barColor: Colors.orangeAccent,),
                     SalesBarChart(reports: snapshot.data!, title: "총 원가 변화 (단위: 만원)", getY: (report) => report.totalCost / 10000, barColor: Colors.greenAccent,),
                     SalesBarOverview(reports: snapshot.data!, title: "매출-순이익-총 원가 변화", getY1: (report) => report.totalSales / 10000, getY2: (report) => report.netProfit / 10000, getY3: (report) => report.totalCost / 10000),
+                    SalesAnalysisTable(checkedList: checkedList),
                   ],
                 ),
               );
