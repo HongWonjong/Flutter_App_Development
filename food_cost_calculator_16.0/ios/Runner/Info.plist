@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
-	<key>GADApplicationIdentifier</key>
+    <string>ko</string>
+    <key>GADApplicationIdentifier</key>
     <string>ca-app-pub-2047502466332917~5139215141</string>
-	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
 	<string>Food Cost Calculator 3 0</string>
 	<key>CFBundleExecutable</key>
