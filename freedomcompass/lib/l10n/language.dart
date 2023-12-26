@@ -1,9 +1,10 @@
 class loginpage_lan {
-  static const String loginPageTitle = "소셜 플랫폼으로 간편 회원가입하세요.";
-  static const String signInWithGoogle = "Sign In with Google";
-  static const String signInWithX = 'Sign In with X';
-  static const String signInWithKaKao = "Sign In with Kakao";
-  static const String signInWithNaver = 'Sign In with Naver';
+  static const String loginPageTitle = "소셜 플랫폼으로 간편 회원가입!";
+  static const String signInWithGoogle = "구글로 회원가입";
+  static const String signInWithX = 'X로 회원가입';
+  static const String signInWithKaKao = "카카오로 회원가입";
+  static const String signInWithNaver = '네이버로 회원가입';
+  static const String justUse = "로그인 없이 사용하기";
 }
 
 class mainpage_lan {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'page/loginpage.dart';
-import 'page/mainpage.dart';
+import 'page/login_page.dart';
+import 'page/main_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: '자유의 나침반',// 앱 아이콘과 이름을 설정
       home: AuthenticationWrapper(),
     );
   }
