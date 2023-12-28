@@ -4,6 +4,18 @@ import 'package:flutter/material.dart';
 class MapWidget extends StatefulWidget {
 
   final GlobalKey<_MapWidgetState> mapKey = GlobalKey<_MapWidgetState>();
+  final controller = MapController.withUserPosition(
+      trackUserLocation: const UserTrackingOption(
+        enableTracking: true,
+        unFollowUser: false,
+        // controller에 customlayer를 추가해서 지도에 눈, 땅 등의 색상을 넣을 수 있다. 근데 그러면 개느려지니까 하지 말자.
+      )
+  );
+
+  // Expose a method to trigger getLocationAndUpdateMap
+  Future<void> triggerLocationUpdate() async {
+    await mapKey.currentState?.getLocationAndUpdateMap(mapKey.currentState!.mapController);
+  }
 
 
   MapWidget({super.key});
@@ -26,6 +38,8 @@ Future<void> getLocationAndUpdateMap(MapController controller) async {
   // 비동기 함수 내에서 await 사용
   await controller.currentLocation();
 }
+
+MapController get mapController => controller;
 @override
 Widget build(BuildContext context) {
   return OSMFlutter(

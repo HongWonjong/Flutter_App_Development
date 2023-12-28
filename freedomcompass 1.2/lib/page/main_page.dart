@@ -9,7 +9,10 @@ import 'package:freedomcompass/style/sized_box.dart';
 
 
 class MainPage extends StatelessWidget {
-  const MainPage({Key? key});
+  MainPage({Key? key});
+
+  // MapWidget 인스턴스 생성
+  MapWidget mapWidget = MapWidget();
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +27,7 @@ class MainPage extends StatelessWidget {
           children: [
             MediumButton(
               onPressed: () {
-                // 버튼이 눌렸을 때 수행할 작업을 여기에 추가
+                MapWidget().triggerLocationUpdate();
               },
               buttonText: mainpage_lan.setToMyPosition,
               buttonColor: Colors.black,
