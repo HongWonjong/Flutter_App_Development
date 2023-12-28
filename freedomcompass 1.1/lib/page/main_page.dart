@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:freedomcompass/l10n/language.dart';
 import 'package:freedomcompass/style/bottom_bar.dart';
-import 'package:freedomcompass/style/text_style.dart';
+import 'package:freedomcompass/style/app_bar.dart';
+import 'package:freedomcompass/function/osm_map.dart';
+
 
 class MainPage extends StatelessWidget {
-  const MainPage({super.key});
+  const MainPage({Key? key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(mainpage_lan.mainPageTitle,
-        style: AdaptiveText.titleTextStyle(context,color: Colors.black)),
-
-      ),
-      body: const Center(
-        child: Text(mainpage_lan.centerMessage),
+      // 사용자 정의된 CustomAppBar로 교체
+      appBar: CustomAppBar(),
+      body:  Center(
+        child: Map_Widget(),
       ),
       bottomNavigationBar: const Material(
-        child: BottomBar(),
+        child: CustomBottomBar(),
       ),
     );
   }
