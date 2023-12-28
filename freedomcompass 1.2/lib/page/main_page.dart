@@ -22,7 +22,7 @@ class MainPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            BigButton(
+            MediumButton(
               onPressed: () {
                 // 버튼이 눌렸을 때 수행할 작업을 여기에 추가
               },
