@@ -9,11 +9,17 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double targetWidth = screenWidth * 0.9;
+
     return Scaffold(
-      // 사용자 정의된 CustomAppBar로 교체
       appBar: CustomAppBar(),
-      body:  Center(
-        child: Map_Widget(),
+      body: Center(
+        child: SizedBox(
+          width: targetWidth,
+          height: targetWidth, // 가로 길이의 90%를 높이로 사용
+          child: MapWidget(),
+        ),
       ),
       bottomNavigationBar: const Material(
         child: CustomBottomBar(),

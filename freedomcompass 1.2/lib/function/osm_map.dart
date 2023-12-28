@@ -1,52 +1,69 @@
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:flutter/material.dart';
-import 'package:freedomcompass/page/main_page.dart';
 
-class Map_Widget extends StatefulWidget {
+class MapWidget extends StatefulWidget {
 
 
-  Map_Widget({super.key});
+  const MapWidget({super.key});
 
   @override
-  State<Map_Widget> createState() => _Map_WidgetState();
+  State<MapWidget> createState() => _MapWidgetState();
 }
 
-class _Map_WidgetState extends State<Map_Widget> {
+class _MapWidgetState extends State<MapWidget> {
 // init the position using the user location
 final controller = MapController.withUserPosition(
     trackUserLocation: const UserTrackingOption(
       enableTracking: true,
       unFollowUser: false,
+      // controller에 customlayer를 추가해서 지도에 눈, 땅 등의 색상을 넣을 수 있다. 근데 그러면 개느려지니까 하지 말자.
     )
 );
 
 @override
 Widget build(BuildContext context) {
-  return MaterialApp(
-    debugShowCheckedModeBanner: false,
-    theme: ThemeData.light(useMaterial3: true),
-    initialRoute: "/home",
-    routes: {
-      "/home": (context) => MainPage(),
-      "/old-home": (context) => MainPage(),
-      "/hook": (context) => MainPage(),
-      //"/adv-home": (ctx) => AdvandedMainExample(),
-      // "/nav": (ctx) => MyHomeNavigationPage(
-      //       map: Container(),
-      // ),
-      "/second": (context) => Scaffold(
-        body: Center(
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.pushNamed(context, "/old-home");
-            },
-            child: Text("another page"),
+  return OSMFlutter(
+      controller:controller,
+      osmOption: OSMOption(
+        userTrackingOption: const UserTrackingOption(
+          enableTracking: true,
+          unFollowUser: false,
+        ),
+        zoomOption: const ZoomOption(
+          initZoom: 8,
+          minZoomLevel: 2,
+          // 이거는 축소시키는 최소 속도를 말하는거다. 높이면 축소가 힘듬.
+          maxZoomLevel: 19,
+          stepZoom: 1.0,
+        ),
+        userLocationMarker: UserLocationMaker(
+          personMarker: const MarkerIcon(
+            icon: Icon(
+              Icons.location_history_rounded,
+              color: Colors.red,
+              size: 48,
+            ),
+          ),
+          directionArrowMarker: const MarkerIcon(
+            icon: Icon(
+              Icons.double_arrow,
+              size: 48,
+            ),
           ),
         ),
-      ),
-      "/picker-result": (context) => MainPage(),
-      "/search": (context) => MainPage(),
-    },
+        roadConfiguration: const RoadOption(
+          roadColor: Colors.yellowAccent,
+        ),
+        markerOption: MarkerOption(
+            defaultMarker: const MarkerIcon(
+              icon: Icon(
+                Icons.person_pin_circle,
+                color: Colors.blue,
+                size: 56,
+              ),
+            )
+        ),
+      )
   );
 }
 }
