@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 
 class MapWidget extends StatefulWidget {
 
+  final GlobalKey<_MapWidgetState> mapKey = GlobalKey<_MapWidgetState>();
 
-  const MapWidget({super.key});
+
+  MapWidget({super.key});
 
   @override
   State<MapWidget> createState() => _MapWidgetState();
