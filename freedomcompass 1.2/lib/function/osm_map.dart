@@ -22,6 +22,10 @@ final controller = MapController.withUserPosition(
     )
 );
 
+Future<void> getLocationAndUpdateMap(MapController controller) async {
+  // 비동기 함수 내에서 await 사용
+  await controller.currentLocation();
+}
 @override
 Widget build(BuildContext context) {
   return OSMFlutter(
