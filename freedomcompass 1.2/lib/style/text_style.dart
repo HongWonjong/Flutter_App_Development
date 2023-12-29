@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AdaptiveText {
   static TextStyle titleTextStyle(BuildContext context, {Color? color}) {
-    double fontSize = MediaQuery.of(context).size.width * 0.07;
+    double fontSize = MediaQuery.of(context).size.width * 0.06;
     return TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: color);
   }
 

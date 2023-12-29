@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:freedomcompass/l10n/language.dart';
+import 'package:freedomcompass/style/app_bar.dart';
 import 'package:freedomcompass/style/text_style.dart';
 import 'package:freedomcompass/style/button_style.dart';
 import 'package:freedomcompass/style/sized_box.dart';
 import 'package:freedomcompass/style/navigator.dart';
 import 'main_page.dart';
+import 'package:freedomcompass/style/color.dart';
+import 'package:freedomcompass/style/text_style.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -12,9 +15,8 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(loginpage_lan.loginPageTitle,
-        style: AdaptiveText.titleTextStyle(context,color: Colors.black)),
+      appBar: const CustomAppBar(
+        titleText: loginpage_lan.loginPageTitle,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -28,7 +30,7 @@ class LoginPage extends StatelessWidget {
               },
               buttonColor: Colors.blueAccent,
               buttonText: loginpage_lan.signInWithGoogle,
-              textStyle: AdaptiveText.mediumTextStyle(context, color: Colors.white),
+              textStyle: AdaptiveText.mediumTextStyle(context, color: AppColors.buttonTextColor),
 
             ),
             const AdaptiveSizedBox(),
@@ -39,7 +41,7 @@ class LoginPage extends StatelessWidget {
               },
               buttonColor: Colors.black,
               buttonText: loginpage_lan.signInWithX,
-              textStyle: AdaptiveText.mediumTextStyle(context, color: Colors.white)),
+              textStyle: AdaptiveText.mediumTextStyle(context, color: AppColors.buttonTextColor)),
 
             const AdaptiveSizedBox(),
             BigButton(
@@ -59,7 +61,7 @@ class LoginPage extends StatelessWidget {
               },
               buttonColor: Colors.green,
               buttonText: loginpage_lan.signInWithNaver,
-              textStyle: AdaptiveText.mediumTextStyle(context, color: Colors.white),
+              textStyle: AdaptiveText.mediumTextStyle(context, color: AppColors.buttonTextColor),
             ),
             const AdaptiveSizedBox(),
             const AdaptiveSizedBox(),
@@ -68,9 +70,9 @@ class LoginPage extends StatelessWidget {
               onPressed: () {
                 NavigatorHelper.goToPage(context, MainPage());
               },
-              buttonColor: Colors.white,
+              buttonColor: Colors.grey,
               buttonText: loginpage_lan.justUse,
-              textStyle: AdaptiveText.mediumTextStyle(context, color: Colors.black),
+              textStyle: AdaptiveText.mediumTextStyle(context, color: AppColors.buttonTextColor),
             ),
           ],
         ),

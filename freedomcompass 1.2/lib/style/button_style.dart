@@ -25,7 +25,7 @@ class BigButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(buttonColor ?? Colors.white), // 버튼 색상 지정, 없으면 기본값으로 blue 사용
+        backgroundColor: MaterialStateProperty.all(buttonColor ?? Colors.white),
         minimumSize: MaterialStateProperty.all(Size(buttonWidth, buttonHeight)),
         textStyle: MaterialStateProperty.all(AdaptiveText.titleTextStyle(context)),
       ),
@@ -58,7 +58,7 @@ class MediumButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(buttonColor ?? Colors.white), // 버튼 색상 지정, 없으면 기본값으로 blue 사용
+        backgroundColor: MaterialStateProperty.all(buttonColor ?? Colors.white),
         minimumSize: MaterialStateProperty.all(Size(buttonWidth, buttonHeight)),
         textStyle: MaterialStateProperty.all(AdaptiveText.titleTextStyle(context)),
       ),

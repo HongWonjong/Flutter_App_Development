@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:freedomcompass/style/icon.dart';
 
 class CustomBottomBar extends StatelessWidget {
-  const CustomBottomBar({Key? key}) : super(key: key);
+  const CustomBottomBar({super.key});
+
 
   @override
   Widget build(BuildContext context) {
+
+    double screenHeight = MediaQuery.of(context).size.height;
+    double containerHeight;
+    containerHeight = screenHeight / 15;
+
     return Container(
-      height: 60.0,
-      color: Colors.white,
+      height: containerHeight,
+      color: Colors.white24,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -15,31 +22,31 @@ class CustomBottomBar extends StatelessWidget {
             onTap: () {
               // Home 아이콘을 클릭했을 때 실행되는 코드
             },
-            child: Icon(Icons.home),
+            child: AdaptiveIcons.homeIcon(),
           ),
           InkWell(
             onTap: () {
               // Search 아이콘을 클릭했을 때 실행되는 코드
             },
-            child: Icon(Icons.search),
+            child: AdaptiveIcons.searchIcon(),
           ),
           InkWell(
             onTap: () {
               // Favorite 아이콘을 클릭했을 때 실행되는 코드
             },
-            child: Icon(Icons.favorite),
+            child: AdaptiveIcons.favoriteIcon(),
           ),
           InkWell(
             onTap: () {
               // Notifications 아이콘을 클릭했을 때 실행되는 코드
             },
-            child: Icon(Icons.notifications),
+            child: AdaptiveIcons.notificationsIcon(),
           ),
           InkWell(
             onTap: () {
               // Settings 아이콘을 클릭했을 때 실행되는 코드
             },
-            child: Icon(Icons.settings),
+            child: AdaptiveIcons.settingsIcon(),
           ),
         ],
       ),

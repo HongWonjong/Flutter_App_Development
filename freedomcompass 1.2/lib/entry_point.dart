@@ -30,17 +30,19 @@ class MyApp extends StatelessWidget {
 class AuthenticationWrapper extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  AuthenticationWrapper({super.key});
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: _auth.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
-          User? user = snapshot.data as User?;
+          User? user = snapshot.data;
 
           if (user == null) {
             // 사용자가 로그인되어 있지 않은 경우
-            return LoginPage();
+            return const LoginPage();
           } else {
             // 사용자가 이미 로그인되어 있는 경우
             return MainPage();
@@ -48,7 +50,7 @@ class AuthenticationWrapper extends StatelessWidget {
         }
 
         // 연결이 활성화되지 않은 경우 로딩 페이지 또는 다른 처리를 할 수 있습니다.
-        return CircularProgressIndicator();
+        return const CircularProgressIndicator();
       },
     );
   }
