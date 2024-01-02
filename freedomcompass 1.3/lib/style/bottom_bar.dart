@@ -18,36 +18,11 @@ class CustomBottomBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          InkWell(
-            onTap: () {
-              // Home 아이콘을 클릭했을 때 실행되는 코드
-            },
-            child: AdaptiveIcons.homeIcon(),
-          ),
-          InkWell(
-            onTap: () {
-              // Search 아이콘을 클릭했을 때 실행되는 코드
-            },
-            child: AdaptiveIcons.searchIcon(),
-          ),
-          InkWell(
-            onTap: () {
-              // Favorite 아이콘을 클릭했을 때 실행되는 코드
-            },
-            child: AdaptiveIcons.favoriteIcon(),
-          ),
-          InkWell(
-            onTap: () {
-              // Notifications 아이콘을 클릭했을 때 실행되는 코드
-            },
-            child: AdaptiveIcons.notificationsIcon(),
-          ),
-          InkWell(
-            onTap: () {
-              // Settings 아이콘을 클릭했을 때 실행되는 코드
-            },
-            child: AdaptiveIcons.settingsIcon(),
-          ),
+          AdaptiveIcons.homeIcon(),
+          AdaptiveIcons.searchIcon(),
+          AdaptiveIcons.favoriteIcon(),
+          AdaptiveIcons.notificationsIcon(),
+          AdaptiveIcons.settingsIcon(),
         ],
       ),
     );

@@ -34,25 +34,10 @@ class MainPage extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text(
-                'User Email: $email', // 가져온 사용자의 UID를 출력
-                style: AdaptiveText.mediumTextStyle(context),
-              ),
-              InkWell(
-                onTap: () {
-                  // Notifications 아이콘을 클릭했을 때 실행되는 코드
-                },
-                child: IconButton(
-                  icon: AdaptiveIcons.notificationsIcon(), // 알맞은 아이콘을 가져와서 사용
-                  onPressed: () {
-                    // Notifications 아이콘을 클릭했을 때 실행되는 코드
-                  },
-                ),
-              ),
               const AdaptiveSizedBox(),
               SizedBox(
                 width: screenWidth * 0.95,
-                height: screenHeight * 0.7,
+                height: screenHeight * 0.8,
                 child: MapWidget(),
               ),
             ],
