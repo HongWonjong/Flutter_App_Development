@@ -11,12 +11,8 @@ class MapWidget extends StatefulWidget {
 
 class _MapWidgetState extends State<MapWidget> {
 // init the position using the user location
-  final controller = MapController.withUserPosition(
-      trackUserLocation: const UserTrackingOption(
-        enableTracking: true,
-        unFollowUser: false,
-        // controller에 customlayer를 추가해서 지도에 눈, 땅 등의 색상을 넣을 수 있다. 근데 그러면 개느려지니까 하지 말자.
-      )
+  final controller = MapController(
+    initMapWithUserPosition:  const UserTrackingOption()
   );
 
   Future<void> getLocationAndUpdateMap(MapController controller) async {
@@ -29,6 +25,7 @@ class _MapWidgetState extends State<MapWidget> {
   Widget build(BuildContext context) {
     return OSMFlutter(
         controller:controller,
+
         osmOption: OSMOption(
           userTrackingOption: const UserTrackingOption(
             enableTracking: true,
@@ -44,20 +41,22 @@ class _MapWidgetState extends State<MapWidget> {
           userLocationMarker: UserLocationMaker(
             personMarker: const MarkerIcon(
               icon: Icon(
-                Icons.location_history_rounded,
-                color: Colors.red,
+                Icons.personal_injury,
+                color: Colors.black,
                 size: 48,
               ),
             ),
             directionArrowMarker: const MarkerIcon(
               icon: Icon(
-                Icons.double_arrow,
+                Icons.location_on,
+                color: Colors.black,
                 size: 48,
               ),
             ),
           ),
           roadConfiguration: const RoadOption(
-            roadColor: Colors.yellowAccent,
+            roadColor: Colors.blueGrey,
+            roadWidth: 20,
           ),
           markerOption: MarkerOption(
               defaultMarker: const MarkerIcon(
