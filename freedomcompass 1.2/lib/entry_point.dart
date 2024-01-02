@@ -6,6 +6,8 @@ import 'page/main_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:freedomcompass/function/user_repository.dart';
+import 'riverpod/user_riverpod.dart';
 
 
 void main() async {
@@ -13,7 +15,6 @@ void main() async {
   await Firebase.initializeApp();
   FirebaseAppCheck appCheck = FirebaseAppCheck.instance;
   await appCheck.activate();
-
 
   runApp(
       ProviderScope(
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
 class AuthenticationWrapper extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+
   AuthenticationWrapper({super.key});
 
   @override
@@ -45,9 +47,11 @@ class AuthenticationWrapper extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.active) {
           User? user = snapshot.data;
 
+
+
           if (user == null) {
             // 사용자가 로그인되어 있지 않은 경우
-            return const LoginPage();
+            return LoginPage();
           } else {
             // 사용자가 이미 로그인되어 있는 경우
             return MainPage();

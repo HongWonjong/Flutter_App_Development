@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:freedomcompass/l10n/language.dart';
 import 'package:freedomcompass/style/app_bar.dart';
@@ -8,28 +7,12 @@ import 'package:freedomcompass/style/sized_box.dart';
 import 'package:freedomcompass/style/navigator.dart';
 import 'main_page.dart';
 import 'package:freedomcompass/style/color.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:freedomcompass/function/user_repository.dart';
+import 'package:freedomcompass/function/sign_in_function.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
-
-  Future<void> _signInWithGoogle() async {
-    try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) return; // 사용자가 로그인을 취소한 경우
-
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      await FirebaseAuth.instance.signInWithCredential(credential);
-    } catch (e) {
-      print('Google 로그인 오류: $e');
-      // 오류 처리 로직을 추가하세요 (예: 사용자에게 알림을 표시하거나 다른 조치를 취함)
-    }
-  }
+  LoginPage({super.key});
+  final UserRepository _userRepository = UserRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +26,10 @@ class LoginPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             BigButton( // 이 부분을 수정
-              onPressed: () {
-                _signInWithGoogle();
+              onPressed: () async {
+                await AuthFunctions.signInWithGoogle();
+                await _userRepository.addUserToFirestore();
+
               },
               buttonColor: Colors.blueAccent,
               buttonText: loginpage_lan.signInWithGoogle,
@@ -86,7 +71,7 @@ class LoginPage extends StatelessWidget {
             const AdaptiveSizedBox(),
             MediumButton(
               onPressed: () {
-                NavigatorHelper.goToPage(context, MainPage());
+                NavigatorHelper.goToPage(context, const MainPage());
               },
               buttonColor: Colors.grey,
               buttonText: loginpage_lan.justUse,

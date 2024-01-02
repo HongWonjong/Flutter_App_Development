@@ -9,9 +9,14 @@ import 'package:freedomcompass/style/sized_box.dart';
 import 'package:freedomcompass/style/color.dart';
 
 
-class MainPage extends StatelessWidget {
-  MainPage({Key? key});
+class MainPage extends StatefulWidget {
+  const MainPage({Key? key});
 
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
   // MapWidget 인스턴스 생성
   MapWidget mapWidget = MapWidget();
 
