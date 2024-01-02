@@ -5,10 +5,15 @@ import 'page/login_page.dart';
 import 'page/main_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  FirebaseAppCheck appCheck = FirebaseAppCheck.instance;
+  await appCheck.activate();
+
 
   runApp(
       ProviderScope(
