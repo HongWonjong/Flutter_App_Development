@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freedomcompass/l10n/language.dart';
 import 'package:freedomcompass/style/bottom_bar.dart';
 import 'package:freedomcompass/style/app_bar.dart';
@@ -8,27 +9,13 @@ import 'package:freedomcompass/style/text_style.dart';
 import 'package:freedomcompass/style/sized_box.dart';
 import 'package:freedomcompass/style/color.dart';
 import 'package:freedomcompass/function/user_repository.dart';
+import 'package:freedomcompass/rriverpod/user_riverpod.dart';
 
-
-class MainPage extends StatefulWidget {
-  const MainPage({Key? key});
-
+class MainPage extends ConsumerWidget {
   @override
-  State<MainPage> createState() => _MainPageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(uidProvider); // uidProvider를 감시하고 user 변수에 저장
 
-class _MainPageState extends State<MainPage> {
-  // MapWidget 인스턴스 생성
-  MapWidget mapWidget = MapWidget();
-
-  @override
-  void initState() {
-    super.initState();
-    checkAndAddUserData();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double targetWidth = screenWidth * 0.9;
 
@@ -36,12 +23,16 @@ class _MainPageState extends State<MainPage> {
       appBar: const CustomAppBar(
         titleText: mainpage_lan.mainPageTitle,
       ),
-      body: Container( // Container 추가
-        color: AppColors.centerColor, // 원하는 색상으로 설정
+      body: Container(
+        color: AppColors.centerColor,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Text(
+                'User UID: $user', // 가져온 사용자의 UID를 출력
+                style: AdaptiveText.mediumTextStyle(context),
+              ),
               MediumButton(
                 onPressed: () {
                   MapWidget().triggerLocationUpdate();
@@ -66,4 +57,5 @@ class _MainPageState extends State<MainPage> {
     );
   }
 }
+
 

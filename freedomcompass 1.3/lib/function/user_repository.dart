@@ -21,7 +21,7 @@ class UserRepository {
     }
 }
 
-Future<void> checkAndAddUserData() async {
+Future<void> checkAndAddDefaultUserData() async { //// 유저가 처음 가입할 때, 기본적인 유저 정보를 데이터베이스에 세팅합니다.
   final user = FirebaseAuth.instance.currentUser;
   if (user != null) {
     final userDoc = await FirebaseFirestore.instance.collection('user').doc(user.uid).get();

@@ -7,40 +7,33 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:freedomcompass/function/user_repository.dart';
-import 'riverpod/user_riverpod.dart';
-import 'firebase_options.dart'; // 이건 firebase CLI 다 설치해야 됨.
-
-
-
+import 'firebase_options.dart';
+import 'rriverpod/user_riverpod.dart'; // user_riverpod.dart를 import합니다.
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
- await Firebase.initializeApp(
+  await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
   await FirebaseAppCheck.instance.activate(
-    // Set androidProvider to `AndroidProvider.debug`
     androidProvider: AndroidProvider.debug,
   );
 
- /*
-  FirebaseAppCheck appCheck = FirebaseAppCheck.instance;
-  await appCheck.activate();*/ // 이건 실제 출시할 때 쓰자.
-
-
   runApp(
-      ProviderScope(
-      child: MyApp()
-  ));
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
-
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '자유의 나침반',// 앱 아이콘과 이름을 설정
+      title: '자유의 나침반',
       home: AuthenticationWrapper(),
     );
   }
@@ -48,7 +41,6 @@ class MyApp extends StatelessWidget {
 
 class AuthenticationWrapper extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
 
   AuthenticationWrapper({super.key});
 
@@ -60,20 +52,17 @@ class AuthenticationWrapper extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.active) {
           User? user = snapshot.data;
 
-
-
           if (user == null) {
-            // 사용자가 로그인되어 있지 않은 경우
             return LoginPage();
           } else {
-            // 사용자가 이미 로그인되어 있는 경우
+            // MainPage에서 user_riverpod.dart에서 가져온 프로바이더 사용
             return MainPage();
           }
         }
 
-        // 연결이 활성화되지 않은 경우 로딩 페이지 또는 다른 처리를 할 수 있습니다.
         return const CircularProgressIndicator();
       },
     );
   }
 }
+

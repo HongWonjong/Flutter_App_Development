@@ -71,7 +71,7 @@ class LoginPage extends StatelessWidget {
             const AdaptiveSizedBox(),
             MediumButton(
               onPressed: () {
-                NavigatorHelper.goToPage(context, const MainPage());
+                NavigatorHelper.goToPage(context, MainPage());
               },
               buttonColor: Colors.grey,
               buttonText: loginpage_lan.justUse,
