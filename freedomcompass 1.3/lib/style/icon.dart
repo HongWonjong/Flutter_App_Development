@@ -11,6 +11,16 @@ class AdaptiveIcons {
     );
   }
 
+  static Widget locationSearching({VoidCallback? onTap, BuildContext? context}) {
+    return InkWell(
+      onTap: onTap,
+      child: Icon(
+        Icons.location_searching,
+        size: context != null ? MediaQuery.of(context).size.height * 0.07 : 0.0,
+      ),
+    );
+  }
+
   static Widget searchIcon({VoidCallback? onTap, BuildContext? context}) {
     return InkWell(
       onTap: onTap,

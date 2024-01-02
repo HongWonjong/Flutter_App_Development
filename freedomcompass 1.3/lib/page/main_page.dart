@@ -10,6 +10,7 @@ import 'package:freedomcompass/style/sized_box.dart';
 import 'package:freedomcompass/style/color.dart';
 import 'package:freedomcompass/rriverpod/user_riverpod.dart';
 import 'package:freedomcompass/rriverpod/map_controller_riverpod.dart';
+import 'package:freedomcompass/style/icon.dart';
 
 class MainPage extends ConsumerWidget {
   const MainPage({super.key});
@@ -21,7 +22,7 @@ class MainPage extends ConsumerWidget {
 
 
     double screenWidth = MediaQuery.of(context).size.width;
-    double targetWidth = screenWidth * 0.9;
+    double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       appBar: const CustomAppBar(
@@ -31,24 +32,27 @@ class MainPage extends ConsumerWidget {
         color: AppColors.centerColor,
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
                 'User Email: $email', // 가져온 사용자의 UID를 출력
                 style: AdaptiveText.mediumTextStyle(context),
               ),
-              MediumButton(
-                onPressed: () {
-                   MapWidget();
+              InkWell(
+                onTap: () {
+                  // Notifications 아이콘을 클릭했을 때 실행되는 코드
                 },
-                buttonText: mainpage_lan.setToMyPosition,
-                buttonColor: AppColors.buttonColor,
-                textStyle: AdaptiveText.mediumTextStyle(context, color: AppColors.buttonTextColor),
+                child: IconButton(
+                  icon: AdaptiveIcons.notificationsIcon(), // 알맞은 아이콘을 가져와서 사용
+                  onPressed: () {
+                    // Notifications 아이콘을 클릭했을 때 실행되는 코드
+                  },
+                ),
               ),
               const AdaptiveSizedBox(),
               SizedBox(
-                width: targetWidth,
-                height: targetWidth * 0.9,
+                width: screenWidth * 0.95,
+                height: screenHeight * 0.7,
                 child: MapWidget(),
               ),
             ],
