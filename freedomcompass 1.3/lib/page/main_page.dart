@@ -9,6 +9,7 @@ import 'package:freedomcompass/style/text_style.dart';
 import 'package:freedomcompass/style/sized_box.dart';
 import 'package:freedomcompass/style/color.dart';
 import 'package:freedomcompass/rriverpod/user_riverpod.dart';
+import 'package:freedomcompass/rriverpod/map_controller_riverpod.dart';
 
 class MainPage extends ConsumerWidget {
   const MainPage({super.key});
@@ -17,6 +18,7 @@ class MainPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
      // final user = ref.watch(uidProvider); // uidProvider를 감시하고 user 변수에 저장
     final email = ref.watch(userEmailProvider).value;
+
 
     double screenWidth = MediaQuery.of(context).size.width;
     double targetWidth = screenWidth * 0.9;
@@ -37,7 +39,7 @@ class MainPage extends ConsumerWidget {
               ),
               MediumButton(
                 onPressed: () {
-                  MapWidget().triggerLocationUpdate();
+                   MapWidget();
                 },
                 buttonText: mainpage_lan.setToMyPosition,
                 buttonColor: AppColors.buttonColor,

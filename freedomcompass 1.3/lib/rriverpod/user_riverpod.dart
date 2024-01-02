@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 final uidProvider = Provider<String>((ref) {
   String myuid = FirebaseAuth.instance.currentUser!.uid;
   return myuid;
-});
+}); // 유저의 uid를 가져와야 할 때
 
 final userEmailProvider = FutureProvider.autoDispose<String>((ref) async {
   final uid = ref.watch(uidProvider);
