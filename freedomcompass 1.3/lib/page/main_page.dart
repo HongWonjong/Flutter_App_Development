@@ -8,13 +8,15 @@ import 'package:freedomcompass/style/button_style.dart';
 import 'package:freedomcompass/style/text_style.dart';
 import 'package:freedomcompass/style/sized_box.dart';
 import 'package:freedomcompass/style/color.dart';
-import 'package:freedomcompass/function/user_repository.dart';
 import 'package:freedomcompass/rriverpod/user_riverpod.dart';
 
 class MainPage extends ConsumerWidget {
+  const MainPage({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(uidProvider); // uidProvider를 감시하고 user 변수에 저장
+     // final user = ref.watch(uidProvider); // uidProvider를 감시하고 user 변수에 저장
+    final email = ref.watch(userEmailProvider).value;
 
     double screenWidth = MediaQuery.of(context).size.width;
     double targetWidth = screenWidth * 0.9;
@@ -30,7 +32,7 @@ class MainPage extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'User UID: $user', // 가져온 사용자의 UID를 출력
+                'User UID: $email', // 가져온 사용자의 UID를 출력
                 style: AdaptiveText.mediumTextStyle(context),
               ),
               MediumButton(

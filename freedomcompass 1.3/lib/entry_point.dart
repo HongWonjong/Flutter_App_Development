@@ -56,7 +56,7 @@ class AuthenticationWrapper extends StatelessWidget {
             return LoginPage();
           } else {
             // MainPage에서 user_riverpod.dart에서 가져온 프로바이더 사용
-            return MainPage();
+            return const MainPage();
           }
         }
 
