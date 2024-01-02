@@ -7,6 +7,7 @@ import 'package:freedomcompass/style/button_style.dart';
 import 'package:freedomcompass/style/text_style.dart';
 import 'package:freedomcompass/style/sized_box.dart';
 import 'package:freedomcompass/style/color.dart';
+import 'package:freedomcompass/function/user_repository.dart';
 
 
 class MainPage extends StatefulWidget {
@@ -19,6 +20,12 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   // MapWidget 인스턴스 생성
   MapWidget mapWidget = MapWidget();
+
+  @override
+  void initState() {
+    super.initState();
+    checkAndAddUserData();
+  }
 
   @override
   Widget build(BuildContext context) {

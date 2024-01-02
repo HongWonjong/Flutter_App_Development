@@ -8,16 +8,26 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:freedomcompass/function/user_repository.dart';
 import 'riverpod/user_riverpod.dart';
-import 'firebase_options.dart';
+import 'firebase_options.dart'; // 이건 firebase CLI 다 설치해야 됨.
+
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
+ await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+ /*
   FirebaseAppCheck appCheck = FirebaseAppCheck.instance;
-  await appCheck.activate();
+  await appCheck.activate();*/ // 이건 실제 출시할 때 쓰자.
+
+
+  // 디버그용 앱 체크 프로바이더 활성화
+  FirebaseAppCheck appCheck = FirebaseAppCheck.instance;
+  await appCheck.activate(
+    debugProvider: DebugAppCheckProviderFactory.getInstance(),
+  );
 
   runApp(
       ProviderScope(

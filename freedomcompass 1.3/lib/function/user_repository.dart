@@ -20,3 +20,15 @@ class UserRepository {
     }
     }
 }
+
+Future<void> checkAndAddUserData() async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+    final userDoc = await FirebaseFirestore.instance.collection('user').doc(user.uid).get();
+
+    if (!userDoc.exists) {
+      // 유저 정보가 데이터베이스에 없으면 추가
+      await UserRepository().addUserToFirestore();
+    }
+  }
+}
