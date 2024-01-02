@@ -32,7 +32,7 @@ class MainPage extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'User UID: $email', // 가져온 사용자의 UID를 출력
+                'User Email: $email', // 가져온 사용자의 UID를 출력
                 style: AdaptiveText.mediumTextStyle(context),
               ),
               MediumButton(
