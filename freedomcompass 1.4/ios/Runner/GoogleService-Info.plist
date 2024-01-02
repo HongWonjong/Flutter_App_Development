@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>618851710711-49qif2pg2gvhsovf3e7peo92ncjvcoic.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.618851710711-49qif2pg2gvhsovf3e7peo92ncjvcoic</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>618851710711-10dh9ql6v153t0iqaa1drdujjncusm6e.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBPTku1kZ8cpvoNloX_BnnSdxRmKtFwVcc</string>
+	<key>GCM_SENDER_ID</key>
+	<string>618851710711</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.freedomcompass</string>
+	<key>PROJECT_ID</key>
+	<string>freedomcompass-920ee</string>
+	<key>STORAGE_BUCKET</key>
+	<string>freedomcompass-920ee.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:618851710711:ios:29184fcb29f55b5a8ac5f2</string>
+</dict>
+</plist>
