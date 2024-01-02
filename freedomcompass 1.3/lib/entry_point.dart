@@ -8,11 +8,14 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:freedomcompass/function/user_repository.dart';
 import 'riverpod/user_riverpod.dart';
+import 'firebase_options.dart';
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   FirebaseAppCheck appCheck = FirebaseAppCheck.instance;
   await appCheck.activate();
 
