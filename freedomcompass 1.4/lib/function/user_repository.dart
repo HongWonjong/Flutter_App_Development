@@ -2,8 +2,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:freedomcompass/rriverpod/user_riverpod.dart';
-import 'package:riverpod/riverpod.dart';
+
 
 class UserRepository {
 

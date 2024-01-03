@@ -1,6 +1,5 @@
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:flutter/material.dart';
-import 'package:riverpod/riverpod.dart';
 
 class MapWidget extends StatefulWidget {
   const MapWidget({super.key});
@@ -25,7 +24,6 @@ class _MapWidgetState extends State<MapWidget> {
   Widget build(BuildContext context) {
     return OSMFlutter(
         controller:controller,
-
         osmOption: OSMOption(
           userTrackingOption: const UserTrackingOption(
             enableTracking: true,

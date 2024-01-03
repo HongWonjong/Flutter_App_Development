@@ -4,13 +4,11 @@ import 'package:freedomcompass/l10n/language.dart';
 import 'package:freedomcompass/style/bottom_bar.dart';
 import 'package:freedomcompass/style/app_bar.dart';
 import 'package:freedomcompass/function/osm_map.dart';
-import 'package:freedomcompass/style/button_style.dart';
-import 'package:freedomcompass/style/text_style.dart';
+
 import 'package:freedomcompass/style/sized_box.dart';
 import 'package:freedomcompass/style/color.dart';
 import 'package:freedomcompass/rriverpod/user_riverpod.dart';
-import 'package:freedomcompass/rriverpod/map_controller_riverpod.dart';
-import 'package:freedomcompass/style/icon.dart';
+
 
 class MainPage extends ConsumerWidget {
   const MainPage({super.key});
