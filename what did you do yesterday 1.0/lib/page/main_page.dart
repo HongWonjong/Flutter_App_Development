@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freedomcompass/l10n/language.dart';
-import 'package:freedomcompass/style/app_bar.dart';
+import 'package:freedomcompass/component/app_bar.dart';
 import 'package:freedomcompass/style/button_style.dart';
-import 'package:freedomcompass/style/sized_box.dart';
+import 'package:freedomcompass/component/sized_box.dart';
 import 'package:freedomcompass/style/color.dart';
 import 'package:freedomcompass/style/text_style.dart';
-import 'package:freedomcompass/style/memo_list.dart';
+import 'package:freedomcompass/component/memo_list.dart';
+import 'package:freedomcompass/function/navigator.dart';
+import 'create_memo_page.dart';
 
 
 class MainPage extends ConsumerWidget {
@@ -35,7 +37,7 @@ class MainPage extends ConsumerWidget {
               MediumButton(
                   buttonColor: AppColors.mainPageButtonColor,
                   onPressed: () {
-                    // elevated button
+                    NavigatorHelper.goToPage(context, CreateMemoPage());
                   },
                   buttonText: mainpage_lan.writeMemos,
                   textStyle: AdaptiveText.mediumTextStyle(context, color: AppColors.mainPageButtonTextColor)),

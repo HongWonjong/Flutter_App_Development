@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:freedomcompass/style/icon.dart';
+import 'package:freedomcompass/component/icon.dart';
 
 
 // 하단에는 채팅입력창이 들어갈 예정이므로 이건 개발 중지다. 수고 많았다.

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:freedomcompass/l10n/language.dart';
-import 'package:freedomcompass/style/app_bar.dart';
+import 'package:freedomcompass/component/app_bar.dart';
 import 'package:freedomcompass/style/text_style.dart';
 import 'package:freedomcompass/style/button_style.dart';
-import 'package:freedomcompass/style/sized_box.dart';
-import 'package:freedomcompass/style/navigator.dart';
+import 'package:freedomcompass/component/sized_box.dart';
+import 'package:freedomcompass/function/navigator.dart';
 import 'main_page.dart';
 import 'package:freedomcompass/style/color.dart';
 import 'package:freedomcompass/function/user_repository.dart';

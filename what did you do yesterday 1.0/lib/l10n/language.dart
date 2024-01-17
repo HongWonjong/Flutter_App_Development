@@ -13,3 +13,7 @@ class mainpage_lan {
   static const String setToMyPosition = '내 위치로 설정하기';
   static const String writeMemos = "새 메모 작성";
 }
+
+class createpage_lan {
+  static const String createfinished = "작성 완료 및 저장";
+}
