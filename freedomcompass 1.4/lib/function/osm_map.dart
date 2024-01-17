@@ -1,6 +1,8 @@
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:flutter/material.dart';
 
+
+// 메인  페이지에 넣어보고 싶었던 지도를 응용한 위젯. 그러나 계획 변경으로 여기에 남겨만 두겠다.
 class MapWidget extends StatefulWidget {
   const MapWidget({super.key});
 

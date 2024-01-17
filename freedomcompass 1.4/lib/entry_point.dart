@@ -4,11 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'page/login_page.dart';
 import 'page/main_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:freedomcompass/function/user_repository.dart';
 import 'firebase_options.dart';
-import 'rriverpod/user_riverpod.dart'; // user_riverpod.dart를 import합니다.
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

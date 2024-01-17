@@ -8,7 +8,7 @@ class loginpage_lan {
 }
 
 class mainpage_lan {
-  static const String mainPageTitle = '메인 페이지';
+  static const String mainPageTitle = 'Guess what?';
   static const String centerMessage = "앱의 중심 내용이 여기에 들어갑니다.";
   static const String setToMyPosition = '내 위치로 설정하기';
 }

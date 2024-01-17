@@ -16,6 +16,7 @@ class UserRepository {
         'user_auth': false,
         'user_email': user.email,
         'user_reliability': 0,
+        'user_uid': user.uid
       });
     }
     else {
