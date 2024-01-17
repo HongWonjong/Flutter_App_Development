@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c4b1accd-1ea4-489f-93b7-b712ba05da75" name="Changes" comment="readme 수정" />
+    <list default="true" id="c4b1accd-1ea4-489f-93b7-b712ba05da75" name="Changes" comment="readme 수정">
+      <change beforePath="$PROJECT_DIR$/freedomcompass 1.4/lib/style/color.dart" beforeDir="false" afterPath="$PROJECT_DIR$/freedomcompass 1.4/lib/style/color.dart" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -28,6 +30,7 @@
     "RunOnceActivity.cidr.known.project.marker": "true",
     "cidr.known.project.marker": "true",
     "dart.analysis.tool.window.visible": "false",
+    "last_opened_file_path": "/Users/wonjonghong/StudioProjects",
     "settings.editor.selected.configurable": "preferences.lookFeel",
     "show.migrate.to.gradle.popup": "false"
   }
