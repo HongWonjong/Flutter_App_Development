@@ -14,14 +14,18 @@ class LoginPage extends StatelessWidget {
   LoginPage({super.key});
   final UserRepository _userRepository = UserRepository();
 
+
   @override
   Widget build(BuildContext context) {
+
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: const CustomAppBar(
         titleText: loginpage_lan.loginPageTitle,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(screenHeight * 0.02),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

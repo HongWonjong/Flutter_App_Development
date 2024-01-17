@@ -7,6 +7,7 @@ import 'package:freedomcompass/component/sized_box.dart';
 import 'package:freedomcompass/style/button_style.dart';
 import 'package:freedomcompass/function/navigator.dart';
 import 'main_page.dart';
+import 'package:freedomcompass/component/memo_text_field.dart';
 
 class CreateMemoPage extends StatefulWidget {
   @override
@@ -18,16 +19,19 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: const CustomAppBar(titleText: mainpage_lan.mainPageTitle),
       body: Container(
         color: AppColors.centerColor,
         child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                const AdaptiveSizedBox(),
                 MediumButton(
                   buttonColor: AppColors.mainPageButtonColor,
                   onPressed: () {
@@ -42,22 +46,11 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
                 ),
                 const AdaptiveSizedBox(),
                 // 텍스트 필드 추가
-                Expanded(
-                  child: TextField(
-                    controller: _memoController,
-                    maxLines: null, // 여러 줄의 텍스트를 입력할 수 있도록 함
-                    style: AdaptiveText.mediumTextStyle(context, color: AppColors.mainPageButtonTextColor),
-                    decoration: const InputDecoration(
-                      hintText: '메모를 입력하세요',
-                      border: OutlineInputBorder(), // 외곽선 추가
-                    ),
-                  ),
-                ),
+                MemoTextFieldWidget(memoController: _memoController),
               ],
             ),
           ),
         ),
-      ),
     );
   }
 }

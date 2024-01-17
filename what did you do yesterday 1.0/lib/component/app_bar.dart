@@ -15,11 +15,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return AppBar(
       centerTitle: true,
       title: Text(
       titleText ?? "글자 안넣었을 때 나오는 글자",
-      style: AdaptiveText.titleTextStyle(context, color: Colors.white),
+      style: AdaptiveText.titleTextStyle(context, color: AppColors.mainPageButtonTextColor),
     ),
       backgroundColor: AppColors.appBarColor,
     );

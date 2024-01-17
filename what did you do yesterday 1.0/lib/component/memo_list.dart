@@ -1,4 +1,3 @@
-// 새로운 파일: memo_list.dart
 import 'package:flutter/material.dart';
 import 'package:freedomcompass/style/color.dart';
 
@@ -25,15 +24,31 @@ class MemoListWidget extends StatelessWidget {
               children: [
                 ListTile(
                   tileColor: Colors.black, // 검은색 배경
-                  contentPadding: EdgeInsets.all(16.0),
-                  title: Text(
-                    'Memo $index',
-                    style: TextStyle(fontSize: 60, color: Colors.white),
+                  contentPadding: EdgeInsets.all(screenHeight * 0.02),
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Memo $index',
+                        style: TextStyle(fontSize: screenHeight * 0.03, color: AppColors.mainPageButtonTextColor),
+                      ),
+                      IconButton(
+                        icon:  Icon(
+                          size: screenHeight * 0.03,
+                          Icons.share,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          // 공유 기능 추가
+                          // 예: Share memo at index
+                        },
+                      ),
+                    ],
                   ),
                 ),
                 Divider(
                   height: screenHeight * 0.02,
-                  color: Colors.black, // 검은색 배경과 구분선을 위한 회색 선
+                  color: AppColors.memoDividerColor, // 검은색 배경과 구분선을 위한 회색 선
                 ),
               ],
             );
@@ -43,4 +58,5 @@ class MemoListWidget extends StatelessWidget {
     );
   }
 }
+
 
