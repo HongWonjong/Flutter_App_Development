@@ -19,7 +19,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: true,
       title: Text(
       titleText ?? "글자 안넣었을 때 나오는 글자",
-      style: AdaptiveText.titleTextStyle(context, color: Colors.black),
+      style: AdaptiveText.titleTextStyle(context, color: Colors.white),
     ),
       backgroundColor: AppColors.appBarColor,
     );

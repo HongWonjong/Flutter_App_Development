@@ -33,7 +33,7 @@ class LoginPage extends StatelessWidget {
               },
               buttonColor: Colors.blueAccent,
               buttonText: loginpage_lan.signInWithGoogle,
-              textStyle: AdaptiveText.mediumTextStyle(context, color: AppColors.buttonTextColor),
+              textStyle: AdaptiveText.mediumTextStyle(context, color: AppColors.loginPageButtonTextColor),
 
             ),
             const AdaptiveSizedBox(),
@@ -44,7 +44,7 @@ class LoginPage extends StatelessWidget {
               },
               buttonColor: Colors.black,
               buttonText: loginpage_lan.signInWithX,
-              textStyle: AdaptiveText.mediumTextStyle(context, color: AppColors.buttonTextColor)),
+              textStyle: AdaptiveText.mediumTextStyle(context, color: AppColors.loginPageButtonTextColor)),
 
             const AdaptiveSizedBox(),
             BigButton(
@@ -64,7 +64,7 @@ class LoginPage extends StatelessWidget {
               },
               buttonColor: Colors.green,
               buttonText: loginpage_lan.signInWithNaver,
-              textStyle: AdaptiveText.mediumTextStyle(context, color: AppColors.buttonTextColor),
+              textStyle: AdaptiveText.mediumTextStyle(context, color: AppColors.loginPageButtonTextColor),
             ),
             const AdaptiveSizedBox(),
             const AdaptiveSizedBox(),
@@ -75,7 +75,7 @@ class LoginPage extends StatelessWidget {
               },
               buttonColor: Colors.grey,
               buttonText: loginpage_lan.justUse,
-              textStyle: AdaptiveText.mediumTextStyle(context, color: AppColors.buttonTextColor),
+              textStyle: AdaptiveText.mediumTextStyle(context, color: AppColors.loginPageButtonTextColor),
             ),
           ],
         ),
