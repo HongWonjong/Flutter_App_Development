@@ -13,10 +13,10 @@ class UserRepository {
       final userDoc = FirebaseFirestore.instance.collection('user').doc(user.uid);
 
       await userDoc.set({
-        'user_auth': false,
-        'user_email': user.email,
-        'user_reliability': 0,
-        'user_uid': user.uid
+        'killSwitch': false,
+        "KillSwitchDLC": false,
+        'email': user.email,
+        "sharedMemoes": [],
       });
     }
     else {
