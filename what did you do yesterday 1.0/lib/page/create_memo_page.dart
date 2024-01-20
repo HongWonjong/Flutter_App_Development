@@ -5,9 +5,9 @@ import 'package:freedomcompass/l10n/language.dart';
 import 'package:freedomcompass/style/color.dart';
 import 'package:freedomcompass/component/sized_box.dart';
 import 'package:freedomcompass/style/button_style.dart';
-import 'package:freedomcompass/function/navigator.dart';
-import 'main_page.dart';
+import 'package:freedomcompass/function/memo_saving_function.dart';
 import 'package:freedomcompass/component/memo_text_field.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CreateMemoPage extends StatefulWidget {
   @override
@@ -16,6 +16,8 @@ class CreateMemoPage extends StatefulWidget {
 
 class _CreateMemoPageState extends State<CreateMemoPage> {
   TextEditingController _memoController = TextEditingController(); // 텍스트 필드의 컨트롤러
+  // Firestore 인스턴스 생성
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +41,8 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
                     String memoText = _memoController.text;
                     print('입력된 메모: $memoText');
 
-                    NavigatorHelper.goToPage(context, const MainPage());
+                    // Memo 저장 함수 호출
+                    saveMemo(memoText, context);
                   },
                   buttonText: createpage_lan.createfinished,
                   textStyle: AdaptiveText.mediumTextStyle(context, color: AppColors.mainPageButtonTextColor),
