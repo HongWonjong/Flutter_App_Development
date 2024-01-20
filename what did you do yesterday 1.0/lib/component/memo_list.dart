@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freedomcompass/style/color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:freedomcompass/page/edit_memo_page.dart';
 
 class MemoListWidget extends StatelessWidget {
   const MemoListWidget({Key? key}) : super(key: key);
@@ -36,6 +37,7 @@ class MemoListWidget extends StatelessWidget {
                 itemBuilder: (context, index) {
                   var memoData = memoList[index].data() as Map<String, dynamic>;
                   var memoContent = memoData['contents'] as String;
+                  var memoId = memoList[index].id; // 메모의 고유번호
 
                   // 처음 10글자만 노출
                   var truncatedContent = memoContent.length <= 10 ? memoContent : '${memoContent.substring(0, 10)}...';
@@ -44,9 +46,13 @@ class MemoListWidget extends StatelessWidget {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          // 클릭 시 수행할 동작 구현
-                          print('Tile at index $index is clicked!');
-                          // 추가로 원하는 동작을 여기에 추가하세요.
+                          // 클릭 시 해당 메모의 고유번호를 전달하고 editmemo 페이지로 이동
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditMemoPage(memoId: memoId),
+                            ),
+                          );
                         },
                         child: ListTile(
                           tileColor: Colors.black,

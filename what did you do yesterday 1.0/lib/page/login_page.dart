@@ -7,7 +7,7 @@ import 'package:freedomcompass/component/sized_box.dart';
 import 'package:freedomcompass/function/navigator.dart';
 import 'main_page.dart';
 import 'package:freedomcompass/style/color.dart';
-import 'package:freedomcompass/function/user_repository.dart';
+import 'package:freedomcompass/function/user_basic_data_upload.dart';
 import 'package:freedomcompass/function/sign_in_function.dart';
 
 class LoginPage extends StatelessWidget {
