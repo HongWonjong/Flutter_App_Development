@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freedomcompass/l10n/language.dart';
-import 'package:freedomcompass/component/app_bar.dart';
-import 'package:freedomcompass/page/setting_page.dart';
 import 'package:freedomcompass/style/button_style.dart';
 import 'package:freedomcompass/component/sized_box.dart';
 import 'package:freedomcompass/style/color.dart';
@@ -41,14 +39,14 @@ class MainPage extends ConsumerWidget {
                       },
                       buttonText: mainpage_lan.writeMemos,
                       textStyle: AdaptiveText.mediumTextStyle(context, color: AppColors.mainPageButtonTextColor)),
-                  IconButton(
+                  /*IconButton(
                     onPressed: () {
                       NavigatorHelper.goToPage(context, const SettingPage());
                     },
                     icon: const Icon(Icons.settings),
                     iconSize: screenWidth * 0.15,
                     color: AppColors.mainPageButtonTextColor,
-                  ),
+                  ),*/
                 ],
               ),
               const MemoListWidget(),

@@ -69,7 +69,7 @@ class MemoListWidget extends StatelessWidget {
                                     icon: Icon(
                                       Icons.share,
                                       size: screenHeight * 0.04,
-                                      color: Colors.white,
+                                      color: AppColors.mainPageButtonTextColor,
                                     ),
                                     onPressed: () {
                                       showDialog(

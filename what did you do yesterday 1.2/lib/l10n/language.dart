@@ -26,3 +26,8 @@ class settingpage_lan {
   static const String killSwitchStatus = "킬 스위치 사용여부";
   static const String killSwitchPurchase = "킬 스위치 구매하기";
 }
+
+class shareDialog_lan {
+  static const String shareMemoTo = "메모 공유하기";
+  static const String hintText = "이메일 입력하기";
+}

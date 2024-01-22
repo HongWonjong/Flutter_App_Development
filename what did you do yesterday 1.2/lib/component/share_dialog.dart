@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:freedomcompass/style/button_style.dart';
 import 'package:freedomcompass/style/color.dart';
 import 'package:freedomcompass/component/sized_box.dart';
 import 'package:freedomcompass/style/text_style.dart';
+import 'package:freedomcompass/l10n/language.dart';
 
 class ShareDialog extends StatelessWidget {
   const ShareDialog({Key? key}) : super(key: key);
@@ -39,22 +41,17 @@ class ShareDialog extends StatelessWidget {
                               textAlignVertical: TextAlignVertical.top,
                               style: AdaptiveText.mediumTextStyle(context, color: AppColors.mainPageButtonTextColor),
                               decoration: const InputDecoration(
-                                hintText: '이메일 입력',
+                                hintText: shareDialog_lan.hintText,
                               ),
                             ),
-                            SizedBox(height: screenHeight * 0.02),
-                            ElevatedButton(
-                              onPressed: () {
-                                // 공유 로직을 여기에 추가
-                              },
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all<Color>(AppColors.listViewBackgroundColor),
-                              ),
-                              child: Text(
-                                '공유',
-                                style: AdaptiveText.mediumTextStyle(context, color: AppColors.mainPageButtonTextColor),
-                              ),
-                            ),
+                            const AdaptiveSizedBox(),
+                            MediumButton(
+                                buttonColor: AppColors.listViewBackgroundColor,
+                                onPressed: () {
+
+                                },
+                                buttonText: shareDialog_lan.shareMemoTo,
+                                textStyle: AdaptiveText.mediumTextStyle(context, color: AppColors.mainPageButtonTextColor)),
                           ],
                         ),
                       ),
