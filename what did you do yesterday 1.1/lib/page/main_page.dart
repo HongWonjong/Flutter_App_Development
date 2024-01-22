@@ -21,9 +21,9 @@ class MainPage extends ConsumerWidget {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: const CustomAppBar(
+      /*appBar: const CustomAppBar(
         titleText: mainpage_lan.mainPageTitle,
-      ),
+      ),*/
       body: Container(
         color: AppColors.centerColor,
         child: Center(

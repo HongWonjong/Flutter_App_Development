@@ -5,6 +5,7 @@ import 'package:freedomcompass/l10n/language.dart';
 import 'main_page.dart';
 import 'package:freedomcompass/function/navigator.dart';
 import 'package:freedomcompass/component/sized_box.dart';
+import 'package:freedomcompass/style/text_style.dart';
 
 class SettingPage extends StatelessWidget {
   const SettingPage({Key? key}) : super(key: key);
@@ -30,7 +31,7 @@ class SettingPage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const AdaptiveSizedBox(),
+                  Text(mainpage_lan.mainPageTitle, style: AdaptiveText.titleTextStyle(context, color: AppColors.mainPageButtonTextColor),),
 
                   IconButton(
                     onPressed: () {

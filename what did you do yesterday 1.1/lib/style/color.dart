@@ -13,4 +13,5 @@ class AppColors {
   static const Color listViewBackgroundColor = Colors.white24;
   static const Color memoDividerColor = Colors.black;
   static const Color memoHintTextColor = Colors.white24;
+  static const Color dialogBackgroundColor = Colors.grey;
 }

@@ -21,9 +21,9 @@ class LoginPage extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: const CustomAppBar(
+      /*appBar: const CustomAppBar(
         titleText: loginpage_lan.loginPageTitle,
-      ),
+      ),*/
       body: Padding(
         padding: EdgeInsets.all(screenHeight * 0.02),
         child: Column(

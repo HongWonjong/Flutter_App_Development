@@ -4,6 +4,7 @@ import 'package:freedomcompass/style/color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freedomcompass/page/edit_memo_page.dart';
 import 'package:intl/intl.dart';
+import 'share_dialog.dart';
 
 class MemoListWidget extends StatelessWidget {
   const MemoListWidget({Key? key}) : super(key: key);
@@ -46,14 +47,14 @@ class MemoListWidget extends StatelessWidget {
                           // 클릭 시 해당 메모의 고유번호를 전달하고 editmemo 페이지로 이동
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
+                            MaterialPageRoute (
                               builder: (context) => EditMemoPage(memoId: memoId),
                             ),
                           );
                         },
                         child: ListTile(
                           tileColor: Colors.black,
-                          contentPadding: EdgeInsets.all(screenHeight * 0.02),
+                          contentPadding: EdgeInsets.all(screenHeight * 0.01),
                           title: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -67,12 +68,16 @@ class MemoListWidget extends StatelessWidget {
                                   IconButton(
                                     icon: Icon(
                                       Icons.share,
-                                      size: screenHeight * 0.03,
+                                      size: screenHeight * 0.04,
                                       color: Colors.white,
                                     ),
                                     onPressed: () {
-                                      // 공유 기능 추가
-                                      // 예: Share memo at index
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return ShareDialog();
+                                        },
+                                      );
                                     },
                                   ),
                                 ],

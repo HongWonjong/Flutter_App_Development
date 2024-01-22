@@ -26,7 +26,7 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: const CustomAppBar(titleText: mainpage_lan.mainPageTitle),
+      /*appBar: const CustomAppBar(titleText: mainpage_lan.mainPageTitle),*/
       body: Container(
         color: AppColors.centerColor,
         child: Center(
