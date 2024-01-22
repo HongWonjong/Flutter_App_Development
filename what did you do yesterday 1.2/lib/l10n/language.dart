@@ -15,7 +15,7 @@ class mainpage_lan {
 }
 
 class createpage_lan {
-  static const String createfinished = "작성 완료 및 저장";
+  static const String createfinished = "메모 저장";
   static const String inputMemo = "메모를 입력하세요...";
 }
 
