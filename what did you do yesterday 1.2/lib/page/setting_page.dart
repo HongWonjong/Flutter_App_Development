@@ -18,9 +18,9 @@ class SettingPage extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar:  const CustomAppBar(
+      /*appBar:  const CustomAppBar(
       titleText: mainpage_lan.mainPageTitle,
-    ),
+    ),*/
       body: Container(
         color: AppColors.centerColor, // 메인 페이지와 동일한 배경색 사용
         child: Center(
