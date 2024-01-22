@@ -1,0 +1,40 @@
+name: freedomcompass
+description: A new Flutter project.
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.19.6 <3.0.0'
+  flutter: ">=3.0.0"
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+  firebase_core: ^2.24.2
+  firebase_auth: ^4.15.3
+  intl: ^0.18.0
+  routing_client_dart: ^0.5.3
+  flutter_osm_plugin: ^0.70.4
+  pointer_interceptor: ^0.10.0
+  flutter_riverpod: ^2.4.9
+  riverpod_annotation: ^2.3.3
+  cupertino_icons: ^1.0.2
+  firebase_app_check: ^0.2.1+8
+  google_sign_in: ^6.2.1
+  cloud_firestore: ^4.13.6
+
+
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner:
+  custom_lint:
+  flutter_lints: ^3.0.1
+  riverpod_generator: ^2.3.9
+  riverpod_lint: ^2.3.7
+
+flutter:
+  uses-material-design: true
