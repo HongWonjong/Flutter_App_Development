@@ -19,91 +19,105 @@ class MemoListWidget extends StatelessWidget {
         // Firestore에서 메모 목록을 가져오는 비동기 작업
         future: _getMemoList(),
         builder: (context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
-            List<DocumentSnapshot> memoList = snapshot.data ?? [];
+          List<DocumentSnapshot> memoList = snapshot.data ?? [];
 
-            return Container(
-              margin: EdgeInsets.symmetric(
-                horizontal: screenWidth * 0.02,
-                vertical: screenHeight * 0.02,
-              ),
-              padding: EdgeInsets.all(screenHeight * 0.02),
-              color: AppColors.listViewBackgroundColor,
-              child: ListView.builder(
-                itemCount: memoList.length,
-                itemBuilder: (context, index) {
-                  var memoData = memoList[index].data() as Map<String, dynamic>;
-                  var memoContent = memoData['contents'] as String;
-                  var memoId = memoList[index].id; // 메모의 고유번호
-                  var createdTime = memoData['createdTime'] as Timestamp; // 메모 생성 시간
-                  var editedTime = memoData['lastEditedTime'] as Timestamp?; // 메모 변경 시간
+          // 정렬을 위해 memoList를 lastEditedTime 또는 createdTime 기준으로 정렬
+          memoList.sort((a, b) {
+            var timeA = (a.data() as Map<String, dynamic>)['lastEditedTime'] as Timestamp?;
+            var timeB = (b.data() as Map<String, dynamic>)['lastEditedTime'] as Timestamp?;
 
-                  // 처음 10글자만 노출
-                  var truncatedContent = memoContent.length <= 13 ? memoContent : '${memoContent.substring(0, 13)}...';
+            // lastEditedTime이 null인 경우 createdTime으로 대체하여 비교
+            if (timeA == null) {
+              timeA = (a.data() as Map<String, dynamic>)['createdTime'] as Timestamp;
+            }
+            if (timeB == null) {
+              timeB = (b.data() as Map<String, dynamic>)['createdTime'] as Timestamp;
+            }
 
-                  return Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          // 클릭 시 해당 메모의 고유번호를 전달하고 editmemo 페이지로 이동
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute (
-                              builder: (context) => EditMemoPage(memoId: memoId),
-                            ),
-                          );
-                        },
-                        child: ListTile(
-                          tileColor: Colors.black,
-                          contentPadding: EdgeInsets.all(screenHeight * 0.01),
-                          title: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    truncatedContent,
-                                    style: TextStyle(fontSize: screenHeight * 0.03, color: AppColors.mainPageButtonTextColor),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(
-                                      Icons.share,
-                                      size: screenHeight * 0.04,
-                                      color: AppColors.mainPageButtonTextColor,
-                                    ),
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return ShareDialog();
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                              Text(
-                                'Created at: ${DateFormat('yyyy-MM-dd HH:mm').format(createdTime.toDate())}', // 시간 표시 포맷 설정
-                                style: TextStyle(fontSize: screenHeight * 0.02, color: Colors.white),
-                              ),
-                              Text(
-                                'Last Edited: ${editedTime != null ? DateFormat('yyyy-MM-dd HH:mm').format(editedTime.toDate()) : 'Not edited yet'}',
-                                style: TextStyle(fontSize: screenHeight * 0.02, color: Colors.white),
-                              ),
-                            ],
+            return timeB.compareTo(timeA); // 내림차순으로 정렬 (최신이 먼저)
+          });
+
+          return Container(
+            margin: EdgeInsets.symmetric(
+              horizontal: screenWidth * 0.02,
+              vertical: screenHeight * 0.02,
+            ),
+            padding: EdgeInsets.all(screenHeight * 0.02),
+            color: AppColors.listViewBackgroundColor,
+            child: ListView.builder(
+              itemCount: memoList.length,
+              itemBuilder: (context, index) {
+                var memoData = memoList[index].data() as Map<String, dynamic>;
+                var memoContent = memoData['contents'] as String;
+                var memoId = memoList[index].id;
+                var createdTime = memoData['createdTime'] as Timestamp;
+                var editedTime = memoData['lastEditedTime'] as Timestamp?;
+
+                // 처음 10글자만 노출
+                var truncatedContent = memoContent.length <= 13 ? memoContent : '${memoContent.substring(0, 13)}...';
+
+                return Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute (
+                            builder: (context) => EditMemoPage(memoId: memoId),
                           ),
+                        );
+                      },
+                      child: ListTile(
+                        tileColor: Colors.black,
+                        contentPadding: EdgeInsets.all(screenHeight * 0.01),
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  truncatedContent,
+                                  style: TextStyle(fontSize: screenHeight * 0.03, color: AppColors.mainPageButtonTextColor),
+                                ),
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.share,
+                                    size: screenHeight * 0.04,
+                                    color: AppColors.mainPageButtonTextColor,
+                                  ),
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return ShareDialog();
+                                      },
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                            Text(
+                              'Created at: ${DateFormat('yyyy-MM-dd HH:mm').format(createdTime.toDate())}',
+                              style: TextStyle(fontSize: screenHeight * 0.02, color: Colors.white),
+                            ),
+                            Text(
+                              'Last Edited: ${editedTime != null ? DateFormat('yyyy-MM-dd HH:mm').format(editedTime.toDate()) : 'Not edited yet'}',
+                              style: TextStyle(fontSize: screenHeight * 0.02, color: Colors.white),
+                            ),
+                          ],
                         ),
                       ),
-                      Divider(
-                        height: screenHeight * 0.02,
-                        color: AppColors.memoDividerColor,
-                      ),
-                    ],
-                  );
-                },
-              ),
-            );
-
+                    ),
+                    Divider(
+                      height: screenHeight * 0.02,
+                      color: AppColors.memoDividerColor,
+                    ),
+                  ],
+                );
+              },
+            ),
+          );
         },
       ),
     );
@@ -111,14 +125,12 @@ class MemoListWidget extends StatelessWidget {
 
   // Firestore에서 메모 목록을 가져오는 비동기 함수
   Future<List<DocumentSnapshot>> _getMemoList() async {
-    // 현재 로그인한 사용자의 UID 가져오기
     String uid = FirebaseAuth.instance.currentUser?.uid ?? "";
-
-    // Firestore에서 메모 목록 가져오기
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('user').doc(uid).collection('memoes').get();
     return querySnapshot.docs;
   }
 }
+
 
 
 
