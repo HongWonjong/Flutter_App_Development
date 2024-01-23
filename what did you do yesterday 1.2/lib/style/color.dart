@@ -14,4 +14,5 @@ class AppColors {
   static const Color memoDividerColor = Colors.black;
   static const Color memoHintTextColor = Colors.white24;
   static const Color dialogBackgroundColor = Colors.grey;
+  static const Color warningColor = Colors.red;
 }

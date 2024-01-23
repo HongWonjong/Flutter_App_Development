@@ -28,6 +28,6 @@ class settingpage_lan {
 }
 
 class shareDialog_lan {
-  static const String shareMemoTo = "메모 공유하기";
+  static const String deleteMemo = "메모 삭제하기";
   static const String hintText = "이메일 입력하기";
 }

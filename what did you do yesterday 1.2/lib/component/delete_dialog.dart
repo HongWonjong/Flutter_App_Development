@@ -5,8 +5,8 @@ import 'package:freedomcompass/component/sized_box.dart';
 import 'package:freedomcompass/style/text_style.dart';
 import 'package:freedomcompass/l10n/language.dart';
 
-class ShareDialog extends StatelessWidget {
-  const ShareDialog({Key? key}) : super(key: key);
+class DeleteDialog extends StatelessWidget {
+  const DeleteDialog({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,20 +33,9 @@ class ShareDialog extends StatelessWidget {
                       Center(
                         child: Column(
                           children: [
-                            // 이메일 입력 필드
-                            TextField(
-                              cursorColor: AppColors.mainPageButtonTextColor,
-                              maxLines: null,
-                              minLines: null,
-                              textAlignVertical: TextAlignVertical.top,
-                              style: AdaptiveText.mediumTextStyle(context, color: AppColors.mainPageButtonTextColor),
-                              decoration: const InputDecoration(
-                                hintText: shareDialog_lan.hintText,
-                              ),
-                            ),
                             const AdaptiveSizedBox(),
                             MediumButton(
-                                buttonColor: AppColors.listViewBackgroundColor,
+                                buttonColor: AppColors.warningColor,
                                 onPressed: () {
 
                                 },

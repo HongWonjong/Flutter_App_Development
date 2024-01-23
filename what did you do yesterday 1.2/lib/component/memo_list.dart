@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freedomcompass/page/edit_memo_page.dart';
 import 'package:intl/intl.dart';
 import 'share_dialog.dart';
+import 'delete_dialog.dart';
 
 class MemoListWidget extends StatelessWidget {
   const MemoListWidget({Key? key}) : super(key: key);
@@ -27,12 +28,8 @@ class MemoListWidget extends StatelessWidget {
             var timeB = (b.data() as Map<String, dynamic>)['lastEditedTime'] as Timestamp?;
 
             // lastEditedTime이 null인 경우 createdTime으로 대체하여 비교
-            if (timeA == null) {
-              timeA = (a.data() as Map<String, dynamic>)['createdTime'] as Timestamp;
-            }
-            if (timeB == null) {
-              timeB = (b.data() as Map<String, dynamic>)['createdTime'] as Timestamp;
-            }
+            timeA ??= (a.data() as Map<String, dynamic>)['createdTime'] as Timestamp;
+            timeB ??= (b.data() as Map<String, dynamic>)['createdTime'] as Timestamp;
 
             return timeB.compareTo(timeA); // 내림차순으로 정렬 (최신이 먼저)
           });
@@ -82,16 +79,14 @@ class MemoListWidget extends StatelessWidget {
                                 ),
                                 IconButton(
                                   icon: Icon(
-                                    Icons.share,
+                                    Icons.delete,
                                     size: screenHeight * 0.04,
                                     color: AppColors.mainPageButtonTextColor,
                                   ),
                                   onPressed: () {
                                     showDialog(
                                       context: context,
-                                      builder: (BuildContext context) {
-                                        return ShareDialog();
-                                      },
+                                      builder: (BuildContext context) => DeleteDialog(),
                                     );
                                   },
                                 ),
