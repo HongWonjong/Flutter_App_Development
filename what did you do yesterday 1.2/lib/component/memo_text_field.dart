@@ -22,6 +22,7 @@ class MemoTextFieldWidget extends StatelessWidget {
           expands: true,
           textAlignVertical: TextAlignVertical.top,
           controller: memoController,
+          autofocus: true, // 자동으로 포커스를 받게 함
           style: AdaptiveText.mediumTextStyle(context, color: AppColors.mainPageButtonTextColor),
           decoration: InputDecoration(
             hintStyle: const TextStyle(color: AppColors.memoHintTextColor),

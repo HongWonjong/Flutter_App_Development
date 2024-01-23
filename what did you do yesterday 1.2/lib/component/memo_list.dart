@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:freedomcompass/l10n/language.dart';
 import 'package:freedomcompass/style/color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freedomcompass/page/edit_memo_page.dart';
@@ -7,8 +8,21 @@ import 'package:intl/intl.dart';
 import 'share_dialog.dart';
 import 'delete_dialog.dart';
 
-class MemoListWidget extends StatelessWidget {
+class MemoListWidget extends StatefulWidget {
   const MemoListWidget({Key? key}) : super(key: key);
+
+  @override
+  _MemoListWidgetState createState() => _MemoListWidgetState();
+}
+
+class _MemoListWidgetState extends State<MemoListWidget> {
+  late Future<List<DocumentSnapshot>> memoListFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    memoListFuture = _getMemoList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,21 +31,17 @@ class MemoListWidget extends StatelessWidget {
 
     return Expanded(
       child: FutureBuilder(
-        // Firestore에서 메모 목록을 가져오는 비동기 작업
-        future: _getMemoList(),
+        future: memoListFuture,
         builder: (context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
           List<DocumentSnapshot> memoList = snapshot.data ?? [];
 
-          // 정렬을 위해 memoList를 lastEditedTime 또는 createdTime 기준으로 정렬
           memoList.sort((a, b) {
             var timeA = (a.data() as Map<String, dynamic>)['lastEditedTime'] as Timestamp?;
             var timeB = (b.data() as Map<String, dynamic>)['lastEditedTime'] as Timestamp?;
-
-            // lastEditedTime이 null인 경우 createdTime으로 대체하여 비교
             timeA ??= (a.data() as Map<String, dynamic>)['createdTime'] as Timestamp;
             timeB ??= (b.data() as Map<String, dynamic>)['createdTime'] as Timestamp;
 
-            return timeB.compareTo(timeA); // 내림차순으로 정렬 (최신이 먼저)
+            return timeB.compareTo(timeA);
           });
 
           return Container(
@@ -50,7 +60,6 @@ class MemoListWidget extends StatelessWidget {
                 var createdTime = memoData['createdTime'] as Timestamp;
                 var editedTime = memoData['lastEditedTime'] as Timestamp?;
 
-                // 처음 10글자만 노출
                 var truncatedContent = memoContent.length <= 13 ? memoContent : '${memoContent.substring(0, 13)}...';
 
                 return Column(
@@ -59,10 +68,15 @@ class MemoListWidget extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute (
+                          MaterialPageRoute(
                             builder: (context) => EditMemoPage(memoId: memoId),
                           ),
-                        );
+                        ).then((_) {
+                          // 메모가 수정된 경우 다시 불러오기
+                          setState(() {
+                            memoListFuture = _getMemoList();
+                          });
+                        });
                       },
                       child: ListTile(
                         tileColor: Colors.black,
@@ -86,18 +100,23 @@ class MemoListWidget extends StatelessWidget {
                                   onPressed: () {
                                     showDialog(
                                       context: context,
-                                      builder: (BuildContext context) => DeleteDialog(),
-                                    );
+                                      builder: (BuildContext context) => DeleteDialog(memoId: memoId),
+                                    ).then((_) {
+                                      // 메모가 삭제된 경우 다시 불러오기
+                                      setState(() {
+                                        memoListFuture = _getMemoList();
+                                      });
+                                    });
                                   },
                                 ),
                               ],
                             ),
                             Text(
-                              'Created at: ${DateFormat('yyyy-MM-dd HH:mm').format(createdTime.toDate())}',
+                              '${mainpage_lan.createdTime}: ${DateFormat('yyyy-MM-dd HH:mm').format(createdTime.toDate())}',
                               style: TextStyle(fontSize: screenHeight * 0.02, color: Colors.white),
                             ),
                             Text(
-                              'Last Edited: ${editedTime != null ? DateFormat('yyyy-MM-dd HH:mm').format(editedTime.toDate()) : 'Not edited yet'}',
+                              '${mainpage_lan.lastEditedTime}: ${editedTime != null ? DateFormat('yyyy-MM-dd HH:mm').format(editedTime.toDate()) : mainpage_lan.notEditedYet}',
                               style: TextStyle(fontSize: screenHeight * 0.02, color: Colors.white),
                             ),
                           ],
@@ -118,13 +137,13 @@ class MemoListWidget extends StatelessWidget {
     );
   }
 
-  // Firestore에서 메모 목록을 가져오는 비동기 함수
   Future<List<DocumentSnapshot>> _getMemoList() async {
     String uid = FirebaseAuth.instance.currentUser?.uid ?? "";
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('user').doc(uid).collection('memoes').get();
     return querySnapshot.docs;
   }
 }
+
 
 
 

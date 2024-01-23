@@ -4,9 +4,12 @@ import 'package:freedomcompass/style/color.dart';
 import 'package:freedomcompass/component/sized_box.dart';
 import 'package:freedomcompass/style/text_style.dart';
 import 'package:freedomcompass/l10n/language.dart';
+import 'package:freedomcompass/function/delete_memo.dart';
 
 class DeleteDialog extends StatelessWidget {
-  const DeleteDialog({Key? key}) : super(key: key);
+  final String memoId;
+
+  const DeleteDialog({super.key, required this.memoId});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +17,7 @@ class DeleteDialog extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Dialog(
-      child: Container(
+      child: SizedBox(
         height: screenHeight * 0.6,
         width: screenWidth * 0.8,
         child: Scaffold(
@@ -29,18 +32,31 @@ class DeleteDialog extends StatelessWidget {
                   color: AppColors.listViewBackgroundColor,
                   child: Column(
                     children: [
-                      // Center에 email 입력 필드 및 공유 버튼 추가
+
                       Center(
                         child: Column(
                           children: [
                             const AdaptiveSizedBox(),
+                            const AdaptiveSizedBox(),
+                            const AdaptiveSizedBox(),
+                            const AdaptiveSizedBox(),
+                            const AdaptiveSizedBox(),
+                            const AdaptiveSizedBox(),
+                            const AdaptiveSizedBox(),
+                            const AdaptiveSizedBox(),
+                            const AdaptiveSizedBox(),
+                            const AdaptiveSizedBox(),
+
                             MediumButton(
                                 buttonColor: AppColors.warningColor,
                                 onPressed: () {
-
+                                  deleteMemo(memoId);
+                                  Navigator.pop(context);
                                 },
-                                buttonText: shareDialog_lan.deleteMemo,
+                                buttonText: deleteDialog_lan.deleteMemo,
                                 textStyle: AdaptiveText.mediumTextStyle(context, color: AppColors.mainPageButtonTextColor)),
+                            Text(deleteDialog_lan.deleteText, style: AdaptiveText.mediumTextStyle(context, color: AppColors.warningColor)),
+
                           ],
                         ),
                       ),

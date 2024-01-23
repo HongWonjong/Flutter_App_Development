@@ -41,7 +41,7 @@ class ShareDialog extends StatelessWidget {
                               textAlignVertical: TextAlignVertical.top,
                               style: AdaptiveText.mediumTextStyle(context, color: AppColors.mainPageButtonTextColor),
                               decoration: const InputDecoration(
-                                hintText: shareDialog_lan.hintText,
+                                hintText: deleteDialog_lan.hintText,
                               ),
                             ),
                             const AdaptiveSizedBox(),
@@ -50,7 +50,7 @@ class ShareDialog extends StatelessWidget {
                                 onPressed: () {
 
                                 },
-                                buttonText: shareDialog_lan.deleteMemo,
+                                buttonText: deleteDialog_lan.deleteMemo,
                                 textStyle: AdaptiveText.mediumTextStyle(context, color: AppColors.mainPageButtonTextColor)),
                           ],
                         ),

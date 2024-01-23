@@ -12,6 +12,9 @@ class mainpage_lan {
   static const String centerMessage = "앱의 중심 내용이 여기에 들어갑니다.";
   static const String setToMyPosition = '내 위치로 설정하기';
   static const String writeMemos = "새 메모 작성";
+  static const String createdTime = "작성날짜";
+  static const String lastEditedTime = "최근 수정날짜";
+  static const String notEditedYet = "수정이력 없음";
 }
 
 class createpage_lan {
@@ -27,7 +30,8 @@ class settingpage_lan {
   static const String killSwitchPurchase = "킬 스위치 구매하기";
 }
 
-class shareDialog_lan {
+class deleteDialog_lan {
   static const String deleteMemo = "메모 삭제하기";
   static const String hintText = "이메일 입력하기";
+  static const String deleteText = "복구 불가능합니다.";
 }
