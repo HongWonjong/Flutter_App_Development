@@ -41,6 +41,8 @@ class LoginPage extends StatelessWidget {
 
             ),
             const AdaptiveSizedBox(),
+            Text(loginpage_lan.logintext, style: AdaptiveText.mediumTextStyle(context, color: AppColors.loginPageButtonColor),),
+            /*const AdaptiveSizedBox(),
             BigButton(
               onPressed: () {
                 // Twitter 로그인 버튼이 눌렸을 때 호출할 함수
@@ -80,7 +82,7 @@ class LoginPage extends StatelessWidget {
               buttonColor: Colors.grey,
               buttonText: loginpage_lan.justUse,
               textStyle: AdaptiveText.mediumTextStyle(context, color: AppColors.loginPageButtonTextColor),
-            ),
+            ),*/
           ],
         ),
       ),

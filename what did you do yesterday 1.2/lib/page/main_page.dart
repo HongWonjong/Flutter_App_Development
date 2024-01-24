@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freedomcompass/l10n/language.dart';
+import 'package:freedomcompass/page/login_page.dart';
 import 'package:freedomcompass/style/button_style.dart';
 import 'package:freedomcompass/component/sized_box.dart';
 import 'package:freedomcompass/style/color.dart';
@@ -36,6 +37,13 @@ class MainPage extends ConsumerWidget {
                       buttonColor: AppColors.mainPageButtonColor,
                       onPressed: () {
                         NavigatorHelper.goToPage(context, CreateMemoPage());
+                      },
+                      buttonText: mainpage_lan.writeMemos,
+                      textStyle: AdaptiveText.mediumTextStyle(context, color: AppColors.mainPageButtonTextColor)),
+                  MediumButton(
+                      buttonColor: AppColors.mainPageButtonColor,
+                      onPressed: () {
+                        NavigatorHelper.goToPage(context, LoginPage());
                       },
                       buttonText: mainpage_lan.writeMemos,
                       textStyle: AdaptiveText.mediumTextStyle(context, color: AppColors.mainPageButtonTextColor)),
