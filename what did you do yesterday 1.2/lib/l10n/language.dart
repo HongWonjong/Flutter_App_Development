@@ -5,7 +5,7 @@ class loginpage_lan {
   static const String signInWithKaKao = "카카오로 회원가입";
   static const String signInWithNaver = '네이버로 회원가입';
   static const String justUse = "로그인 없이 사용하기";
-  static const String logintext = "너 회원가입 한다! 다른 기기로 옮겨도 너 어디서나 메모 볼 수 있다!";
+  static const String logintext = "회원가입을 통해 어디서나 메모를 공유할 수 있습니다.";
 }
 
 class mainpage_lan {
@@ -14,12 +14,12 @@ class mainpage_lan {
   static const String writeMemos = "새 메모 작성";
   static const String createdTime = "작성날짜";
   static const String lastEditedTime = "최근 수정날짜";
-  static const String notEditedYet = "나 이 메모 안건드렸다!";
+  static const String notEditedYet = "수정 이력 없음";
 }
 
 class createpage_lan {
   static const String createfinished = "메모 저장";
-  static const String inputMemo = "나 메모 쓴다";
+  static const String inputMemo = "메모를 입력하세요";
 }
 
 class settingpage_lan {

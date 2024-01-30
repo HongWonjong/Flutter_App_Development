@@ -12,6 +12,13 @@ void editMemo(String memoId, String updatedMemoText, BuildContext context) {
   String uid = FirebaseAuth.instance.currentUser?.uid ?? "";
   Timestamp currentTime = Timestamp.now();
 
+  // 텍스트 필드가 비어 있는지 확인
+  if (updatedMemoText.trim().isEmpty) {
+    NavigatorHelper.goToPage(context, const MainPage()); // 혹은 사용자에게 알림을 보여줄 수 있음
+    return;  // 빈 텍스트의 경우 함수 종료
+  }
+
+
   // 해당 메모의 내용을 업데이트
   FirebaseFirestore.instance.collection('user').doc(uid).collection('memoes').doc(memoId).update({
     'contents': updatedMemoText,
