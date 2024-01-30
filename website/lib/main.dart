@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('나만의 웹사이트입니다'),
+          title: const Text('나만의 웹사이트입니다1'),
           backgroundColor: Colors.blue, // 앱바 배경색
         ),
         body: Container(
