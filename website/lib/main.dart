@@ -15,13 +15,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('나만의 웹사이트'),
+          title: const Text('나만의 웹사이트'),
           backgroundColor: Colors.blue, // 앱바 배경색
         ),
         body: Container(
           color: Colors.grey[200], // 배경색
-          padding: EdgeInsets.all(16.0),
-          child: Center(
+          padding: const EdgeInsets.all(16.0),
+          child: const Center(
             child: Text(
               '안녕하세요, 웹사이트를 꾸며보는 중입니다!',
               style: TextStyle(fontSize: 20.0),
