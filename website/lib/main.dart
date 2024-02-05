@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 
 void main() {
@@ -6,10 +7,12 @@ void main() {
     // 앱 종료 시 실행될 코드
   });
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
