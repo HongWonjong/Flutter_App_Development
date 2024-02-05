@@ -5,166 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="aad5a634-dd5d-4138-b9c6-eada3b026bf8" name="Changes" comment="11">
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/.metadata" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/analysis_options.yaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/android/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/android/app/build.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/android/app/google-services.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/android/app/src/debug/AndroidManifest.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/android/app/src/main/AndroidManifest.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/android/app/src/main/kotlin/com/example/freedomcompass/MainActivity.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/android/app/src/main/res/drawable-v21/launch_background.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/android/app/src/main/res/drawable/launch_background.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/android/app/src/main/res/mipmap-hdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/android/app/src/main/res/mipmap-mdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/android/app/src/main/res/values-night/styles.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/android/app/src/main/res/values/styles.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/android/app/src/profile/AndroidManifest.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/android/build.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/android/gradle.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/android/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/android/settings.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/functions/.eslintrc.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/functions/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/functions/index.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/functions/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Flutter/AppFrameworkInfo.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Flutter/Debug.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Flutter/Release.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Podfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner.xcodeproj/project.pbxproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner.xcworkspace/contents.xcworkspacedata" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/AppDelegate.swift" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-1024x1024@1x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@1x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@3x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@1x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@3x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@1x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@3x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@3x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@1x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-83.5x83.5@2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Assets.xcassets/LaunchImage.imageset/Contents.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@3x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Assets.xcassets/LaunchImage.imageset/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Base.lproj/LaunchScreen.storyboard" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Base.lproj/Main.storyboard" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/GoogleService-Info.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Info.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/Runner/Runner-Bridging-Header.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/ios/firebase_app_id_file.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/component/app_bar.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/component/delete_dialog.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/component/memo_list.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/component/memo_text_field.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/component/share_dialog.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/component/sized_box.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/entry_point.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/firebase_options.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/function/delete_memo.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/function/memo_creating_function.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/function/memo_editing_function.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/function/navigator.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/function/sign_in_function.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/function/user_basic_data_upload.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/l10n/language.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/page/create_memo_page.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/page/edit_memo_page.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/page/login_page.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/page/main_page.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/page/setting_page.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/rriverpod/user_riverpod.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/style/button_style.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/style/color.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/lib/style/text_style.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/linux/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/linux/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/linux/flutter/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/linux/flutter/generated_plugin_registrant.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/linux/flutter/generated_plugin_registrant.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/linux/flutter/generated_plugins.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/linux/main.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/linux/my_application.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/linux/my_application.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Flutter/Flutter-Debug.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Flutter/Flutter-Release.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Podfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner.xcodeproj/project.pbxproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner.xcworkspace/contents.xcworkspacedata" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner/AppDelegate.swift" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_1024.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_128.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_16.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_256.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_32.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_512.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_64.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner/Base.lproj/MainMenu.xib" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner/Configs/AppInfo.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner/Configs/Debug.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner/Configs/Release.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner/Configs/Warnings.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner/DebugProfile.entitlements" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner/GoogleService-Info.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner/Info.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner/MainFlutterWindow.swift" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/Runner/Release.entitlements" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/macos/firebase_app_id_file.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/pubspec.lock" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/pubspec.yaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/test/widget_test.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/web/favicon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/web/icons/Icon-192.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/web/icons/Icon-512.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/web/icons/Icon-maskable-192.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/web/icons/Icon-maskable-512.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/web/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/web/manifest.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/windows/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/windows/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/windows/flutter/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/windows/flutter/generated_plugin_registrant.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/windows/flutter/generated_plugin_registrant.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/windows/flutter/generated_plugins.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/windows/runner/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/windows/runner/Runner.rc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/windows/runner/flutter_window.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/windows/runner/flutter_window.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/windows/runner/main.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/windows/runner/resource.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/windows/runner/resources/app_icon.ico" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/windows/runner/runner.exe.manifest" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/windows/runner/utils.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/windows/runner/utils.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/windows/runner/win32_window.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/심심해서 만든 웹사이트 1.0/windows/runner/win32_window.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -182,18 +23,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "cidr.known.project.marker": "true",
-    "dart.analysis.tool.window.visible": "false",
-    "last_opened_file_path": "/Users/wonjonghong/StudioProjects",
-    "settings.editor.selected.configurable": "AndroidSdkUpdater",
-    "show.migrate.to.gradle.popup": "false"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/wonjonghong/StudioProjects&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;AndroidSdkUpdater&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
