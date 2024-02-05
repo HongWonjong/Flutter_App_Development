@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
-import 'dart:html' as html;
 import 'style/media_query_custom.dart';  // MediaQueryUtil을 추가로 임포트
 import 'component/custom_app_bar.dart';
 import 'component/body_part.dart';  // BodyPage의 파일명을 맞게 수정
 import 'style/language.dart';
+// ignore: depend_on_referenced_packages
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
-  html.window.onBeforeUnload.listen((event) {
-    // 앱 종료 시 실행될 코드
-  });
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+
 
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
