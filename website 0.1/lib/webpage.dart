@@ -4,10 +4,9 @@ import 'component/custom_app_bar.dart';
 import 'component/body_part.dart';
 import 'style/language.dart';
 import 'component/header.dart';
-import 'style/image_path.dart'; // 새로 생성한 파일 import
+import 'style/image_path.dart';
 
 class MyApp extends StatelessWidget {
-
   MyApp({Key? key}) : super(key: key);
 
   @override
@@ -15,75 +14,69 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: CustomAppBar(),
-        body: Builder(
-          builder: (context) {
-            return Column(
-              children: [
-                SizedBox(height: MQSize.getDetailHeight1(context)),
-                HeaderPage(
-                  imagePaths: ImagePaths.imagePath1,
-                  imageHeight: MQSize.getDetailHeight3(context),
-                  imageWidth: MQSize.getDetailWidth3(context),// 외부에서 이미지 높이 설정
-                  textYouWant: mainpage_lan.begging,
-                ),
-                SizedBox(height: MQSize.getDetailHeight1(context)),
-                HeaderPage(
-                  imagePaths: ImagePaths.imagePath2,
-                  imageHeight: MQSize.getDetailHeight4(context),
-                  imageWidth: MQSize.getDetailWidth3(context),
-                  textYouWant: mainpage_lan.commercialPlease,
-                ),
-                SizedBox(height: MQSize.getDetailHeight1(context)),
-                HeaderPage(
-                  imagePaths: ImagePaths.imagePath3,
-                  imageHeight: MQSize.getDetailHeight4(context),
-                  imageWidth: MQSize.getDetailWidth3(context),
-                  textYouWant: mainpage_lan.popPop,
-                ),
-                SizedBox(height: MQSize.getDetailHeight1(context)),
-                Expanded(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: BodyPage(
-                          text: mainpage_lan.bodyPart1,
-                          height: MQSize.getDetailHeight5(context),
-                          width: MQSize.getDetailWidth5(context),
-                        ),
-                      ),
-                      Expanded(
-                        child: BodyPage(
-                          text: mainpage_lan.bodyPart2,
-                          height: MQSize.getDetailHeight5(context),
-                          width: MQSize.getDetailWidth5(context),
-                        ),
-                      ),
-                    ],
+        body: SingleChildScrollView( // 변경된 부분
+          child: Column(
+            children: [
+              SizedBox(height: MQSize.getDetailHeight1(context)),
+              HeaderPage(
+                imagePaths: ImagePaths.imagePath1,
+                imageHeight: MQSize.getDetailHeight3(context),
+                imageWidth: MQSize.getDetailWidth3(context),
+                textYouWant: mainpage_lan.begging,
+              ),
+              SizedBox(height: MQSize.getDetailHeight1(context)),
+              HeaderPage(
+                imagePaths: ImagePaths.imagePath2,
+                imageHeight: MQSize.getDetailHeight4(context),
+                imageWidth: MQSize.getDetailWidth3(context),
+                textYouWant: mainpage_lan.commercialPlease,
+              ),
+              SizedBox(height: MQSize.getDetailHeight1(context)),
+              HeaderPage(
+                imagePaths: ImagePaths.imagePath3,
+                imageHeight: MQSize.getDetailHeight4(context),
+                imageWidth: MQSize.getDetailWidth3(context),
+                textYouWant: mainpage_lan.popPop,
+              ),
+              SizedBox(height: MQSize.getDetailHeight1(context)),
+              Row(
+                children: [
+                  Expanded(
+                    child: BodyPage(
+                      text: mainpage_lan.bodyPart1,
+                      height: MQSize.getDetailHeight5(context),
+                      width: MQSize.getDetailWidth5(context),
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: BodyPage(
-                          text: mainpage_lan.bodyPart3,
-                          height: MQSize.getDetailHeight5(context),
-                          width: MQSize.getDetailWidth5(context),
-                        ),
-                      ),
-                      Expanded(
-                        child: BodyPage(
-                          text: mainpage_lan.bodyPart4,
-                          height: MQSize.getDetailHeight5(context),
-                          width: MQSize.getDetailWidth5(context),
-                        ),
-                      ),
-                    ],
+                  Expanded(
+                    child: BodyPage(
+                      text: mainpage_lan.bodyPart2,
+                      height: MQSize.getDetailHeight5(context),
+                      width: MQSize.getDetailWidth5(context),
+                    ),
                   ),
-                ),
-              ],
-            );
-          },
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: BodyPage(
+                      text: mainpage_lan.bodyPart3,
+                      height: MQSize.getDetailHeight5(context),
+                      width: MQSize.getDetailWidth5(context),
+                    ),
+                  ),
+                  Expanded(
+                    child: BodyPage(
+                      text: mainpage_lan.bodyPart4,
+                      height: MQSize.getDetailHeight5(context),
+                      width: MQSize.getDetailWidth5(context),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
