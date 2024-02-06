@@ -1,7 +1,7 @@
-// body_page.dart
 import 'package:flutter/material.dart';
+import 'package:website/style/media_query_custom.dart';
 
-class BodyPage extends StatelessWidget {
+class BodyPage extends StatefulWidget {
   final String text;
   final double height;
   final double width;
@@ -11,38 +11,49 @@ class BodyPage extends StatelessWidget {
   final double borderWidth;
   final EdgeInsets margin;
   final EdgeInsets padding;
-  final TextStyle textStyle;
 
-  const BodyPage({
+  BodyPage({
     Key? key,
     required this.text,
     required this.height,
     required this.width,
-    this.backgroundColor = Colors.grey,
+    this.backgroundColor = Colors.tealAccent,
     this.borderRadius = 10.0,
     this.borderColor = Colors.grey,
     this.borderWidth = 1.0,
     this.margin = const EdgeInsets.all(8.0),
     this.padding = const EdgeInsets.all(16.0),
-    this.textStyle = const TextStyle(fontSize: 20.0),
   }) : super(key: key);
+
+  @override
+  _BodyPageState createState() => _BodyPageState();
+}
+
+class _BodyPageState extends State<BodyPage> {
+  late TextStyle _textStyle;
+
+  @override
+  void initState() {
+    super.initState();
+    _textStyle = TextStyle(fontSize: MQSize.getDetailHeight2(context));
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(borderRadius),
-        border: Border.all(color: borderColor, width: borderWidth),
+        color: widget.backgroundColor,
+        borderRadius: BorderRadius.circular(widget.borderRadius),
+        border: Border.all(color: widget.borderColor, width: widget.borderWidth),
       ),
-      margin: margin,
-      padding: padding,
-      height: height,
-      width: width,
+      margin: widget.margin,
+      padding: widget.padding,
+      height: widget.height,
+      width: widget.width,
       child: Center(
         child: Text(
-          text,
-          style: textStyle,
+          widget.text,
+          style: _textStyle,
         ),
       ),
     );

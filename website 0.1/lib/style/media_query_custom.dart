@@ -1,7 +1,7 @@
 // media_query_util.dart
 import 'package:flutter/widgets.dart';
 
-class MediaQueryUtil {
+class MQSize {
   static double getHeightPercentage(BuildContext context, double percentage) {
     final screenHeight = MediaQuery.of(context).size.height;
     return screenHeight * percentage;
