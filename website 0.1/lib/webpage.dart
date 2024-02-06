@@ -34,6 +34,13 @@ class MyApp extends StatelessWidget {
                   textYouWant: mainpage_lan.commercialPlease,
                 ),
                 SizedBox(height: MQSize.getDetailHeight1(context)),
+                HeaderPage(
+                  imagePaths: ImagePaths.imagePath3,
+                  imageHeight: MQSize.getDetailHeight4(context),
+                  imageWidth: MQSize.getDetailWidth3(context),
+                  textYouWant: mainpage_lan.popPop,
+                ),
+                SizedBox(height: MQSize.getDetailHeight1(context)),
                 Expanded(
                   child: Row(
                     children: [
