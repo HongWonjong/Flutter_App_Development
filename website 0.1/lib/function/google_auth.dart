@@ -1,7 +1,6 @@
-// auth_functions.dart
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:google_sign_in_web/google_sign_in_web.dart';
 
 class AuthFunctions {
   static Future<void> signInWithGoogle() async {
@@ -11,8 +10,8 @@ class AuthFunctions {
 
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+        accessToken: googleAuth.accessToken!,
+        idToken: googleAuth.idToken!,
       );
 
       await FirebaseAuth.instance.signInWithCredential(credential);
