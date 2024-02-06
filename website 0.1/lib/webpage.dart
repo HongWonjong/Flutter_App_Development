@@ -4,22 +4,9 @@ import 'component/custom_app_bar.dart';
 import 'component/body_part.dart';
 import 'style/language.dart';
 import 'component/header.dart';
+import 'style/image_path.dart'; // 새로 생성한 파일 import
 
 class MyApp extends StatelessWidget {
-  final List<String> imagePath1 = [
-    'lib/images/그지.jpg',
-    'lib/images/그지.jpg',
-    'lib/images/그지.jpg',
-    'lib/images/그지.jpg',
-    // Add more image paths as needed
-  ];
-  final List<String> imagePath2 = [
-    'lib/images/한잔해.jpg',
-    'lib/images/한잔해.jpg',
-    'lib/images/한잔해.jpg',
-    'lib/images/한잔해.jpg',
-    // Add more image paths as needed
-  ];
 
   MyApp({Key? key}) : super(key: key);
 
@@ -27,23 +14,26 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: const CustomAppBar(),
+        appBar: CustomAppBar(),
         body: Builder(
           builder: (context) {
             return Column(
               children: [
+                SizedBox(height: MQSize.getDetailHeight1(context)),
                 HeaderPage(
-                  imagePaths: imagePath1,
+                  imagePaths: ImagePaths.imagePath1,
                   imageHeight: MQSize.getDetailHeight3(context),
-                  imageWidth: MQSize.getDetailHeight3(context),// 외부에서 이미지 높이 설정
+                  imageWidth: MQSize.getDetailWidth3(context),// 외부에서 이미지 높이 설정
                   textYouWant: mainpage_lan.begging,
                 ),
+                SizedBox(height: MQSize.getDetailHeight1(context)),
                 HeaderPage(
-                  imagePaths: imagePath2,
-                  imageHeight: MQSize.getDetailHeight3(context),
-                  imageWidth: MQSize.getDetailHeight2(context),
+                  imagePaths: ImagePaths.imagePath2,
+                  imageHeight: MQSize.getDetailHeight4(context),
+                  imageWidth: MQSize.getDetailWidth3(context),
                   textYouWant: mainpage_lan.commercialPlease,
                 ),
+                SizedBox(height: MQSize.getDetailHeight1(context)),
                 Expanded(
                   child: Row(
                     children: [
