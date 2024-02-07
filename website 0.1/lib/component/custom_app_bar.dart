@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:website/style/language.dart';
 import 'package:website/style/media_query_custom.dart';
 import 'package:website/function/google_auth.dart';
+import 'package:website/function/upload_user_basic_data.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
    CustomAppBar({Key? key}) : super(key: key);
+
 
   @override
   Size get preferredSize =>  const Size.fromHeight(kToolbarHeight);
@@ -19,8 +21,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         IconButton(
           icon: const Icon(Icons.person_add),
           iconSize: MQSize.getDetailHeight2(context),
-          onPressed: () {
+          onPressed: () async {
             AuthFunctions.signInWithGoogle();
+            UserDataUpload userDataUpload = UserDataUpload();
+            userDataUpload.addUserToFirestore();
+            UserDataUpload userDataUpload2 = UserDataUpload();
+            userDataUpload2.checkAndAddDefaultUserData();
+
+
+
           },
         ),
         IconButton(

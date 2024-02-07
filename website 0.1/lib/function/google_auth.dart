@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+
 class AuthFunctions {
   static Future<UserCredential> signInWithGoogle() async {
     // Create a new provider
@@ -11,8 +12,10 @@ class AuthFunctions {
       'login_hint': 'user@example.com'
     });
 
+
     // Once signed in, return the UserCredential
     return await FirebaseAuth.instance.signInWithPopup(googleProvider);
+
 
     // Or use signInWithRedirect
     // return await FirebaseAuth.instance.signInWithRedirect(googleProvider);
