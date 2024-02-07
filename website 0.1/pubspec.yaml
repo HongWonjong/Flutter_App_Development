@@ -28,7 +28,7 @@ dev_dependencies:
   firebase_app_check: ^0.2.1+12
   firebase_storage: ^11.6.4
   firebase_storage_web: ^3.6.21
-  riverpod: ^2.5.0
+  flutter_riverpod: ^2.4.10
   cloud_firestore: ^4.15.3
   cloud_firestore_web: ^3.10.3
   google_sign_in: ^6.2.1

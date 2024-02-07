@@ -6,14 +6,15 @@ import 'style/language.dart';
 import 'component/header.dart';
 import 'style/image_path.dart';
 
+
 class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: CustomAppBar(),
+        appBar: const CustomAppBar(),
         body: SingleChildScrollView( // 변경된 부분
           child: Column(
             children: [
