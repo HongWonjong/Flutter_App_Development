@@ -8,6 +8,7 @@ import 'package:website/function/riverpod_setting.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 
+
 class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const CustomAppBar({Key? key}) : super(key: key);
 
@@ -16,9 +17,10 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(uidProvider);
+    final loginStatus = ref.watch(googleSignInProvider);
     final email = ref.watch(userEmailProvider).value;
     final gp = ref.watch(userGPProvider).value;
+    AuthFunctions authFunctions = AuthFunctions();
 
     return AppBar(
       title: const Text(mainpage_lan.appBarTitle),
@@ -27,7 +29,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
         // 예시: 사용자가 로그인되어 있는 경우에만 텍스트 표시
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: user != null
+          children: loginStatus != null
               ? [
             Text('환영합니다 $email 님'),
             Text("현재 GeminiPoint: $gp"),
@@ -38,7 +40,6 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
           icon: const Icon(Icons.account_circle),
           iconSize: MQSize.getDetailHeight2(context),
           onPressed: () async {
-            AuthFunctions.signInWithGoogle();
             UserDataUpload userDataUpload = UserDataUpload();
             userDataUpload.addUserToFirestore();
             UserDataUpload userDataUpload2 = UserDataUpload();
@@ -49,7 +50,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
           icon: const Icon(Icons.logout_outlined),
           iconSize: MQSize.getDetailHeight2(context),
           onPressed: () {
-            // 로그인 버튼을 눌렀을 때의 동작 추가
+            authFunctions.signOut();
           },
         ),
       ],

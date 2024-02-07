@@ -5,10 +5,12 @@ import 'component/body_part.dart';
 import 'style/language.dart';
 import 'component/header.dart';
 import 'style/image_path.dart';
+import 'function/google_auth.dart';
 
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+   MyApp({Key? key}) : super(key: key);
+  AuthFunctions authFunctions = AuthFunctions();
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +44,19 @@ class MyApp extends StatelessWidget {
               SizedBox(height: MQSize.getDetailHeight1(context)),
               Row(
                 children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      authFunctions.signInWithGoogle();
+                    },
+                    child: Text("로그인"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      authFunctions.signOut();
+                    },
+                    child: Text("로그아웃"),
+                  ),
+
                   Expanded(
                     child: BodyPage(
                       text: mainpage_lan.bodyPart1,
