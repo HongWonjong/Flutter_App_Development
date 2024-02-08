@@ -92,7 +92,6 @@ class _QABoxState extends State<QABox> {
                   if (!isTextEmpty) {
                     // Assuming you have the user's UID and discussion ID available
                     String uid = FirebaseAuth.instance.currentUser!.uid;
-
                     // Call the function to send the message to Firestore
                     sendMessageToFirestore(uid, _textController.text);
 

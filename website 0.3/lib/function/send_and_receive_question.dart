@@ -1,10 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
 Future<void> sendMessageToFirestore(String uid, String text) async {
-  CollectionReference discussions = FirebaseFirestore.instance.collection('users').doc(uid).collection('discussions');
+  // Access the 'users' collection
+  CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
+
+  // Access the user's document using the uid
+  DocumentReference userDocRef = usersRef.doc(uid);
+
+  // Access the 'discussions' collection inside the user's document
+  CollectionReference discussionsRef = userDocRef.collection('discussions');
 
   // Add a new discussion document to the 'discussions' collection with auto-generated ID
-  DocumentReference newDiscussionRef = await discussions.add({
+  DocumentReference newDiscussionRef = await discussionsRef.add({
     // Add fields if needed
   });
 
@@ -24,3 +32,4 @@ Future<void> sendMessageToFirestore(String uid, String text) async {
   print('Discussion ID: $discussionId');
   print('Message ID: ${newMessageRef.id}');
 }
+
