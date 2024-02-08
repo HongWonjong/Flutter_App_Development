@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:website/style/color.dart';
 import 'package:website/style/language.dart';
 import 'package:website/style/media_query_custom.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:website/function/send_and_receive_question.dart';
+
 
 class QABox extends StatefulWidget {
   final String text;
@@ -86,9 +89,19 @@ class _QABoxState extends State<QABox> {
                 ),
                 child: const Text(mainpage_lan.sendMessage, style: TextStyle(color: AppColors.textColor)),
                 onPressed: () {
+                  if (!isTextEmpty) {
+                    // Assuming you have the user's UID and discussion ID available
+                    String uid = FirebaseAuth.instance.currentUser!.uid;
 
+                    // Call the function to send the message to Firestore
+                    sendMessageToFirestore(uid, _textController.text);
+
+                    // Optionally, you can clear the text field after sending the message
+                    _textController.clear();
+                  }
                 },
               ),
+
             ],
           )
         ],
