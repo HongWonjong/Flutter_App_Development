@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 Future<void> sendMessageToFirestore(String uid, String text) async {
   // Access the 'users' collection
   CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
@@ -11,16 +10,21 @@ Future<void> sendMessageToFirestore(String uid, String text) async {
   // Access the 'discussions' collection inside the user's document
   CollectionReference discussionsRef = userDocRef.collection('discussions');
 
-  // Add a new discussion document to the 'discussions' collection with auto-generated ID
-  DocumentReference newDiscussionRef = await discussionsRef.add({
-    // Add fields if needed
-  });
+  // Check if "연습용토론계정" document already exists
+  DocumentSnapshot practiceDiscussionDoc = await discussionsRef.doc('연습용토론계정').get();
 
-  // Get the auto-generated ID of the new discussion
-  String discussionId = newDiscussionRef.id;
+  if (!practiceDiscussionDoc.exists) {
+    // Create "연습용토론계정" document if it doesn't exist
+    await discussionsRef.doc('연습용토론계정').set({
+      // Add fields if needed
+    });
+  }
 
-  // Access the 'messages' collection inside the new discussion
-  CollectionReference messagesRef = newDiscussionRef.collection('messages');
+  // Get the reference to "연습용토론계정" document
+  DocumentReference practiceDiscussionRef = discussionsRef.doc('연습용토론계정');
+
+  // Access the 'messages' collection inside the "연습용토론계정" document
+  CollectionReference messagesRef = practiceDiscussionRef.collection('messages');
 
   // Add a new message document to the 'messages' collection with auto-generated ID
   DocumentReference newMessageRef = await messagesRef.add({
@@ -29,7 +33,8 @@ Future<void> sendMessageToFirestore(String uid, String text) async {
   });
 
   print('Message sent to Firestore!');
-  print('Discussion ID: $discussionId');
+  print('Discussion ID: 연습용토론계정');
   print('Message ID: ${newMessageRef.id}');
 }
+
 

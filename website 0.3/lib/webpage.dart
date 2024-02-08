@@ -7,6 +7,7 @@ import 'component/header.dart';
 import 'style/image_path.dart';
 import 'function/google_auth.dart';
 import 'style/color.dart';
+import 'component/message_response_list.dart';
 
 
 class MyApp extends StatelessWidget {
@@ -84,8 +85,9 @@ class MyApp extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const Row(
+                   Row(
                     children: [
+                      MessageListWidget(),
                       /*Expanded(
                         child: BodyPage(
                           text: mainpage_lan.bodyPart3,

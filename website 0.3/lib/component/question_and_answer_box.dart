@@ -3,7 +3,8 @@ import 'package:website/style/color.dart';
 import 'package:website/style/language.dart';
 import 'package:website/style/media_query_custom.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:website/function/send_and_receive_question.dart';
+import 'package:website/function/send_prompt.dart';
+import 'message_response_list.dart';
 
 
 class QABox extends StatefulWidget {
@@ -102,7 +103,7 @@ class _QABoxState extends State<QABox> {
               ),
 
             ],
-          )
+          ),
         ],
       ),
     );
