@@ -10,16 +10,25 @@ class UserDataUpload {
     if (user != null) {
       final userDoc = FirebaseFirestore.instance.collection('users').doc(user.uid);
 
-      await userDoc.set({
-        'userUid': user.uid,
-        'email': user.email,
-        "GeminiPoint": 10,
-      });
-    }
-    else {
+      // Check if the document already exists
+      final docSnapshot = await userDoc.get();
+
+      if (!docSnapshot.exists) {
+        // Document does not exist, create a new one
+        await userDoc.set({
+          'userUid': user.uid,
+          'email': user.email,
+          'GeminiPoint': 10,
+        });
+        print('유저 정보가 성공적으로 추가되었습니다.');
+      } else {
+        print('이미 유저 정보가 존재합니다.');
+      }
+    } else {
       print('유저 정보 추가 안됨');
     }
   }
+
 
   Future<void> checkAndAddDefaultUserData() async { //// 유저가 처음 가입할 때, 기본적인 유저 정보를 데이터베이스에 세팅합니다.
     final user = FirebaseAuth.instance.currentUser;

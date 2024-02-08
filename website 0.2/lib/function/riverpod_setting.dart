@@ -15,22 +15,30 @@ final googleSignInProvider = StreamProvider<bool>((ref) async* {
 });
 
 
-final userEmailProvider = StreamProvider<String>((ref) {
-  final uid = FirebaseAuth.instance.currentUser!.uid;
+final userEmailProvider = StreamProvider<String?>((ref) {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+    final uid = user.uid;
 
-  // Firestore에서 해당 UID의 사용자 정보 가져오기 (실시간 업데이트를 위해 snap 상태 반환)
-  return FirebaseFirestore.instance.collection('users').doc(uid).snapshots().map((snapshot) {
-    // 사용자 정보에서 GeminiPoint 가져오기
-    return snapshot.data()?['email'] ?? '';
-  });
+    return FirebaseFirestore.instance.collection('users').doc(uid).snapshots().map((snapshot) {
+      return snapshot.data()?['email'] ?? '';
+    });
+  } else {
+    // 로그인되지 않은 경우, null 반환
+    return Stream.value(null);
+  }
 });
 
-final userGPProvider = StreamProvider<String>((ref) {
-  final uid = FirebaseAuth.instance.currentUser!.uid;
+final userGPProvider = StreamProvider<String?>((ref) {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+    final uid = user.uid;
 
-  // Firestore에서 해당 UID의 사용자 정보 가져오기 (실시간 업데이트를 위해 snap 상태 반환)
-  return FirebaseFirestore.instance.collection('users').doc(uid).snapshots().map((snapshot) {
-    // 사용자 정보에서 GeminiPoint 가져오기
-    return snapshot.data()?['GeminiPoint'] ?? '';
-  });
+    return FirebaseFirestore.instance.collection('users').doc(uid).snapshots().map((snapshot) {
+      return snapshot.data()?['GeminiPoint'] ?? '';
+    });
+  } else {
+    // 로그인되지 않은 경우, null 반환
+    return Stream.value(null);
+  }
 });

@@ -42,12 +42,12 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
           // 예시: 사용자가 로그인되어 있는 경우에만 텍스트 표시
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: loginStatus != null
+            children: email != null
                 ? [
               Text('환영합니다 $email 님'),
               Text("현재 GeminiPoint: $gp"),
             ]
-                : <Widget>[
+                : [
               const Text("기능을 사용하시려면 로그인 해주세요")
             ], // 혹은 빈 리스트를 사용하여 아무것도 표시하지 않음
           ),
@@ -55,6 +55,8 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
             icon: const Icon(Icons.account_circle),
             iconSize: MQSize.getDetailHeight2(context),
             onPressed: () async {
+              AuthFunctions Auth = AuthFunctions();
+              Auth.signInWithGoogle();
               UserDataUpload userDataUpload = UserDataUpload();
               userDataUpload.addUserToFirestore();
               UserDataUpload userDataUpload2 = UserDataUpload();
