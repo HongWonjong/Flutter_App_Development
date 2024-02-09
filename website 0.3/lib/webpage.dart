@@ -44,14 +44,14 @@ class MyApp extends StatelessWidget {
                     imagePaths: ImagePaths.imagePath1,
                     imageHeight: MQSize.getDetailHeight3(context),
                     imageWidth: MQSize.getDetailWidth3(context),
-                    textYouWant: mainpage_lan.begging,
+                    textYouWant: MainPageLan.begging,
                   ),
                   SizedBox(height: MQSize.getDetailHeight1(context)),
                   HeaderPage(
                     imagePaths: ImagePaths.imagePath2,
                     imageHeight: MQSize.getDetailHeight3(context),
                     imageWidth: MQSize.getDetailWidth3(context),
-                    textYouWant: mainpage_lan.commercialPlease,
+                    textYouWant: MainPageLan.briefExplanation,
                   ),
                   SizedBox(height: MQSize.getDetailHeight1(context)),
                   /*HeaderPage(
@@ -78,7 +78,7 @@ class MyApp extends StatelessWidget {
 
                       Expanded(
                         child: QABox(
-                          text: mainpage_lan.bodyPart1,
+                          text: MainPageLan.bodyPart1,
                           height: MQSize.getDetailHeightHalf(context),
                           width: MQSize.getDetailWidth90(context),
                         ),

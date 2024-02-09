@@ -21,7 +21,7 @@ Stream<List<String>> listenForMessages() {
         String prompt = messageSnapshot['prompt'] ?? '';
         String response = messageSnapshot['response'] ?? '';
 
-        String message = 'Prompt: $prompt\nResponse: $response\nCreate Time: $createTime';
+        String message = '내 질문: $prompt\nGemini Pro: $response\nCreate Time: $createTime';
         messagesAndResponses.add(message);
       }
       return messagesAndResponses;

@@ -35,7 +35,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
         ),
       ),
       child: AppBar(
-        title: const Text(mainpage_lan.appBarTitle),
+        title: const Text(MainPageLan.appBarTitle),
         backgroundColor: AppColors.appBarColor,
         centerTitle: true,
         actions: <Widget>[

@@ -4,8 +4,7 @@ import 'package:website/style/language.dart';
 import 'package:website/style/media_query_custom.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:website/function/send_prompt.dart';
-import 'message_response_list.dart';
-
+import 'model_choice_dropdown.dart';
 
 class QABox extends StatefulWidget {
   final String text;
@@ -36,9 +35,9 @@ class QABox extends StatefulWidget {
 }
 
 class _QABoxState extends State<QABox> {
-
   final TextEditingController _textController = TextEditingController();
   bool isTextEmpty = true;
+  String selectedModel = MainPageLan.modelNameGemini; // 추가: 선택된 모델을 저장할 변수
 
   @override
   void initState() {
@@ -47,6 +46,13 @@ class _QABoxState extends State<QABox> {
       setState(() {
         isTextEmpty = _textController.text.isEmpty;
       });
+    });
+  }
+
+  // 추가: 드롭다운 값 변경 시 호출되는 함수
+  void onDropdownChanged(String? newValue) {
+    setState(() {
+      selectedModel = newValue!;
     });
   }
 
@@ -62,53 +68,66 @@ class _QABoxState extends State<QABox> {
       padding: widget.padding,
       height: widget.height,
       width: widget.width,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                flex: 95,
-                child: TextFormField(
-                  minLines: null,
-                  maxLines: null,
-                  controller: _textController,
-                  decoration: const InputDecoration(
-                    hintText: mainpage_lan.hintText,
-                    border: OutlineInputBorder(),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // 수정: 드롭다운 메뉴를 위젯으로 분리하여 사용
+            Row(
+              children: [
+                CustomDropdown(
+                  selectedModel: selectedModel,
+                  onChanged: onDropdownChanged,
+                ),
+              ],
+            ),
+
+            // 기존 코드는 그대로 유지
+            Row(
+              children: [
+                Expanded(
+                  flex: 95,
+                  child: TextFormField(
+                    minLines: null,
+                    maxLines: null,
+                    controller: _textController,
+                    decoration: const InputDecoration(
+                      hintText: MainPageLan.hintText,
+                      border: OutlineInputBorder(),
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(width: MQSize.getDetailWidth01(context)),
-              ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                        (Set<MaterialState> states) {
-                      return isTextEmpty ? Colors.white24 : Colors.white;
-                    },
+                SizedBox(width: MQSize.getDetailWidth01(context)),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                          (Set<MaterialState> states) {
+                        return isTextEmpty ? Colors.white24 : Colors.white;
+                      },
+                    ),
                   ),
+                  child: const Text(MainPageLan.sendMessage, style: TextStyle(color: AppColors.textColor)),
+                  onPressed: () {
+                    if (!isTextEmpty) {
+                      // Assuming you have the user's UID and discussion ID available
+                      String uid = FirebaseAuth.instance.currentUser!.uid;
+                      // Call the function to send the message to Firestore
+                      sendGeminiPromptToFirestore(uid, _textController.text);
+
+                      // Optionally, you can clear the text field after sending the message
+                      _textController.clear();
+                    }
+                  },
                 ),
-                child: const Text(mainpage_lan.sendMessage, style: TextStyle(color: AppColors.textColor)),
-                onPressed: () {
-                  if (!isTextEmpty) {
-                    // Assuming you have the user's UID and discussion ID available
-                    String uid = FirebaseAuth.instance.currentUser!.uid;
-                    // Call the function to send the message to Firestore
-                    sendMessageToFirestore(uid, _textController.text);
-
-                    // Optionally, you can clear the text field after sending the message
-                    _textController.clear();
-                  }
-                },
-              ),
-
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 }
+
 
 
 

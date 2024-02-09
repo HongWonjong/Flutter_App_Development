@@ -17,10 +17,8 @@ class MessageListWidget extends StatelessWidget {
 
           return Column(
             children: messagesAndResponses.map((message) {
-              return InkWell(
-                onTap: () {
-                  // 버튼이 눌리면 할 일 추가
-                },
+              return Align(
+                alignment: Alignment.center,
                 child: Container(
                   width: MQSize.getDetailWidth90(context),
                   padding: EdgeInsets.all(16.0), // 내용과 상하좌우 간격 조절
