@@ -15,7 +15,7 @@ class CustomDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       child: DropdownButton<String>(
         value: selectedModel,
         onChanged: onChanged,

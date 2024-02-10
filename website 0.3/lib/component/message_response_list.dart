@@ -1,17 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:website/function/get_response.dart';
 import 'package:website/style/media_query_custom.dart'; // 적절한 경로로 수정해주세요
+import 'package:rxdart/rxdart.dart';
 
 class MessageListWidget extends StatelessWidget {
+
+
+  Stream<List<String>> getModelResponseStream() {
+    // Combine responses from both models using rxdart
+    Stream<List<String>> geminiStream = listenForGeminiProResponse();
+    Stream<List<String>> gpt35Stream = listenForGPT35Response();
+
+    return Rx.concat([geminiStream, gpt35Stream]);
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<String>>(
-      stream: listenForMessages(),
+      stream: getModelResponseStream(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
+          return const CircularProgressIndicator();
         } else {
           List<String> messagesAndResponses = snapshot.data ?? [];
 
@@ -21,11 +32,11 @@ class MessageListWidget extends StatelessWidget {
                 alignment: Alignment.center,
                 child: Container(
                   width: MQSize.getDetailWidth90(context),
-                  padding: EdgeInsets.all(16.0), // 내용과 상하좌우 간격 조절
-                  margin: EdgeInsets.symmetric(vertical: 8.0), // 위아래 간격 조절
+                  padding: const EdgeInsets.all(16.0),
+                  margin: const EdgeInsets.symmetric(vertical: 8.0),
                   decoration: BoxDecoration(
-                    color: Colors.white, // 배경 색상을 white 24로
-                    borderRadius: BorderRadius.circular(0.0), // 모서리를 각진 모양으로
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(0.0),
                   ),
                   child: Text(
                     message,
@@ -41,5 +52,6 @@ class MessageListWidget extends StatelessWidget {
     );
   }
 }
+
 
 

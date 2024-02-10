@@ -3,12 +3,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-Stream<List<String>> listenForMessages() {
+Stream<List<String>> listenForGeminiProResponse() {
   CollectionReference messagesRef = FirebaseFirestore.instance
       .collection('users')
       .doc(FirebaseAuth.instance.currentUser!.uid)
       .collection('discussions')
-      .doc('연습용토론계정')
+      .doc('GeminiPro')
       .collection('messages');
 
   return messagesRef.orderBy('createTime', descending: true).snapshots().map(
@@ -21,7 +21,7 @@ Stream<List<String>> listenForMessages() {
         String prompt = messageSnapshot['prompt'] ?? '';
         String response = messageSnapshot['response'] ?? '';
 
-        String message = '내 질문: $prompt\nGemini Pro: $response\nCreate Time: $createTime';
+        String message = '내 질문: $prompt\nGemini Pro: $response\n 시간: $createTime';
         messagesAndResponses.add(message);
       }
       return messagesAndResponses;
@@ -29,3 +29,31 @@ Stream<List<String>> listenForMessages() {
   );
 }
 
+Stream<List<String>> listenForGPT35Response() {
+  CollectionReference messagesRef = FirebaseFirestore.instance
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .collection('discussions')
+      .doc('GPT35')
+      .collection('messages');
+
+  return messagesRef.orderBy('status.created_at', descending: true)
+      .snapshots()
+      .map(
+        (querySnapshot) {
+      List<String> messagesAndResponses = [];
+      for (QueryDocumentSnapshot messageSnapshot in querySnapshot.docs) {
+        Timestamp timestamp = messageSnapshot['status']['created_at'] ??
+            Timestamp.now();
+        DateTime createTime = timestamp.toDate();
+
+        String prompt = messageSnapshot['gpt35_prompt'] ?? '';
+        String response = messageSnapshot['gpt35_response'] ?? '';
+
+        String message = '내 질문: $prompt\nGPT3.5: $response\n 시간: $createTime';
+        messagesAndResponses.add(message);
+      }
+      return messagesAndResponses;
+    },
+  );
+}

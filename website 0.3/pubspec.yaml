@@ -33,6 +33,7 @@ dev_dependencies:
   cloud_firestore_web: ^3.10.3
   google_sign_in: ^6.2.1
   google_sign_in_web: ^0.12.3+2
+  rxdart: ^0.27.7
   build_test: ^2.1.0
   flutter_lints: ^2.0.0
   cached_network_image: ^3.3.1

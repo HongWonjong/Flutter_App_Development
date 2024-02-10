@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
 Future<void> sendGeminiPromptToFirestore(String uid, String text) async {
   // Access the 'users' collection
   CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
@@ -11,17 +12,17 @@ Future<void> sendGeminiPromptToFirestore(String uid, String text) async {
   CollectionReference discussionsRef = userDocRef.collection('discussions');
 
   // Check if "연습용토론계정" document already exists
-  DocumentSnapshot practiceDiscussionDoc = await discussionsRef.doc('연습용토론계정').get();
+  DocumentSnapshot practiceDiscussionDoc = await discussionsRef.doc('GeminiPro').get();
 
   if (!practiceDiscussionDoc.exists) {
     // Create "연습용토론계정" document if it doesn't exist
-    await discussionsRef.doc('연습용토론계정').set({
+    await discussionsRef.doc('GeminiPro').set({
       // Add fields if needed
     });
   }
 
   // Get the reference to "연습용토론계정" document
-  DocumentReference practiceDiscussionRef = discussionsRef.doc('연습용토론계정');
+  DocumentReference practiceDiscussionRef = discussionsRef.doc('GeminiPro');
 
   // Access the 'messages' collection inside the "연습용토론계정" document
   CollectionReference messagesRef = practiceDiscussionRef.collection('messages');
@@ -33,7 +34,7 @@ Future<void> sendGeminiPromptToFirestore(String uid, String text) async {
   });
 
   print('Message sent to Firestore!');
-  print('Discussion ID: 연습용토론계정');
+  print('Discussion ID: GeminiPro');
   print('Message ID: ${newMessageRef.id}');
 }
 
@@ -48,29 +49,29 @@ Future<void> sendGPT35PromptToFirestore(String uid, String text) async {
   CollectionReference discussionsRef = userDocRef.collection('discussions');
 
   // Check if "GPT35계정" document already exists
-  DocumentSnapshot gpt35DiscussionDoc = await discussionsRef.doc('GPT35계정').get();
+  DocumentSnapshot gpt35DiscussionDoc = await discussionsRef.doc('GPT35').get();
 
   if (!gpt35DiscussionDoc.exists) {
     // Create "GPT35계정" document if it doesn't exist
-    await discussionsRef.doc('GPT35계정').set({
+    await discussionsRef.doc('GPT35').set({
       // Add fields if needed
     });
   }
 
   // Get the reference to "GPT35계정" document
-  DocumentReference gpt35DiscussionRef = discussionsRef.doc('GPT35계정');
+  DocumentReference gpt35DiscussionRef = discussionsRef.doc('GPT35');
 
   // Access the 'messages' collection inside the "GPT35계정" document
   CollectionReference messagesRef = gpt35DiscussionRef.collection('messages');
 
   // Add a new message document to the 'messages' collection with auto-generated ID
   DocumentReference newMessageRef = await messagesRef.add({
-    'gpt_prompt': text,
+    'gpt35_prompt': text,
     // Add other fields if needed
   });
 
   print('GPT 3.5 Prompt sent to Firestore!');
-  print('Discussion ID: GPT35계정');
+  print('Discussio  n ID: GPT35');
   print('Message ID: ${newMessageRef.id}');
 }
 

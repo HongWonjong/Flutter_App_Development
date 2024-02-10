@@ -49,6 +49,24 @@ class _QABoxState extends State<QABox> {
     });
   }
 
+  void sendPromptToModel() {
+    if (!isTextEmpty) {
+      String uid = FirebaseAuth.instance.currentUser!.uid;
+      if (selectedModel == MainPageLan.modelNameGemini) {
+        // Gemini Pro 선택 시
+        sendGeminiPromptToFirestore(uid, _textController.text);
+      } else if (selectedModel == MainPageLan.modelNameGpt35) {
+        // GPT 3.5 선택 시
+        sendGPT35PromptToFirestore(uid, _textController.text);
+      }
+      // 다른 모델 추가 가능
+      // ...
+
+      // Optionally, you can clear the text field after sending the message
+      _textController.clear();
+    }
+  }
+
   // 추가: 드롭다운 값 변경 시 호출되는 함수
   void onDropdownChanged(String? newValue) {
     setState(() {
@@ -106,18 +124,13 @@ class _QABoxState extends State<QABox> {
                       },
                     ),
                   ),
-                  child: const Text(MainPageLan.sendMessage, style: TextStyle(color: AppColors.textColor)),
-                  onPressed: () {
-                    if (!isTextEmpty) {
-                      // Assuming you have the user's UID and discussion ID available
-                      String uid = FirebaseAuth.instance.currentUser!.uid;
-                      // Call the function to send the message to Firestore
-                      sendGeminiPromptToFirestore(uid, _textController.text);
-
-                      // Optionally, you can clear the text field after sending the message
-                      _textController.clear();
-                    }
+                  onPressed: isTextEmpty
+                      ? null // 버튼 비활성화 상태
+                      : () {
+                    sendPromptToModel();
+                    _textController.clear();
                   },
+                  child: const Text(MainPageLan.sendMessage, style: TextStyle(color: AppColors.textColor)),
                 ),
               ],
             ),

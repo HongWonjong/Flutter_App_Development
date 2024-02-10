@@ -8,14 +8,17 @@ import 'style/image_path.dart';
 import 'function/google_auth.dart';
 import 'style/color.dart';
 import 'component/message_response_list.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'function/riverpod_selected_model.dart';
 
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
    MyApp({Key? key}) : super(key: key);
   AuthFunctions authFunctions = AuthFunctions();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    //final selectedModel = ref.watch(selectedModelProvider);
     return MaterialApp(
       home: Scaffold(
         appBar:  const CustomAppBar(),
