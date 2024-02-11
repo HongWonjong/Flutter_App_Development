@@ -9,7 +9,7 @@ import 'function/google_auth.dart';
 import 'style/color.dart';
 import 'component/message_response_list.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'function/riverpod_selected_model.dart';
+import 'component/empty_box.dart';
 
 
 class MyApp extends ConsumerWidget {
@@ -88,25 +88,25 @@ class MyApp extends ConsumerWidget {
                       ),
                     ],
                   ),
-                   Row(
+                  Row(
                     children: [
-                      MessageListWidget(),
-                      /*Expanded(
-                        child: BodyPage(
-                          text: mainpage_lan.bodyPart3,
-                          height: MQSize.getDetailHeight5(context),
-                          width: MQSize.getDetailWidth5(context),
-                        ),
+                      EmptyBox(
+                        text: MainPageLan.bodyPart1,
+                        height: MQSize.getDetailHeightHalf(context),
+                        width: MQSize.getDetailWidthHalf(context),
+                        child: const MessageListWidget(),
                       ),
                       Expanded(
-                        child: BodyPage(
-                          text: mainpage_lan.bodyPart4,
-                          height: MQSize.getDetailHeight5(context),
-                          width: MQSize.getDetailWidth5(context),
+                        child: EmptyBox(
+                          text: MainPageLan.bodyPart1,
+                          height: MQSize.getDetailHeightHalf(context),
+                          width: MQSize.getDetailWidthHalf(context),
+                          child: const MessageListWidget(),
                         ),
-                      ),*/
+                      ),
                     ],
                   ),
+
                 ],
               ),
             ),

@@ -43,8 +43,7 @@ Stream<List<String>> listenForGPT35Response() {
         (querySnapshot) {
       List<String> messagesAndResponses = [];
       for (QueryDocumentSnapshot messageSnapshot in querySnapshot.docs) {
-        Timestamp timestamp = messageSnapshot['status']['created_at'] ??
-            Timestamp.now();
+        Timestamp timestamp = messageSnapshot['status']['created_at'] ?? Timestamp.now();
         DateTime createTime = timestamp.toDate();
 
         String prompt = messageSnapshot['gpt35_prompt'] ?? '';

@@ -4,6 +4,8 @@ import 'package:website/style/media_query_custom.dart'; // 적절한 경로로 �
 import 'package:rxdart/rxdart.dart';
 
 class MessageListWidget extends StatelessWidget {
+  const MessageListWidget({super.key});
+
 
 
   Stream<List<String>> getModelResponseStream() {
@@ -11,7 +13,7 @@ class MessageListWidget extends StatelessWidget {
     Stream<List<String>> geminiStream = listenForGeminiProResponse();
     Stream<List<String>> gpt35Stream = listenForGPT35Response();
 
-    return Rx.concat([geminiStream, gpt35Stream]);
+    return Rx.merge([geminiStream, gpt35Stream]);
   }
 
   @override

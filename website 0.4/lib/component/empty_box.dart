@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:website/style/color.dart';
 import 'package:website/style/language.dart';
-import 'package:website/style/media_query_custom.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:website/function/send_prompt.dart';
-import 'model_choice_dropdown.dart';
 
-class QABox extends StatefulWidget {
+
+class EmptyBox extends StatefulWidget {
   final String text;
   final double height;
   final double width;
@@ -16,8 +15,9 @@ class QABox extends StatefulWidget {
   final double borderWidth;
   final EdgeInsets margin;
   final EdgeInsets padding;
+  final Widget child;
 
-  const QABox({
+  const EmptyBox({
     Key? key,
     required this.text,
     required this.height,
@@ -28,13 +28,14 @@ class QABox extends StatefulWidget {
     this.borderWidth = 1.0,
     this.margin = const EdgeInsets.all(8.0),
     this.padding = const EdgeInsets.all(16.0),
+    required this.child,
   }) : super(key: key);
 
   @override
-  _QABoxState createState() => _QABoxState();
+  _EmptyBoxState createState() => _EmptyBoxState();
 }
 
-class _QABoxState extends State<QABox> {
+class _EmptyBoxState extends State<EmptyBox> {
   final TextEditingController _textController = TextEditingController();
   bool isTextEmpty = true;
   String selectedModel = MainPageLan.modelNameGemini; // 추가: 선택된 모델을 저장할 변수
@@ -42,14 +43,12 @@ class _QABoxState extends State<QABox> {
   @override
   void initState() {
     super.initState();
-    _textController.text = ""; // 초기 상태에서 텍스트 컨트롤러를 빈 문자열로 설정
     _textController.addListener(() {
       setState(() {
         isTextEmpty = _textController.text.isEmpty;
       });
     });
   }
-
 
   void sendPromptToModel() {
     if (!isTextEmpty) {
@@ -82,70 +81,16 @@ class _QABoxState extends State<QABox> {
       decoration: BoxDecoration(
         color: widget.backgroundColor,
         borderRadius: BorderRadius.circular(widget.borderRadius),
-        border: Border.all(color: widget.borderColor, width: widget.borderWidth),
+        border: Border.all(
+            color: widget.borderColor, width: widget.borderWidth),
       ),
       margin: widget.margin,
       padding: widget.padding,
       height: widget.height,
       width: widget.width,
       child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // 수정: 드롭다운 메뉴를 위젯으로 분리하여 사용
-            Row(
-              children: [
-                CustomDropdown(
-                  selectedModel: selectedModel,
-                  onChanged: onDropdownChanged,
-                ),
-              ],
-            ),
-
-            // 기존 코드는 그대로 유지
-            Row(
-              children: [
-                Expanded(
-                  flex: 95,
-                  child: TextFormField(
-                    minLines: null,
-                    maxLines: null,
-                    controller: _textController,
-                    decoration: const InputDecoration(
-                      hintText: MainPageLan.hintText,
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                SizedBox(width: MQSize.getDetailWidth01(context)),
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                          (Set<MaterialState> states) {
-                        return isTextEmpty ? Colors.white24 : Colors.white;
-                      },
-                    ),
-                  ),
-                  onPressed: isTextEmpty
-                      ? null // 버튼 비활성화 상태
-                      : () {
-                    sendPromptToModel();
-                    setState(() {
-                      isTextEmpty = true; // 상태를 갱신하여 버튼이 다시 비활성화되도록 함
-                    });
-                    _textController.clear();
-                  },
-                  child: const Text(MainPageLan.sendMessage, style: TextStyle(color: AppColors.textColor)),
-                ),
-              ],
-            ),
-          ],
-        ),
+        child: widget.child, // 여기에 인자로 받은 다른 위젯을 넣어줍니다.
       ),
     );
   }
 }
-
-
-
-

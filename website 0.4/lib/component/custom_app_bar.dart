@@ -7,6 +7,8 @@ import 'package:website/function/upload_user_basic_data.dart';
 import 'package:website/function/riverpod_setting.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:website/style/color.dart';
+import 'package:website/main.dart';
+import 'package:website/webpage.dart';
 
 
 
@@ -48,12 +50,14 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
               Text("현재 GeminiPoint: $gp"),
             ]
                 : [
-              const Text("기능을 사용하시려면 로그인 해주세요")
+              const Text("로그인 해주세요")
             ], // 혹은 빈 리스트를 사용하여 아무것도 표시하지 않음
           ),
           IconButton(
-            icon: const Icon(Icons.account_circle),
-            iconSize: MQSize.getDetailHeight2(context),
+            icon: Image.asset(
+              'lib/images/googleLogin.png',
+              height: MQSize.getDetailHeight2(context),
+            ),
             onPressed: () async {
               AuthFunctions Auth = AuthFunctions();
               Auth.signInWithGoogle();
@@ -68,7 +72,9 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
             iconSize: MQSize.getDetailHeight2(context),
             onPressed: () {
               authFunctions.signOut();
-            },
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyApp()), // 앱의 메인 화면 위젯으로 교체
+    );
+    },
           ),
         ],
       ),
