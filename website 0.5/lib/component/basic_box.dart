@@ -4,7 +4,7 @@ import 'package:website/style/language.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:website/function/send_prompt.dart';
 
-class EmptyBox extends StatefulWidget {
+class BasicBox extends StatefulWidget {
   final double height;
   final double width;
   final Color backgroundColor;
@@ -16,7 +16,8 @@ class EmptyBox extends StatefulWidget {
   final Widget? child;
   final String title;
 
-  const EmptyBox({
+
+  const BasicBox({
     Key? key,
     required this.height,
     required this.width,
@@ -31,10 +32,10 @@ class EmptyBox extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _EmptyBoxState createState() => _EmptyBoxState();
+  _BasicBoxState createState() => _BasicBoxState();
 }
 
-class _EmptyBoxState extends State<EmptyBox> {
+class _BasicBoxState extends State<BasicBox> {
   final TextEditingController _textController = TextEditingController();
   bool isTextEmpty = true;
   String selectedModel = MainPageLan.modelNameGemini;

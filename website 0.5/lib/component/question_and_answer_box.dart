@@ -112,6 +112,8 @@ class _QABoxState extends State<QABox> {
                     decoration: const InputDecoration(
                       hintText: MainPageLan.hintText,
                       border: OutlineInputBorder(),
+                      fillColor: Colors.white, // 흰색 배경색 추가
+                      filled: true, // 배경색 채우기 활성화
                     ),
                   ),
                 ),

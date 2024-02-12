@@ -9,8 +9,9 @@ import 'function/google_auth.dart';
 import 'style/color.dart';
 import 'component/message_response_list.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'component/empty_box.dart';
+import 'component/chat_log_box.dart';
 import 'function/get_response.dart';
+import 'component/basic_box.dart';
 
 
 class MyApp extends ConsumerWidget {
@@ -94,6 +95,7 @@ class MyApp extends ConsumerWidget {
                         title: MainPageLan.geminiPro,
                         height: MQSize.getDetailHeight70(context),
                         width: MQSize.getDetailWidthHalf(context),
+                        deleteDocArg: FunctionLan.geminiDoc,
                         child: MessageListWidget(modelResponseStream: listenForGeminiProResponse()),
                       ),
                       Expanded(
@@ -101,6 +103,7 @@ class MyApp extends ConsumerWidget {
                           title: MainPageLan.gpt35,
                           height: MQSize.getDetailHeight70(context),
                           width: MQSize.getDetailWidthHalf(context),
+                          deleteDocArg: FunctionLan.gpt35Doc,
                           child: MessageListWidget(modelResponseStream: listenForGPT35Response()),
                         ),
                       ),
@@ -109,7 +112,7 @@ class MyApp extends ConsumerWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: EmptyBox(
+                        child: BasicBox(
                           title: MainPageLan.autoGpt,
                           height: MQSize.getDetailHeightHalf(context),
                           width: MQSize.getDetailWidth99(context),

@@ -6,7 +6,7 @@ class MainPageLan {
   static const String begging = "우리 1002-557-792455 홍원종 <= 이거 만든 놈";
 
   static const String briefExplanation
-  = "Gemini Pro ai와 GPT 3.5를 무료로 사용해보세요. 추가적으로 ai를 복합적으로 연동한 기능을 구현중입니다.(문의는 wonhong1996@naver.com)";
+  = "Gemini Pro ai와 GPT 3.5를 무료로 사용해보세요. 추가적으로 ai를 복합적으로 연동한 기능을 구현중입니다.(오류 문의는 wonhong1996@naver.com)";
   static const String hintText = "물어볼 질문을 입력하세요...";
   static const String sendMessage = "전송";
   static const String modelNameGemini = "Gemini Pro(무료)";
@@ -18,4 +18,9 @@ class MainPageLan {
   static const String autoGpt = "AI 별 분할 업무 자동 수행 시스템";
 
 
+}
+
+class FunctionLan {
+  static const String geminiDoc = "GeminiPro";
+  static const String gpt35Doc = "GPT35";
 }

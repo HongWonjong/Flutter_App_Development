@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:website/style/language.dart';
 
 
 Future<void> sendGeminiPromptToFirestore(String uid, String text) async {
@@ -12,17 +13,17 @@ Future<void> sendGeminiPromptToFirestore(String uid, String text) async {
   CollectionReference discussionsRef = userDocRef.collection('discussions');
 
   // Check if "연습용토론계정" document already exists
-  DocumentSnapshot practiceDiscussionDoc = await discussionsRef.doc('GeminiPro').get();
+  DocumentSnapshot practiceDiscussionDoc = await discussionsRef.doc(FunctionLan.geminiDoc).get();
 
   if (!practiceDiscussionDoc.exists) {
     // Create "연습용토론계정" document if it doesn't exist
-    await discussionsRef.doc('GeminiPro').set({
+    await discussionsRef.doc(FunctionLan.geminiDoc).set({
       // Add fields if needed
     });
   }
 
   // Get the reference to "연습용토론계정" document
-  DocumentReference practiceDiscussionRef = discussionsRef.doc('GeminiPro');
+  DocumentReference practiceDiscussionRef = discussionsRef.doc(FunctionLan.geminiDoc);
 
   // Access the 'messages' collection inside the "연습용토론계정" document
   CollectionReference messagesRef = practiceDiscussionRef.collection('messages');
@@ -49,17 +50,17 @@ Future<void> sendGPT35PromptToFirestore(String uid, String text) async {
   CollectionReference discussionsRef = userDocRef.collection('discussions');
 
   // Check if "GPT35계정" document already exists
-  DocumentSnapshot gpt35DiscussionDoc = await discussionsRef.doc('GPT35').get();
+  DocumentSnapshot gpt35DiscussionDoc = await discussionsRef.doc(FunctionLan.gpt35Doc).get();
 
   if (!gpt35DiscussionDoc.exists) {
     // Create "GPT35계정" document if it doesn't exist
-    await discussionsRef.doc('GPT35').set({
+    await discussionsRef.doc(FunctionLan.gpt35Doc).set({
       // Add fields if needed
     });
   }
 
   // Get the reference to "GPT35계정" document
-  DocumentReference gpt35DiscussionRef = discussionsRef.doc('GPT35');
+  DocumentReference gpt35DiscussionRef = discussionsRef.doc(FunctionLan.gpt35Doc);
 
   // Access the 'messages' collection inside the "GPT35계정" document
   CollectionReference messagesRef = gpt35DiscussionRef.collection('messages');
@@ -71,7 +72,7 @@ Future<void> sendGPT35PromptToFirestore(String uid, String text) async {
   });
 
   print('GPT 3.5 Prompt sent to Firestore!');
-  print('Discussio  n ID: GPT35');
+  print('Discussion ID: GPT35');
   print('Message ID: ${newMessageRef.id}');
 }
 

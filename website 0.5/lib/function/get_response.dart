@@ -1,5 +1,4 @@
-// message_functions.dart
-
+import 'package:website/style/language.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -8,7 +7,7 @@ Stream<List<String>> listenForGeminiProResponse() {
       .collection('users')
       .doc(FirebaseAuth.instance.currentUser!.uid)
       .collection('discussions')
-      .doc('GeminiPro')
+      .doc(FunctionLan.geminiDoc)
       .collection('messages');
 
   return messagesRef.orderBy('createTime', descending: true).snapshots().map(
@@ -39,7 +38,7 @@ Stream<List<String>> listenForGPT35Response() {
       .collection('users')
       .doc(FirebaseAuth.instance.currentUser!.uid)
       .collection('discussions')
-      .doc('GPT35')
+      .doc(FunctionLan.gpt35Doc)
       .collection('messages');
 
   return messagesRef.orderBy('status.created_at', descending: true)
