@@ -10,6 +10,7 @@ import 'style/color.dart';
 import 'component/message_response_list.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'component/empty_box.dart';
+import 'function/get_response.dart';
 
 
 class MyApp extends ConsumerWidget {
@@ -43,17 +44,17 @@ class MyApp extends ConsumerWidget {
               child: Column(
                 children: [
                   SizedBox(height: MQSize.getDetailHeight1(context)),
-                  HeaderPage(
+                  /*HeaderPage(
                     imagePaths: ImagePaths.imagePath1,
                     imageHeight: MQSize.getDetailHeight3(context),
                     imageWidth: MQSize.getDetailWidth3(context),
                     textYouWant: MainPageLan.begging,
-                  ),
+                  ),*/
                   SizedBox(height: MQSize.getDetailHeight1(context)),
                   HeaderPage(
                     imagePaths: ImagePaths.imagePath2,
-                    imageHeight: MQSize.getDetailHeight3(context),
-                    imageWidth: MQSize.getDetailWidth3(context),
+                    imageHeight: MQSize.getDetailHeight4(context),
+                    imageWidth: MQSize.getDetailWidth4(context),
                     textYouWant: MainPageLan.briefExplanation,
                   ),
                   SizedBox(height: MQSize.getDetailHeight1(context)),
@@ -81,7 +82,6 @@ class MyApp extends ConsumerWidget {
 
                       Expanded(
                         child: QABox(
-                          text: MainPageLan.bodyPart1,
                           height: MQSize.getDetailHeightHalf(context),
                           width: MQSize.getDetailWidth90(context),
                         ),
@@ -91,22 +91,32 @@ class MyApp extends ConsumerWidget {
                   Row(
                     children: [
                       EmptyBox(
-                        text: MainPageLan.bodyPart1,
-                        height: MQSize.getDetailHeightHalf(context),
+                        title: MainPageLan.geminiPro,
+                        height: MQSize.getDetailHeight70(context),
                         width: MQSize.getDetailWidthHalf(context),
-                        child: const MessageListWidget(),
+                        child: MessageListWidget(modelResponseStream: listenForGeminiProResponse()),
                       ),
                       Expanded(
                         child: EmptyBox(
-                          text: MainPageLan.bodyPart1,
-                          height: MQSize.getDetailHeightHalf(context),
+                          title: MainPageLan.gpt35,
+                          height: MQSize.getDetailHeight70(context),
                           width: MQSize.getDetailWidthHalf(context),
-                          child: const MessageListWidget(),
+                          child: MessageListWidget(modelResponseStream: listenForGPT35Response()),
                         ),
                       ),
                     ],
                   ),
-
+                  Row(
+                    children: [
+                      Expanded(
+                        child: EmptyBox(
+                          title: MainPageLan.autoGpt,
+                          height: MQSize.getDetailHeightHalf(context),
+                          width: MQSize.getDetailWidth99(context),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),

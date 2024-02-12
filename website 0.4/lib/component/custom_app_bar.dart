@@ -7,7 +7,7 @@ import 'package:website/function/upload_user_basic_data.dart';
 import 'package:website/function/riverpod_setting.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:website/style/color.dart';
-import 'package:website/main.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:website/webpage.dart';
 
 
@@ -72,6 +72,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
             iconSize: MQSize.getDetailHeight2(context),
             onPressed: () {
               authFunctions.signOut();
+              DefaultCacheManager().emptyCache();
               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyApp()), // 앱의 메인 화면 위젯으로 교체
     );
     },

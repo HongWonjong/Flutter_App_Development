@@ -7,7 +7,6 @@ import 'package:website/function/send_prompt.dart';
 import 'model_choice_dropdown.dart';
 
 class QABox extends StatefulWidget {
-  final String text;
   final double height;
   final double width;
   final Color backgroundColor;
@@ -19,7 +18,6 @@ class QABox extends StatefulWidget {
 
   const QABox({
     Key? key,
-    required this.text,
     required this.height,
     required this.width,
     this.backgroundColor = AppColors.bodyPageBackground,

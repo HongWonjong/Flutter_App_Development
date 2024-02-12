@@ -1,25 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:website/function/get_response.dart';
 import 'package:website/style/media_query_custom.dart'; // 적절한 경로로 수정해주세요
-import 'package:rxdart/rxdart.dart';
+
 
 class MessageListWidget extends StatelessWidget {
-  const MessageListWidget({super.key});
+  final Stream<List<String>> modelResponseStream;
 
-
-
-  Stream<List<String>> getModelResponseStream() {
-    // Combine responses from both models using rxdart
-    Stream<List<String>> geminiStream = listenForGeminiProResponse();
-    Stream<List<String>> gpt35Stream = listenForGPT35Response();
-
-    return Rx.merge([geminiStream, gpt35Stream]);
-  }
+  const MessageListWidget({Key? key, required this.modelResponseStream}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<String>>(
-      stream: getModelResponseStream(),
+      stream: modelResponseStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
@@ -33,17 +24,25 @@ class MessageListWidget extends StatelessWidget {
               return Align(
                 alignment: Alignment.center,
                 child: Container(
+                  color: Colors.white,
                   width: MQSize.getDetailWidth90(context),
-                  padding: const EdgeInsets.all(16.0),
                   margin: const EdgeInsets.symmetric(vertical: 8.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(0.0),
-                  ),
-                  child: Text(
-                    message,
-                    maxLines: 5,
-                    overflow: TextOverflow.ellipsis,
+                  child: ExpansionTile(
+                    title: Text(
+                      message,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Text(
+                          message,
+                          maxLines: 5,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               );
@@ -54,6 +53,8 @@ class MessageListWidget extends StatelessWidget {
     );
   }
 }
+
+
 
 
 

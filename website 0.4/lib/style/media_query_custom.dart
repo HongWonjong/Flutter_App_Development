@@ -37,6 +37,9 @@ class MQSize {
   static double getDetailHeightHalf(BuildContext context) =>
       getHeightPercentage(context, 0.5);
 
+  static double getDetailHeight70(BuildContext context) =>
+      getHeightPercentage(context, 0.7);
+
   static double getDetailHeight90(BuildContext context) =>
       getHeightPercentage(context, 0.9);
 
@@ -63,4 +66,7 @@ class MQSize {
 
   static double getDetailWidth90(BuildContext context) =>
       getWidthPercentage(context, 0.9);
+
+  static double getDetailWidth99(BuildContext context) =>
+      getWidthPercentage(context, 0.99);
 }

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 
 class AuthFunctions {
@@ -28,7 +29,9 @@ class AuthFunctions {
     try {
       await _googleSignIn.signOut();
       await _firebaseAuth.signOut();
-    } catch (error) {
+      FirebaseAuth.instance.signOut();
+      DefaultCacheManager().emptyCache();
+          } catch (error) {
       // 로그아웃 실패 처리
       rethrow;
     }
