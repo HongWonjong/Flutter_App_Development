@@ -104,11 +104,16 @@ class _EmptyBoxState extends State<EmptyBox> {
               ElevatedButton(
                 style: DeleteButtonStyles.getDeleteButtonStyle(context),
                 onPressed: () {
-                  // "GeminiDoc 삭제" 버튼 클릭 시 실행되는 함수 호출
-                  deleteDoc(context, widget.deleteDocArg);
+                  // "GeminiDoc 삭제" 버튼 클릭 시 확인 다이얼로그 표시
+                  showDeleteConfirmationDialog(context, widget.deleteDocArg);
                 },
-                child: Text('${widget.deleteDocArg} 기록 삭제',
-                    style:  TextStyle(color: AppColors.whiteTextColor, fontSize: MQSize.getDetailHeight1(context))), // 버튼 텍스트에도 사용됨
+                child: Text(
+                  '${widget.deleteDocArg} 기록 삭제',
+                  style: TextStyle(
+                    color: AppColors.whiteTextColor,
+                    fontSize: MQSize.getDetailHeight1(context),
+                  ),
+                ),
               ),
             ],
           ),

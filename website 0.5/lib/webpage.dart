@@ -20,7 +20,6 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    //final selectedModel = ref.watch(selectedModelProvider);
     return MaterialApp(
       home: Scaffold(
         appBar:  const CustomAppBar(),
@@ -40,47 +39,22 @@ class MyApp extends ConsumerWidget {
               ),
             ),
 
-            /* SingleChildScrollView containing the layout */
             SingleChildScrollView(
               child: Column(
                 children: [
                   SizedBox(height: MQSize.getDetailHeight1(context)),
-                  /*HeaderPage(
-                    imagePaths: ImagePaths.imagePath1,
-                    imageHeight: MQSize.getDetailHeight3(context),
-                    imageWidth: MQSize.getDetailWidth3(context),
-                    textYouWant: MainPageLan.begging,
-                  ),*/
                   SizedBox(height: MQSize.getDetailHeight1(context)),
                   HeaderPage(
+                    height: MQSize.getDetailHeight4(context),
+                    width: MQSize.getDetailWidth99(context),
                     imagePaths: ImagePaths.imagePath2,
                     imageHeight: MQSize.getDetailHeight4(context),
                     imageWidth: MQSize.getDetailWidth4(context),
                     textYouWant: MainPageLan.briefExplanation,
                   ),
                   SizedBox(height: MQSize.getDetailHeight1(context)),
-                  /*HeaderPage(
-                    imagePaths: ImagePaths.imagePath3,
-                    imageHeight: MQSize.getDetailHeight4(context),
-                    imageWidth: MQSize.getDetailWidth3(context),
-                    textYouWant: mainpage_lan.popPop,
-                  ),
-                  SizedBox(height: MQSize.getDetailHeight1(context)),*/
                   Row(
                     children: [
-                      /*ElevatedButton(
-                        onPressed: () {
-                          authFunctions.signInWithGoogle();
-                        },
-                        child: Text("로그인"),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          authFunctions.signOut();
-                        },
-                        child: Text("로그아웃"),
-                      ),*/
-
                       Expanded(
                         child: QABox(
                           height: MQSize.getDetailHeightHalf(context),

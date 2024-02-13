@@ -4,6 +4,35 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:website/style/language.dart';
 
 
+Future<void> showDeleteConfirmationDialog(BuildContext context, String docName) async {
+  return showDialog<void>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('삭제 확인'),
+        content: Text('$docName 기록을 삭제하시겠습니까?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // 다이얼로그 닫기
+            },
+            child: Text('취소'),
+          ),
+          TextButton(
+            onPressed: () {
+              // "삭제" 버튼 클릭 시 실행되는 함수 호출
+              deleteDoc(context, docName);
+              Navigator.of(context).pop(); // 다이얼로그 닫기
+            },
+            child: Text('삭제'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+
 void deleteDoc(BuildContext context, String docType) async {
   try {
     String currentUserUid = FirebaseAuth.instance.currentUser!.uid;

@@ -10,12 +10,12 @@ class MainPageLan {
   static const String hintText = "물어볼 질문을 입력하세요...";
   static const String sendMessage = "전송";
   static const String modelNameGemini = "Gemini Pro(무료)";
-  static const String modelNameGpt35 = 'GPT 3.5(저렴)';
+  static const String modelNameGpt35 = 'GPT 3.5(무료)';
   static const String modelNameGpt4 = 'GPT 4(비싸서 추후 추가 예정)';
 
   static const String geminiPro = "Gemini Pro";
   static const String gpt35 = "GPT 3.5";
-  static const String autoGpt = "AI 별 분할 업무 자동 수행 시스템";
+  static const String autoGpt = "역할에 따라 별도의 파인튜닝 된 다중 AI 생성 & 업무 지시와 그 결과 진행 확인";
 
 
 }
