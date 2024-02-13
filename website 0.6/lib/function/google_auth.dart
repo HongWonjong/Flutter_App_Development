@@ -29,14 +29,8 @@ class AuthFunctions {
   }
 
   Future<void> signOut() async {
-    try {
       await _firebaseAuth.signOut();
       await _googleSignIn.signOut();
-      FirebaseAuth.instance.signOut();
-          } catch (error) {
-      // 로그아웃 실패 처리
-      rethrow;
-    }
   }
 }
 

@@ -18,7 +18,7 @@ class UserDataUpload {
         await userDoc.set({
           'userUid': user.uid,
           'email': user.email,
-          'GeminiPoint': 10,
+          'GeminiPoint': 100,
         });
         print('유저 정보가 성공적으로 추가되었습니다.');
       } else {
