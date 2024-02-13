@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
-import 'style/media_query_custom.dart';
-import 'component/custom_app_bar.dart';
-import 'component/question_and_answer_box.dart';
-import 'style/language.dart';
-import 'component/header.dart';
-import 'style/image_path.dart';
-import 'function/google_auth.dart';
-import 'style/color.dart';
-import 'component/message_response_list.dart';
+import '../style/media_query_custom.dart';
+import '../component/custom_app_bar.dart';
+import '../component/question_and_answer_box.dart';
+import '../style/language.dart';
+import '../component/header.dart';
+import '../style/image_path.dart';
+import '../function/google_auth.dart';
+import '../style/color.dart';
+import '../component/message_response_list.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'component/chat_log_box.dart';
-import 'function/get_response.dart';
-import 'component/basic_box.dart';
+import '../component/chat_log_box.dart';
+import '../function/get_response.dart';
+import '../component/basic_box.dart';
 
 
 class MyApp extends ConsumerWidget {
-   MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
   AuthFunctions authFunctions = AuthFunctions();
+
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -103,6 +104,7 @@ class MyApp extends ConsumerWidget {
     );
   }
 }
+
 
 
 

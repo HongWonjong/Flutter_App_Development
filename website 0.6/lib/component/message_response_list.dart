@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:website/style/media_query_custom.dart'; // 적절한 경로로 수정해주세요
-import 'package:website/function/delete_chat_log.dart';
-import 'package:website/style/color.dart';
-import 'package:website/style/delete_buttons_style.dart';
+import 'package:website/style/media_query_custom.dart';
+import 'package:website/style/language.dart';
 
 class MessageListWidget extends StatelessWidget {
   final Stream<List<String>> modelResponseStream;
 
-
   const MessageListWidget({
     Key? key,
     required this.modelResponseStream,
-
   }) : super(key: key);
 
   @override
@@ -27,6 +23,10 @@ class MessageListWidget extends StatelessWidget {
               return const CircularProgressIndicator();
             } else {
               List<String> messagesAndResponses = snapshot.data ?? [];
+
+              if (messagesAndResponses.isEmpty) {
+                return Text(MainPageLan.noChatLog, style: TextStyle(fontSize: MQSize.getDetailHeight11(context)));
+              }
 
               return Column(
                 children: messagesAndResponses.map((message) {

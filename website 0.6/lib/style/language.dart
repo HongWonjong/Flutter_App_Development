@@ -17,6 +17,8 @@ class MainPageLan {
   static const String gpt35 = "GPT 3.5";
   static const String autoGpt = "역할에 따라 별도의 파인튜닝 된 다중 AI 생성 & 업무 지시와 그 결과 진행 확인";
 
+  static const String noChatLog = "물어본 기록이 없습니다.";
+
 
 }
 
