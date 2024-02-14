@@ -50,7 +50,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
               Text("GeminiPoint: $gp"),
             ]
                 : [
-              const Text("로그인 해주세요")
+              const Text("오른쪽의 아이콘을 눌러 로그인 해주세요.")
             ], // 혹은 빈 리스트를 사용하여 아무것도 표시하지 않음
           ),
           IconButton(
@@ -69,7 +69,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
           ),
 
           IconButton(
-            icon: const Icon(Icons.logout_outlined),
+            icon: const Icon(Icons.logout_outlined, color: AppColors.whiteTextColor),
             iconSize: MQSize.getDetailHeight2(context),
             onPressed: () {
               authFunctions.signOut(ref);

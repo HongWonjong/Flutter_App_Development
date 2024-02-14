@@ -65,7 +65,7 @@ class MyApp extends ConsumerWidget {
                     width: MQSize.getDetailWidth99(context),
                     imagePaths: ImagePaths.imagePath2,
                     imageHeight: MQSize.getDetailHeight5(context),
-                    imageWidth: MQSize.getDetailWidth4(context),
+                    imageWidth: MQSize.getDetailWidth5(context),
                     textYouWant: MainPageLan.briefExplanation,
                   ),
                   SizedBox(height: MQSize.getDetailHeight1(context)),
