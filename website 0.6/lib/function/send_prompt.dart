@@ -43,7 +43,7 @@ Future<void> sendGeminiPromptToFirestore(String uid, String text) async {
   });
 
 // Update GeminiPoints in the user's document
-  await userDocRef.update({'GeminiPoint': geminiPoints - 1});
+  await userDocRef.update({'GeminiPoint': FieldValue.increment(-1)});
 
 
 
