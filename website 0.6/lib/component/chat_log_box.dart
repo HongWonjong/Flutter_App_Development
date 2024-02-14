@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:website/function/send_prompt.dart';
 import 'package:website/style/media_query_custom.dart';
 import 'package:website/function/delete_chat_log.dart';
-import 'package:website/style/delete_buttons_style.dart';
+import 'package:website/component/button/delete_buttons_style.dart';
 
 class ChatLogBox extends StatefulWidget {
   final double height;
@@ -96,11 +96,15 @@ class _ChatLogBoxState extends State<ChatLogBox> {
             children: [
               Text(
                 widget.title,
-                style: const TextStyle(
+                style:  TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 18.0,
+                  fontSize: MQSize.getDetailHeight11(context),
                 ),
               ),
+            ],
+          ),
+          Row(
+            children: [
               ElevatedButton(
                 style: DeleteButtonStyles.getDeleteButtonStyle(context),
                 onPressed: () {
@@ -111,7 +115,7 @@ class _ChatLogBoxState extends State<ChatLogBox> {
                   '기록 삭제',
                   style: TextStyle(
                     color: AppColors.whiteTextColor,
-                    fontSize: MQSize.getDetailHeight1(context),
+                    fontSize: MQSize.getDetailHeight11(context),
                   ),
                 ),
               ),

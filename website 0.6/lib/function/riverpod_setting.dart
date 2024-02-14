@@ -3,17 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-final googleSignInProvider = StreamProvider<bool>((ref) async* {
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-  final GoogleSignInAccount? googleUser = await _googleSignIn.signInSilently();
+// riverpod_setting.dart 또는 앱의 상태 관리를 담당하는 파일에 추가
 
-  yield googleUser != null;
-
-  await for (final _ in _googleSignIn.onCurrentUserChanged) {
-    yield _googleSignIn.currentUser != null;
-  }
+final authStateProvider = StateProvider<bool>((ref) {
+  // 초기 상태 설정. 기본적으로 로그인 상태는 false로 설정
+  return false;
 });
-
 
 final userEmailProvider = StreamProvider<String?>((ref) {
   final user = FirebaseAuth.instance.currentUser;

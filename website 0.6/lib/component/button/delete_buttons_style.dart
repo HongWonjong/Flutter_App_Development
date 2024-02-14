@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'media_query_custom.dart';
+import '../../style/media_query_custom.dart';
 
 class DeleteButtonStyles {
   static ButtonStyle getDeleteButtonStyle(BuildContext context) {

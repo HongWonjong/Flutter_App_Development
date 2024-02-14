@@ -20,22 +20,21 @@ class MessageListWidget extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
             } else if (snapshot.hasError) {
-              return const CircularProgressIndicator();
+              return Text('다시 로그인 하세요.');
             } else {
               List<String> messagesAndResponses = snapshot.data ?? [];
 
               if (messagesAndResponses.isEmpty) {
-                return Text(MainPageLan.noChatLog, style: TextStyle(fontSize: MQSize.getDetailHeight11(context)));
+                return Text(MainPageLan.noChatLog, style: TextStyle(fontSize: MQSize.getDetailWidth2(context)));
               }
-
               return Column(
                 children: messagesAndResponses.map((message) {
                   return Align(
                     alignment: Alignment.center,
                     child: Container(
                       color: Colors.white,
-                      width: MQSize.getDetailWidth90(context),
-                      margin: const EdgeInsets.symmetric(vertical: 8.0),
+                      width: MQSize.getDetailWidthHalf(context),
+                      margin: EdgeInsets.symmetric(vertical: MQSize.getDetailHeight1(context)),
                       child: ElevatedButton(
                         onPressed: () {
                           showDialog(

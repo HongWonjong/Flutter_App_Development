@@ -56,7 +56,7 @@ class _HeaderPageState extends State<HeaderPage> {
       child: Row(
         children: [
           for (String imagePath in widget.imagePaths)
-            SizedBox(
+            Expanded(
               child: Image.asset(
                 imagePath,
                 height: widget.imageHeight,
@@ -67,7 +67,7 @@ class _HeaderPageState extends State<HeaderPage> {
             child: Text(
               widget.textYouWant,
               style: TextStyle(
-                fontSize: MQSize.getDetailHeight11(context),
+                fontSize: MQSize.getDetailWidth1(context),
                 // Adjust the fontSize according to your preference
               ),
             ),

@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../component/chat_log_box.dart';
 import '../function/get_response.dart';
 import '../component/basic_box.dart';
+import 'package:website/function/riverpod_setting.dart';
 
 
 class MyApp extends ConsumerWidget {
@@ -21,10 +22,13 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isLoggedIn = ref.watch(authStateProvider);
+
     return MaterialApp(
       home: Scaffold(
         appBar:  const CustomAppBar(),
-        body: Stack(
+        body: isLoggedIn // 로그인 상태에 따라 조건부 렌더링
+            ? Stack(
           children: [
             /* Gradient background */
             Container(
@@ -49,7 +53,7 @@ class MyApp extends ConsumerWidget {
                     height: MQSize.getDetailHeight4(context),
                     width: MQSize.getDetailWidth99(context),
                     imagePaths: ImagePaths.imagePath2,
-                    imageHeight: MQSize.getDetailHeight4(context),
+                    imageHeight: MQSize.getDetailHeight5(context),
                     imageWidth: MQSize.getDetailWidth4(context),
                     textYouWant: MainPageLan.briefExplanation,
                   ),
@@ -58,26 +62,27 @@ class MyApp extends ConsumerWidget {
                     children: [
                       Expanded(
                         child: QABox(
-                          height: MQSize.getDetailHeightHalf(context),
-                          width: MQSize.getDetailWidth90(context),
+                          height: MQSize.getDetailHeight5(context),
+                          width: MQSize.getDetailWidth5(context),
                         ),
                       ),
                     ],
                   ),
                   Row(
                     children: [
-                      ChatLogBox(
-                        title: MainPageLan.geminiPro,
-                        height: MQSize.getDetailHeight70(context),
-                        width: MQSize.getDetailWidthHalf(context),
-                        deleteDocArg: FunctionLan.geminiDoc,
-                        child: MessageListWidget(modelResponseStream: listenForGeminiProResponse()),
-                      ),
+                      Expanded(
+                          child: ChatLogBox(
+                            title: MainPageLan.geminiPro,
+                            height: MQSize.getDetailHeightHalf(context),
+                            width: MQSize.getDetailWidth5(context),
+                            deleteDocArg: FunctionLan.geminiDoc,
+                            child: MessageListWidget(modelResponseStream: listenForGeminiProResponse()),
+                          )),
                       Expanded(
                         child: ChatLogBox(
                           title: MainPageLan.gpt35,
-                          height: MQSize.getDetailHeight70(context),
-                          width: MQSize.getDetailWidthHalf(context),
+                          height: MQSize.getDetailHeightHalf(context),
+                          width: MQSize.getDetailWidth5(context),
                           deleteDocArg: FunctionLan.gpt35Doc,
                           child: MessageListWidget(modelResponseStream: listenForGPT35Response()),
                         ),
@@ -89,8 +94,8 @@ class MyApp extends ConsumerWidget {
                       Expanded(
                         child: ChatLogBox(
                           title: MainPageLan.gpt4,
-                          height: MQSize.getDetailHeight70(context),
-                          width: MQSize.getDetailWidthHalf(context),
+                          height: MQSize.getDetailHeightHalf(context),
+                          width: MQSize.getDetailWidth5(context),
                           deleteDocArg: FunctionLan.gpt4Doc,
                           child: MessageListWidget(modelResponseStream: listenForGPT4Response()),
                         ),
@@ -102,8 +107,8 @@ class MyApp extends ConsumerWidget {
                       Expanded(
                         child: BasicBox(
                           title: MainPageLan.autoGpt,
-                          height: MQSize.getDetailHeight70(context),
-                          width: MQSize.getDetailWidth99(context),
+                          height: MQSize.getDetailHeight5(context),
+                          width: MQSize.getDetailWidth5(context),
                         ),
                       ),
                     ],
@@ -112,8 +117,8 @@ class MyApp extends ConsumerWidget {
               ),
             ),
           ],
-        ),
-      ),
+        ) : const Center(child: Text('로그인이 필요합니다.')),
+    ),
     );
   }
 }

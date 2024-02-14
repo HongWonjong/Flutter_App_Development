@@ -36,6 +36,8 @@ class _QABoxState extends State<QABox> {
   final TextEditingController _textController = TextEditingController();
   bool isTextEmpty = true;
   String selectedModel = MainPageLan.modelNameGemini; // 추가: 선택된 모델을 저장할 변수
+  bool showAIPreparingMessage = false; // AI 답변 준비 메시지를 보여줄지 결정하는 상태 변수
+
 
   @override
   void initState() {
@@ -52,6 +54,13 @@ class _QABoxState extends State<QABox> {
   void sendPromptToModel() {
     if (!isTextEmpty) {
       String uid = FirebaseAuth.instance.currentUser!.uid;
+      String promptText = _textController.text; // 메시지 내용을 변수에 저장
+
+      setState(() {
+        showAIPreparingMessage = true; // AI 준비 메시지 활성화
+        isTextEmpty = true;
+      });
+
       if (selectedModel == MainPageLan.modelNameGemini) {
         // Gemini Pro 선택 시
         sendGeminiPromptToFirestore(uid, _textController.text);
@@ -68,6 +77,11 @@ class _QABoxState extends State<QABox> {
 
       // Optionally, you can clear the text field after sending the message
       _textController.clear();
+      Future.delayed(const Duration(seconds: 4), () {
+        setState(() {
+          showAIPreparingMessage = false; // AI 준비 메시지 비활성화
+        });
+      });
     }
   }
 
@@ -141,6 +155,15 @@ class _QABoxState extends State<QABox> {
                   },
                   child: const Text(MainPageLan.sendMessage, style: TextStyle(color: AppColors.textColor)),
                 ),
+              ],
+            ),
+            Row(
+              children: [
+                if (showAIPreparingMessage) // 조건부 위젯 렌더링
+                  const Padding(
+                    padding: EdgeInsets.only(top: 8.0),
+                    child: Text("AI가 답변을 하는 중입니다.. 아래의 대답 내역에 곧 생성됩니다."),
+                  ),
               ],
             ),
           ],

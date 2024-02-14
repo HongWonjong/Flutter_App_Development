@@ -11,6 +11,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 
 
+
 class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const CustomAppBar({Key? key}) : super(key: key);
 
@@ -19,7 +20,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final loginStatus = ref.watch(googleSignInProvider);
+    final isLoggedIn = ref.watch(authStateProvider);
     final email = ref.watch(userEmailProvider).value;
     final gp = ref.watch(userGPProvider).value;
     AuthFunctions authFunctions = AuthFunctions();
@@ -36,17 +37,17 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
         ),
       ),
       child: AppBar(
-        title: const Text(MainPageLan.appBarTitle),
+        title: Text(MainPageLan.appBarTitle, style: TextStyle(fontSize: MQSize.getDetailWidth1(context)),),
         backgroundColor: AppColors.appBarColor,
         centerTitle: true,
         actions: <Widget>[
           // 예시: 사용자가 로그인되어 있는 경우에만 텍스트 표시
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: email != null
+            children: isLoggedIn
                 ? [
-              Text('환영합니다 $email 님'),
-              Text("현재 GeminiPoint: $gp"),
+              Text('$email'),
+              Text("GeminiPoint: $gp"),
             ]
                 : [
               const Text("로그인 해주세요")
@@ -59,18 +60,19 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
             ),
             onPressed: () async {
               AuthFunctions auth = AuthFunctions();
-              auth.signInWithGoogle();
+              auth.signInWithGoogle(ref);
               UserDataUpload userDataUpload = UserDataUpload();
               userDataUpload.addUserToFirestore();
               UserDataUpload userDataUpload2 = UserDataUpload();
               userDataUpload2.checkAndAddDefaultUserData();
             },
           ),
+
           IconButton(
             icon: const Icon(Icons.logout_outlined),
             iconSize: MQSize.getDetailHeight2(context),
             onPressed: () {
-              authFunctions.signOut();
+              authFunctions.signOut(ref);
               DefaultCacheManager().emptyCache();
               },
           ),

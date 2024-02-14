@@ -46,9 +46,10 @@ void deleteDoc(BuildContext context, String docType) async {
       docId = FunctionLan.geminiDoc;
     } else if (docType == FunctionLan.gpt35Doc) {
       docId = FunctionLan.gpt35Doc;
+    } else if (docType == FunctionLan.gpt4Doc) {
+      docId = FunctionLan.gpt4Doc;
     } else {
-      // 유효하지 않은 docType이면 함수 종료
-      return;
+      return null;
     }
 
     // 해당 문서의 messages 하위 컬렉션 삭제

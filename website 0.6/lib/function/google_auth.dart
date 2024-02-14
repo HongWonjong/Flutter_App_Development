@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'riverpod_setting.dart';
 
 class AuthFunctions {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
@@ -12,7 +12,7 @@ class AuthFunctions {
     return _firebaseAuth.currentUser != null;
   }
 
-  Future<UserCredential> signInWithGoogle() async {
+  Future<UserCredential> signInWithGoogle(WidgetRef ref) async {
     // Create a new provider
     GoogleAuthProvider googleProvider = GoogleAuthProvider();
 
@@ -22,15 +22,20 @@ class AuthFunctions {
     });
 
     // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithPopup(googleProvider);
+    UserCredential userCredential = await FirebaseAuth.instance.signInWithPopup(googleProvider);
+    // Update login state
+    ref.read(authStateProvider.notifier).state = true;
+    return userCredential;
 
     // Or use signInWithRedirect
     // return await FirebaseAuth.instance.signInWithRedirect(googleProvider);
   }
 
-  Future<void> signOut() async {
-      await _firebaseAuth.signOut();
-      await _googleSignIn.signOut();
+  Future<void> signOut(WidgetRef ref) async {
+    await _firebaseAuth.signOut();
+    await _googleSignIn.signOut();
+    // Update login state
+    ref.read(authStateProvider.notifier).state = false;
   }
 }
 
