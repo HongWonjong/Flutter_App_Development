@@ -12,9 +12,9 @@ class DeleteButtonStyles {
       iconSize: MaterialStateProperty.resolveWith<double>(
             (Set<MaterialState> states) {
           if (states.contains(MaterialState.pressed)) {
-            return MQSize.getDetailHeight3(context) * 0.9; // 버튼이 눌렸을 때 크기
+            return MQSize.getDetailWidth2(context) * 0.9; // 버튼이 눌렸을 때 크기
           } else {
-            return MQSize.getDetailHeight3(context); // 기본 크기
+            return MQSize.getDetailWidth2(context); // 기본 크기
           }
         },
       ),

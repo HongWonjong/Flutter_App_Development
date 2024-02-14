@@ -108,7 +108,7 @@ class _ChatLogBoxState extends State<ChatLogBox> {
                   showDeleteConfirmationDialog(context, widget.deleteDocArg);
                 },
                 child: Text(
-                  '${widget.deleteDocArg} 기록 삭제',
+                  '기록 삭제',
                   style: TextStyle(
                     color: AppColors.whiteTextColor,
                     fontSize: MQSize.getDetailHeight1(context),
