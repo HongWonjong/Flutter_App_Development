@@ -13,6 +13,7 @@ import '../component/chat_log_box.dart';
 import '../function/get_response.dart';
 import '../component/basic_box.dart';
 import 'package:website/function/riverpod_setting.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 
 class MyApp extends ConsumerWidget {
@@ -24,8 +25,18 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoggedIn = ref.watch(authStateProvider);
 
+    // 구글 어널리틱스 관련 코드
+     FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+     FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(analytics: analytics);
+    FirebaseAnalyticsObserver(analytics: analytics);
+     //
+
     return MaterialApp(
+      navigatorObservers: <NavigatorObserver>[observer],
+
       home: Scaffold(
+
+
         appBar:  const CustomAppBar(),
         body: isLoggedIn // 로그인 상태에 따라 조건부 렌더링
             ? Stack(
