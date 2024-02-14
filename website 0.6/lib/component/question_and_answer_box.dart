@@ -59,6 +59,10 @@ class _QABoxState extends State<QABox> {
         // GPT 3.5 선택 시
         sendGPT35PromptToFirestore(uid, _textController.text);
       }
+      else if (selectedModel == MainPageLan.modelNameGpt4) {
+        // GPT 3.5 선택 시
+        sendGPT4PromptToFirestore(uid, _textController.text);
+      }
       // 다른 모델 추가 가능
       // ...
 

@@ -7,7 +7,7 @@ import 'package:website/style/media_query_custom.dart';
 import 'package:website/function/delete_chat_log.dart';
 import 'package:website/style/delete_buttons_style.dart';
 
-class EmptyBox extends StatefulWidget {
+class ChatLogBox extends StatefulWidget {
   final double height;
   final double width;
   final Color backgroundColor;
@@ -21,7 +21,7 @@ class EmptyBox extends StatefulWidget {
   final String deleteDocArg;
 
 
-  const EmptyBox({
+  const ChatLogBox({
     Key? key,
     required this.height,
     required this.width,
@@ -37,10 +37,10 @@ class EmptyBox extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _EmptyBoxState createState() => _EmptyBoxState();
+  _ChatLogBoxState createState() => _ChatLogBoxState();
 }
 
-class _EmptyBoxState extends State<EmptyBox> {
+class _ChatLogBoxState extends State<ChatLogBox> {
   final TextEditingController _textController = TextEditingController();
   bool isTextEmpty = true;
   String selectedModel = MainPageLan.modelNameGemini;

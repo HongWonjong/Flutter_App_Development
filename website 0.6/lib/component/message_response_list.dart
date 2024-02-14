@@ -36,22 +36,39 @@ class MessageListWidget extends StatelessWidget {
                       color: Colors.white,
                       width: MQSize.getDetailWidth90(context),
                       margin: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: ExpansionTile(
-                        title: Text(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text('당신의 대화 내용'),
+                                content: SingleChildScrollView(
+                                  child: Text(
+                                    message,
+                                    maxLines: null, // Allows unlimited lines
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text('닫기'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          alignment: Alignment.centerLeft, // 텍스트를 왼쪽으로 정렬
+                        ),
+                        child: Text(
                           message,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Text(
-                              message,
-                              maxLines: 5,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
                       ),
                     ),
                   );
@@ -64,6 +81,7 @@ class MessageListWidget extends StatelessWidget {
     );
   }
 }
+
 
 
 

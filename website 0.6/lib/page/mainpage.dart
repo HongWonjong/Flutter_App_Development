@@ -66,7 +66,7 @@ class MyApp extends ConsumerWidget {
                   ),
                   Row(
                     children: [
-                      EmptyBox(
+                      ChatLogBox(
                         title: MainPageLan.geminiPro,
                         height: MQSize.getDetailHeight70(context),
                         width: MQSize.getDetailWidthHalf(context),
@@ -74,7 +74,7 @@ class MyApp extends ConsumerWidget {
                         child: MessageListWidget(modelResponseStream: listenForGeminiProResponse()),
                       ),
                       Expanded(
-                        child: EmptyBox(
+                        child: ChatLogBox(
                           title: MainPageLan.gpt35,
                           height: MQSize.getDetailHeight70(context),
                           width: MQSize.getDetailWidthHalf(context),
@@ -87,9 +87,22 @@ class MyApp extends ConsumerWidget {
                   Row(
                     children: [
                       Expanded(
+                        child: ChatLogBox(
+                          title: MainPageLan.gpt4,
+                          height: MQSize.getDetailHeight70(context),
+                          width: MQSize.getDetailWidthHalf(context),
+                          deleteDocArg: FunctionLan.gpt4Doc,
+                          child: MessageListWidget(modelResponseStream: listenForGPT4Response()),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
                         child: BasicBox(
                           title: MainPageLan.autoGpt,
-                          height: MQSize.getDetailHeightHalf(context),
+                          height: MQSize.getDetailHeight70(context),
                           width: MQSize.getDetailWidth99(context),
                         ),
                       ),
