@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:website/style/language.dart';
 
 Future<void> sendGeminiPromptToFirestore(String uid, String text) async {
+  String title = text.length > 15 ? text.substring(0, 15) : text;
   // Access the 'users' collection
   CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
 
@@ -39,6 +40,7 @@ Future<void> sendGeminiPromptToFirestore(String uid, String text) async {
   // Add a new message document to the 'messages' collection with auto-generated ID
   await messagesRef.add({
     'prompt': text,
+    'title': title, // 'title' 필드 추가
     // Add other fields if needed
   });
 
@@ -52,6 +54,7 @@ Future<void> sendGeminiPromptToFirestore(String uid, String text) async {
 }
 
 Future<void> sendGPT35PromptToFirestore(String uid, String text) async {
+  String title = text.length > 10 ? text.substring(0, 10) : text;
   // Access the 'users' collection
   CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
 
@@ -89,6 +92,8 @@ Future<void> sendGPT35PromptToFirestore(String uid, String text) async {
   // Add a new message document to the 'messages' collection with auto-generated ID
   await messagesRef.add({
     'gpt35_prompt': text,
+    'title': title, // 'title' 필드 추가
+
     // Add other fields if needed
   });
 
@@ -100,6 +105,7 @@ Future<void> sendGPT35PromptToFirestore(String uid, String text) async {
 }
 
 Future<void> sendGPT4PromptToFirestore(String uid, String text) async {
+  String title = text.length > 10 ? text.substring(0, 10) : text;
   // Access the 'users' collection
   CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
 
@@ -137,6 +143,8 @@ Future<void> sendGPT4PromptToFirestore(String uid, String text) async {
   // Add a new message document to the 'messages' collection with auto-generated ID
   await messagesRef.add({
     'gpt4_prompt': text,
+    'title': title, // 'title' 필드 추가
+
     // Add other fields if needed
   });
 

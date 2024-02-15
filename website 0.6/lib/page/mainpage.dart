@@ -14,6 +14,7 @@ import '../function/get_response.dart';
 import '../component/basic_box.dart';
 import 'package:website/function/riverpod_setting.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:website/function/get_chat_title.dart';
 
 
 class MyApp extends ConsumerWidget {
@@ -87,7 +88,7 @@ class MyApp extends ConsumerWidget {
                             height: MQSize.getDetailHeightHalf(context),
                             width: MQSize.getDetailWidth5(context),
                             deleteDocArg: FunctionLan.geminiDoc,
-                            child: MessageListWidget(modelResponseStream: listenForGeminiProResponse()),
+                            child: MessageListWidget(modelResponseStream: listenForGeminiProResponse(), titleResponseStream: listenForGeminiProTitle(),),
                           )),
                       Expanded(
                         child: ChatLogBox(
@@ -95,7 +96,7 @@ class MyApp extends ConsumerWidget {
                           height: MQSize.getDetailHeightHalf(context),
                           width: MQSize.getDetailWidth5(context),
                           deleteDocArg: FunctionLan.gpt35Doc,
-                          child: MessageListWidget(modelResponseStream: listenForGPT35Response()),
+                          child: MessageListWidget(modelResponseStream: listenForGPT35Response(), titleResponseStream: listenForGPT35Title(),),
                         ),
                       ),
                     ],
@@ -108,7 +109,7 @@ class MyApp extends ConsumerWidget {
                           height: MQSize.getDetailHeightHalf(context),
                           width: MQSize.getDetailWidth5(context),
                           deleteDocArg: FunctionLan.gpt4Doc,
-                          child: MessageListWidget(modelResponseStream: listenForGPT4Response()),
+                          child: MessageListWidget(modelResponseStream: listenForGPT4Response(), titleResponseStream: listenForGPT4Title(),),
                         ),
                       ),
                     ],
