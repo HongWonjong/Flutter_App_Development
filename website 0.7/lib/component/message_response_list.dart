@@ -29,7 +29,7 @@ class MessageListWidget extends StatelessWidget {
               List<String> messagesAndResponses = snapshot.data ?? [];
 
               if (messagesAndResponses.isEmpty) {
-                return Text(MainPageLan.noChatLog, style: TextStyle(fontSize: MQSize.getDetailWidth2(context)));
+                return Text(MainPageLan.noChatLog, style: TextStyle(fontSize: MQSize.getDetailWidth1(context)));
               }
               return Column(
                 children: messagesAndResponses.map((message) {

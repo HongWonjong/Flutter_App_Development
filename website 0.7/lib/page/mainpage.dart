@@ -121,6 +121,18 @@ class MyApp extends ConsumerWidget {
                           ),
                         ),
                       ),
+                      Expanded(
+                        child: ChatLogBox(
+                          title: MainPageLan.palm,
+                          height: MQSize.getDetailHeightHalf(context),
+                          width: MQSize.getDetailWidth5(context),
+                          deleteDocArg: FunctionLan.palmDoc,
+                          child: MessageListWidget(
+                              modelResponseStream: listenForResponses(FunctionLan.palmDoc, 'palm_prompt', 'palm_response', 'createTime'),
+                              titleResponseStream: listenForTitle(FunctionLan.palmDoc, 'createTime')
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   Row(
@@ -138,7 +150,36 @@ class MyApp extends ConsumerWidget {
               ),
             ),
           ],
-        ) : const Center(child: Text('로그인이 필요합니다.')),
+        ) :  Stack(
+          children: [
+            Container(
+        decoration:   BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.bodyGradationLeft,
+            AppColors.bodyGradationRight,
+          ],
+        ),
+      ),
+              child: Column(
+                children: [
+                  SizedBox(height: MQSize.getDetailHeight1(context)),
+                  HeaderPage(
+                    height: MQSize.getDetailHeight4(context),
+                    width: MQSize.getDetailWidth99(context),
+                    imagePaths: ImagePaths.imagePath2,
+                    imageHeight: MQSize.getDetailHeight5(context),
+                    imageWidth: MQSize.getDetailWidth5(context),
+                    textYouWant: MainPageLan.briefExplanation,
+                  ),
+                   Text("로그인 후 이용해주세요", style: TextStyle(fontSize: MQSize.getDetailWidth1(context), color: AppColors.whiteTextColor),),
+                ],
+              ),
+    ),
+          ],
+        ),
     ),
     );
   }

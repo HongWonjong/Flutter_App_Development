@@ -92,6 +92,17 @@ class _QBoxState extends State<QBox> {
             titleLength: 15
         );
       }
+      else if (selectedModel == MainPageLan.modelNamePalm) {
+        // GPT 4 선택 시
+        sendPromptToFirestore(
+            uid: uid,
+            text: _textController.text,
+            pointCost: 1,
+            docId: FunctionLan.palmDoc,
+            messageFieldName: 'palm_prompt',
+            titleLength: 15
+        );
+      }
 
       // Optionally, you can clear the text field after sending the message
       _textController.clear();
