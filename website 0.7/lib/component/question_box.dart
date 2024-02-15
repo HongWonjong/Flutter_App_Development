@@ -58,14 +58,14 @@ class _QBoxState extends State<QBox> {
 
       setState(() {
         showAIPreparingMessage = true; // AI 준비 메시지 활성화
-        isTextEmpty = true;
+        isTextEmpty = false; // false로 해야 버튼이 한번에 눌린다.
       });
 
       if (selectedModel == MainPageLan.modelNameGemini) {
         // Gemini Pro 선택 시
         sendPromptToFirestore(
             uid: uid,
-            text: _textController.text,
+            text: promptText,
             pointCost: 1,
             docId: FunctionLan.geminiDoc,
             messageFieldName: 'prompt',
@@ -75,7 +75,7 @@ class _QBoxState extends State<QBox> {
         // GPT 3.5 선택 시
         sendPromptToFirestore(
             uid: uid,
-            text: _textController.text,
+            text: promptText,
             pointCost: 2,
             docId: FunctionLan.gpt35Doc,
             messageFieldName: 'gpt35_prompt',
@@ -85,7 +85,7 @@ class _QBoxState extends State<QBox> {
         // GPT 4 선택 시
         sendPromptToFirestore(
             uid: uid,
-            text: _textController.text,
+            text: promptText,
             pointCost: 10,
             docId: FunctionLan.gpt4Doc,
             messageFieldName: 'gpt4_prompt',
@@ -96,7 +96,7 @@ class _QBoxState extends State<QBox> {
         // GPT 4 선택 시
         sendPromptToFirestore(
             uid: uid,
-            text: _textController.text,
+            text: promptText,
             pointCost: 1,
             docId: FunctionLan.palmDoc,
             messageFieldName: 'palm_prompt',
@@ -177,10 +177,6 @@ class _QBoxState extends State<QBox> {
                       ? null // 버튼 비활성화 상태
                       : () {
                     sendPromptToModel();
-                    setState(() {
-                      isTextEmpty = true; // 상태를 갱신하여 버튼이 다시 비활성화되도록 함
-                    });
-                    _textController.clear();
                   },
                   child: const Text(MainPageLan.sendMessage, style: TextStyle(color: AppColors.textColor)),
                 ),
