@@ -20,10 +20,15 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isLoggedIn = ref.watch(authStateProvider);
+    final authState = ref.watch(authStateProvider);
     final email = ref.watch(userEmailProvider).value;
     final gp = ref.watch(userGPProvider).value;
     AuthFunctions authFunctions = AuthFunctions();
+
+    final isLoggedIn = authState.maybeWhen(
+      data: (user) => user != null, // User 객체가 null이 아니면 로그인한 것으로 간주
+      orElse: () => false, // 그 외의 경우에는 로그인하지 않은 것으로 간주
+    );
 
     return Container(
       decoration:   BoxDecoration(

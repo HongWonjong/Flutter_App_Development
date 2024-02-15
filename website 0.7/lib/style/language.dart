@@ -2,7 +2,7 @@
 
 
 class MainPageLan {
-  static const String appBarTitle = "커스텀 Gemini&GPT AI";
+  static const String appBarTitle = "커스텀 AI Chat";
   static const String begging = "우리 1002-557-792455 홍원종 <= 이거 만든 놈";
 
   static const String briefExplanation

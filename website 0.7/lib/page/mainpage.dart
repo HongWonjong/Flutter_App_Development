@@ -24,8 +24,11 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isLoggedIn = ref.watch(authStateProvider);
-
+    final authState = ref.watch(authStateProvider);
+    final isLoggedIn = authState.maybeWhen(
+      data: (user) => user != null, // User 객체가 null이 아니면 로그인한 것으로 간주
+      orElse: () => false, // 그 외의 경우에는 로그인하지 않은 것으로 간주
+    );
     // 구글 어널리틱스 관련 코드
      FirebaseAnalytics analytics = FirebaseAnalytics.instance;
      FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(analytics: analytics);

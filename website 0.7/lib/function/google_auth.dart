@@ -7,10 +7,6 @@ class AuthFunctions {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  // Method to check if the user is logged in
-  bool isUserLoggedIn() {
-    return _firebaseAuth.currentUser != null;
-  }
 
   Future<UserCredential> signInWithGoogle(WidgetRef ref) async {
     // Create a new provider
@@ -24,7 +20,7 @@ class AuthFunctions {
     // Once signed in, return the UserCredential
     UserCredential userCredential = await FirebaseAuth.instance.signInWithPopup(googleProvider);
     // Update login state
-    ref.read(authStateProvider.notifier).state = true;
+
     return userCredential;
 
     // Or use signInWithRedirect
@@ -35,7 +31,7 @@ class AuthFunctions {
     await _firebaseAuth.signOut();
     await _googleSignIn.signOut();
     // Update login state
-    ref.read(authStateProvider.notifier).state = false;
+
   }
 }
 
