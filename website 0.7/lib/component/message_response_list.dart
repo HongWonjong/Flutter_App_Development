@@ -24,7 +24,7 @@ class MessageListWidget extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
             } else if (snapshot.hasError) {
-              return Text('다시 로그인 하세요.');
+              return const Text('다시 로그인 하세요.');
             } else {
               List<String> messagesAndResponses = snapshot.data ?? [];
 
@@ -57,7 +57,7 @@ class MessageListWidget extends StatelessWidget {
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },
-                                    child: Text('닫기'),
+                                    child: const Text('닫기'),
                                   ),
                                 ],
                               );

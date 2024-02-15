@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:website/function/send_prompt.dart';
 import 'model_choice_dropdown.dart';
 
-class QABox extends StatefulWidget {
+class QBox extends StatefulWidget {
   final double height;
   final double width;
   final Color backgroundColor;
@@ -16,7 +16,7 @@ class QABox extends StatefulWidget {
   final EdgeInsets margin;
   final EdgeInsets padding;
 
-  const QABox({
+  const QBox({
     Key? key,
     required this.height,
     required this.width,
@@ -29,10 +29,10 @@ class QABox extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _QABoxState createState() => _QABoxState();
+  _QBoxState createState() => _QBoxState();
 }
 
-class _QABoxState extends State<QABox> {
+class _QBoxState extends State<QBox> {
   final TextEditingController _textController = TextEditingController();
   bool isTextEmpty = true;
   String selectedModel = MainPageLan.modelNameGemini; // 추가: 선택된 모델을 저장할 변수
@@ -63,17 +63,35 @@ class _QABoxState extends State<QABox> {
 
       if (selectedModel == MainPageLan.modelNameGemini) {
         // Gemini Pro 선택 시
-        sendGeminiPromptToFirestore(uid, _textController.text);
+        sendPromptToFirestore(
+            uid: uid,
+            text: _textController.text,
+            pointCost: 1,
+            docId: FunctionLan.geminiDoc,
+            messageFieldName: 'prompt',
+            titleLength: 15
+        );
       } else if (selectedModel == MainPageLan.modelNameGpt35) {
         // GPT 3.5 선택 시
-        sendGPT35PromptToFirestore(uid, _textController.text);
+        sendPromptToFirestore(
+            uid: uid,
+            text: _textController.text,
+            pointCost: 2,
+            docId: FunctionLan.gpt35Doc,
+            messageFieldName: 'gpt35_prompt',
+            titleLength: 15
+        );
+      } else if (selectedModel == MainPageLan.modelNameGpt4) {
+        // GPT 4 선택 시
+        sendPromptToFirestore(
+            uid: uid,
+            text: _textController.text,
+            pointCost: 10,
+            docId: FunctionLan.gpt4Doc,
+            messageFieldName: 'gpt4_prompt',
+            titleLength: 15
+        );
       }
-      else if (selectedModel == MainPageLan.modelNameGpt4) {
-        // GPT 3.5 선택 시
-        sendGPT4PromptToFirestore(uid, _textController.text);
-      }
-      // 다른 모델 추가 가능
-      // ...
 
       // Optionally, you can clear the text field after sending the message
       _textController.clear();

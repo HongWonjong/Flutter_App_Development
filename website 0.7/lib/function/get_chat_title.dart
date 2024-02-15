@@ -2,93 +2,32 @@ import 'package:website/style/language.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-Stream<List<String>> listenForGeminiProTitle() {
+Stream<List<String>> listenForTitle(String docId, String orderByField) {
   CollectionReference messagesRef = FirebaseFirestore.instance
       .collection('users')
       .doc(FirebaseAuth.instance.currentUser!.uid)
       .collection('discussions')
-      .doc(FunctionLan.geminiDoc)
+      .doc(docId)
       .collection('messages');
 
-  return messagesRef.orderBy('createTime', descending: true).snapshots().map(
+  return messagesRef.orderBy(orderByField, descending: true).snapshots().map(
         (querySnapshot) {
-      List<String> titleList = [];
-      for (QueryDocumentSnapshot messageSnapshot in querySnapshot.docs) {
+      return querySnapshot.docs.map((messageSnapshot) {
         try {
           String title = messageSnapshot['title'] ?? '';
-          Timestamp timestamp = messageSnapshot['createTime'];
+          Timestamp timestamp = messageSnapshot[orderByField];
           DateTime createTime = timestamp.toDate();
-          // title과 createTime을 함께 저장
-          String message = '$title\n$createTime';
-          titleList.add(message);
+          return '$title\n$createTime';
         } catch (e) {
-          print('오류 발생: $e');
+          print('Error: $e');
+          return ''; // 오류가 발생한 경우 빈 문자열 반환
         }
-      }
-      return titleList;
+      }).where((title) => title.isNotEmpty).toList(); // 빈 문자열 제거
     },
   );
 }
 
-
-Stream<List<String>> listenForGPT35Title() {
-  CollectionReference messagesRef = FirebaseFirestore.instance
-      .collection('users')
-      .doc(FirebaseAuth.instance.currentUser!.uid)
-      .collection('discussions')
-      .doc(FunctionLan.gpt35Doc)
-      .collection('messages');
-
-  return messagesRef.orderBy('status.created_at', descending: true)
-      .snapshots()
-      .map(
-        (querySnapshot) {
-      List<String> titleList = [];
-      for (QueryDocumentSnapshot messageSnapshot in querySnapshot.docs) {
-        try {
-          String title = messageSnapshot['title'] ?? '';
-          Timestamp timestamp = messageSnapshot['status.created_at'];
-          DateTime createTime = timestamp.toDate();
-          // title과 createTime을 함께 저장
-          String message = '$title\n$createTime';
-          titleList.add(message);
-        } catch (e) {
-          // 오류가 발생하면 해당 메시지를 무시하고 다음 메시지로 계속 진행
-          print('오류 발생: $e');
-        }
-      }
-      return titleList;
-    },
-  );
-}
-
-Stream<List<String>> listenForGPT4Title() {
-  CollectionReference messagesRef = FirebaseFirestore.instance
-      .collection('users')
-      .doc(FirebaseAuth.instance.currentUser!.uid)
-      .collection('discussions')
-      .doc(FunctionLan.gpt4Doc)
-      .collection('messages');
-
-  return messagesRef.orderBy('status.created_at', descending: true)
-      .snapshots()
-      .map(
-        (querySnapshot) {
-      List<String> titleList = [];
-      for (QueryDocumentSnapshot messageSnapshot in querySnapshot.docs) {
-        try {
-          String title = messageSnapshot['title'] ?? '';
-          Timestamp timestamp = messageSnapshot['status.created_at'];
-          DateTime createTime = timestamp.toDate();
-          // title과 createTime을 함께 저장
-          String message = '$title\n$createTime';
-          titleList.add(message);
-        } catch (e) {
-          // 오류가 발생하면 해당 메시지를 무시하고 다음 메시지로 계속 진행
-          print('오류 발생: $e');
-        }
-      }
-      return titleList;
-    },
-  );
-}
+// 사용 예시:
+/*Stream<List<String>> geminiTitles = listenForTitle(FunctionLan.geminiDoc, 'createTime');
+Stream<List<String>> gpt35Titles = listenForTitle(FunctionLan.gpt35Doc, 'status.created_at');
+Stream<List<String>> gpt4Titles = listenForTitle(FunctionLan.gpt4Doc, 'status.created_at');*/

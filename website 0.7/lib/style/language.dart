@@ -11,7 +11,7 @@ class MainPageLan {
   static const String sendMessage = "전송";
   static const String modelNameGemini = "Gemini Pro(1p 소모)";
   static const String modelNameGpt35 = 'GPT 3.5(2p 소모)';
-  static const String modelNameGpt4 = 'GPT 4(4p 소모)';
+  static const String modelNameGpt4 = 'GPT 4(10p 소모)';
 
   static const String geminiPro = "Gemini Pro";
   static const String gpt35 = "GPT 3.5";

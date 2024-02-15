@@ -4,7 +4,7 @@ import 'firebase_options.dart';
 import 'page/mainpage.dart'; // 메인 파일의 이름에 따라 수정
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
+
 
 
 void main() async {
