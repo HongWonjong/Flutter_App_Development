@@ -103,6 +103,17 @@ class _QBoxState extends State<QBox> {
             titleLength: 15
         );
       }
+      else if (selectedModel == MainPageLan.modelNameFb) {
+        // GPT 4 선택 시
+        sendPromptToFirestore(
+            uid: uid,
+            text: promptText,
+            pointCost: 1,
+            docId: FunctionLan.fibiDoc,
+            messageFieldName: 'fb_prompt',
+            titleLength: 15
+        );
+      }
 
       // Optionally, you can clear the text field after sending the message
       _textController.clear();

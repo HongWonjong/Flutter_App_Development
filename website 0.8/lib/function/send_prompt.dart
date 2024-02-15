@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:website/style/language.dart';
+
 
 Future<void> sendPromptToFirestore({
   required String uid,

@@ -19,7 +19,12 @@ class CustomDropdown extends StatelessWidget {
       child: DropdownButton<String>(
         value: selectedModel,
         onChanged: onChanged,
-        items: <String>[MainPageLan.modelNameGemini, MainPageLan.modelNameGpt35, MainPageLan.modelNameGpt4, MainPageLan.modelNamePalm]
+        items: <String>[
+          MainPageLan.modelNameGemini,
+          MainPageLan.modelNameGpt35,
+          MainPageLan.modelNameGpt4,
+          MainPageLan.modelNamePalm,
+          MainPageLan.modelNameFb]
             .map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
             value: value,

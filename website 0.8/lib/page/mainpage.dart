@@ -141,6 +141,22 @@ class MyApp extends ConsumerWidget {
                   Row(
                     children: [
                       Expanded(
+                        child: ChatLogBox(
+                          title: MainPageLan.fibi,
+                          height: MQSize.getDetailHeightHalf(context),
+                          width: MQSize.getDetailWidth5(context),
+                          deleteDocArg: FunctionLan.fibiDoc,
+                          child: MessageListWidget(
+                              modelResponseStream: listenForResponses(FunctionLan.fibiDoc, 'fb_prompt', 'fb_response', 'createTime'),
+                              titleResponseStream: listenForTitle(FunctionLan.fibiDoc, 'createTime')
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
                         child: BasicBox(
                           title: MainPageLan.autoGpt,
                           height: MQSize.getDetailHeight5(context),
