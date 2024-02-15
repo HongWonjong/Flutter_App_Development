@@ -20,7 +20,7 @@ final userEmailProvider = StreamProvider<String?>((ref) {
     });
   } else {
     // 로그인되지 않은 경우, null 반환
-    return Stream.value(null);
+    return Stream.value("");
   }
 });
 
@@ -34,6 +34,6 @@ final userGPProvider = StreamProvider<String?>((ref) {
     });
   } else {
     // 로그인되지 않은 경우, null 반환
-    return Stream.value(null);
+    return Stream.value("");
   }
 });
