@@ -38,6 +38,18 @@
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="main.dart.js" defer></script>
+
+  <script>
+window.addEventListener('error', function(event) {
+  gtag('event', 'exception', {
+    'description': event.message,
+    'fatal': false,  // 중대한 오류인 경우 true로 설정
+    'source': event.filename,
+    'line': event.lineno
+  });
+});
+</script>
+
 </head>
 <body>
 
