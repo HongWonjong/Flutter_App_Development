@@ -19,7 +19,7 @@ import 'package:website/function/get_chat_title.dart';
 
 class MyApp extends ConsumerWidget {
   MyApp({Key? key}) : super(key: key);
-  AuthFunctions authFunctions = AuthFunctions();
+  final AuthFunctions authFunctions = AuthFunctions();
 
 
   @override
@@ -67,9 +67,8 @@ class MyApp extends ConsumerWidget {
                   HeaderPage(
                     height: MQSize.getDetailHeight4(context),
                     width: MQSize.getDetailWidth99(context),
-                    imagePaths: ImagePaths.imagePath2,
-                    imageHeight: MQSize.getDetailHeight5(context),
-                    imageWidth: MQSize.getDetailWidth5(context),
+                    imagePaths: ImagePaths.toothless,
+                    imageHeight: MQSize.getDetailHeight4(context),
                     textYouWant: MainPageLan.briefExplanation,
                   ),
                   SizedBox(height: MQSize.getDetailHeight1(context)),
@@ -188,9 +187,8 @@ class MyApp extends ConsumerWidget {
                   HeaderPage(
                     height: MQSize.getDetailHeight4(context),
                     width: MQSize.getDetailWidth99(context),
-                    imagePaths: ImagePaths.imagePath2,
+                    imagePaths: ImagePaths.toothless,
                     imageHeight: MQSize.getDetailHeight5(context),
-                    imageWidth: MQSize.getDetailWidth5(context),
                     textYouWant: MainPageLan.briefExplanation,
                   ),
                    Text("로그인 후 이용해주세요", style: TextStyle(fontSize: MQSize.getDetailWidth1(context), color: AppColors.whiteTextColor),),

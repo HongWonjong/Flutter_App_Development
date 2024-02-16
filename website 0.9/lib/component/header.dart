@@ -7,7 +7,6 @@ class HeaderPage extends StatefulWidget {
   final List<String> imagePaths;
   final String textYouWant;
   final double imageHeight;
-  final double imageWidth;
   final double height;
   final double width;
   final Color backgroundColor;
@@ -22,15 +21,14 @@ class HeaderPage extends StatefulWidget {
     required this.imagePaths,
     required this.textYouWant,
     required this.imageHeight,
-    required this.imageWidth,
     required this.height,
     required this.width,
     this.backgroundColor = AppColors.bodyPageBackground,
-    this.borderRadius = 10.0,
+    this.borderRadius = 3.0,
     this.borderColor = Colors.grey,
     this.borderWidth = 1.0,
-    this.margin = const EdgeInsets.all(8.0),
-    this.padding = const EdgeInsets.all(16.0),
+    this.margin = const EdgeInsets.all(4.0),
+    this.padding = const EdgeInsets.all(8.0),
   }) : super(key: key);
 
   @override
@@ -60,7 +58,7 @@ class _HeaderPageState extends State<HeaderPage> {
               child: Image.asset(
                 imagePath,
                 height: widget.imageHeight,
-                width: widget.imageWidth,
+                fit: BoxFit.fitHeight,
               ),
             ),
           Expanded(
