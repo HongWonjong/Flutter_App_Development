@@ -37,7 +37,9 @@ class MessageListWidget extends StatelessWidget {
                   return Align(
                     alignment: Alignment.center,
                     child: Container(
-                      color: Colors.white,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10)
+                      ),
                       width: MQSize.getDetailWidthHalf(context),
                       margin: EdgeInsets.symmetric(vertical: MQSize.getDetailHeight1(context)),
                       child: ElevatedButton(
