@@ -51,8 +51,8 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: isLoggedIn
                 ? [
-              Text('$email'),
-              Text("GeminiPoint: $gp"),
+              Text('$email', style: TextStyle(fontSize: MQSize.getDetailWidth01(context)),),
+              Text("GeminiPoint: $gp", style: TextStyle(fontSize: MQSize.getDetailWidth01(context)),),
             ]
                 : [
               const Text("오른쪽의 아이콘을 눌러 로그인 해주세요.")

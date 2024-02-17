@@ -21,9 +21,7 @@ class ImagePaths {
   ];
 
   static final List<String> toothless = [
-    'lib/images/toothless_dancing.gif',
-    'lib/images/toothless_dancing.gif',
-    // Add more video paths as needed
+    'lib/images/toothless_dancing.gif', // Add more video paths as needed
   ];
 }
 
