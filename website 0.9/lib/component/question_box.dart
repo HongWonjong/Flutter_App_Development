@@ -164,6 +164,7 @@ class _QBoxState extends State<QBox> {
                 Expanded(
                   flex: 95,
                   child: TextFormField(
+                    style: TextStyle(fontSize: MQSize.getDetailHeight1(context)),
                     minLines: null,
                     maxLines: null,
                     controller: _textController,

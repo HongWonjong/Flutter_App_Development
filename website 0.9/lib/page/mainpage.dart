@@ -39,8 +39,7 @@ class MyApp extends ConsumerWidget {
       navigatorObservers: <NavigatorObserver>[observer],
 
       home: Scaffold(
-
-
+        resizeToAvoidBottomInset: true, // 키보드가 화면에 나타날 때 위젯이 밀리며 생기는 UI 문제를 해결할 수 있다.
         appBar:  const CustomAppBar(),
         body: isLoggedIn // 로그인 상태에 따라 조건부 렌더링
             ? Stack(
