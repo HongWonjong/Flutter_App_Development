@@ -4,7 +4,7 @@ import 'firebase_options.dart';
 import 'page/mainpage.dart'; // 메인 파일의 이름에 따라 수정
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cloud_functions/cloud_functions.dart';
+import 'function/fetch_secret_value.dart';
 
 
 
@@ -14,7 +14,7 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-
+    String gpt35_key = await fetchGptApiKey();
     String secretValue = await fetchSecretValue();
     await FirebaseAppCheck.instance.activate(
       webProvider: ReCaptchaV3Provider(secretValue),
@@ -26,9 +26,3 @@ void main() async {
   runApp(ProviderScope(child: MyApp()));
 }
 
-// 이 함수는 main 함수 외부에 위치해야 합니다.
-Future<String> fetchSecretValue() async {
-  HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('getSecretValue');
-  final response = await callable.call();
-  return response.data['secretValue'];
-}

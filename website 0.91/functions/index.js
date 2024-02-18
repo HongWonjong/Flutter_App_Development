@@ -33,5 +33,15 @@ exports.getSecretValue = functions.region("asia-northeast3").https.onCall(async 
     return { secretValue: payload };
 });
 
+exports.getSecretValue = functions.region("asia-northeast3").https.onCall(async (data, context) => {
+    const [version] = await client.accessSecretVersion({
+        name: 'projects/432019525707/secrets/firestore-chatgpt-bot-OPENAI_API_KEY',
+    });
+
+    const payload = version.payload.data.toString('utf8');
+
+    return { gpt35SecretValue: payload };
+});
+
 
 
