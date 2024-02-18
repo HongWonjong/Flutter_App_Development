@@ -199,7 +199,7 @@ class _QBoxState extends State<QBox> {
                 if (showAIPreparingMessage) // 조건부 위젯 렌더링
                   const Padding(
                     padding: EdgeInsets.only(top: 8.0),
-                    child: Text("AI가 답변을 하는 중입니다.. 아래의 대답 내역에 곧 생성됩니다."),
+                    child: Text(MainPageLan.loadingText),
                   ),
               ],
             ),

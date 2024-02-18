@@ -12,18 +12,13 @@ class MainPageLan {
   static const String hintText = "물어볼 질문을 입력하세요...";
   static const String sendMessage = "전송";
   static const String deleteHistory = '기록 삭제';
+  static const String loadingText = "AI가 답변을 하는 중입니다.. 아래의 대답 내역에 곧 생성됩니다.";
 
   static const String modelNameGemini = "Gemini Pro(1p 소모)";
   static const String modelNameGpt35 = 'GPT 3.5(2p 소모)';
   static const String modelNameGpt4 = 'GPT 4(10p 소모)';
   static const String modelNamePalm = "PaLM 2(1p 소모)";
   static const String modelNameFb = '지렁이(1p 소모)';
-
-  static const String toolTipGemini = "Google AI의 사실적 언어 모델. 구글에서 미친듯이 업데이트해서 요즘 꽤 좋다.";
-  static const String toolTipGpt35 = "가장 유명하지만, 요즘 체감 상 GeminiPro가 더 똑똑함";
-  static const String toolTipGpt4 = "너무 비싸고, 가격에 비해 딱히 똑똑하지 않다. 이거 거품임";
-  static const String toolTipPalm = "지렁이보단 낫다.";
-  static const String toolTipFb = "자기가 지렁이라고 믿는 GeminiPro 모델. 너무 바보라 내가 지어준 '피비'라는 이름을 종종 까먹는다.";
 
   static const String geminiPro = "Gemini Pro";
   static const String gpt35 = "GPT 3.5";
