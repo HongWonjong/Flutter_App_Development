@@ -32,8 +32,19 @@ class CustomDropdown extends StatelessWidget {
             value: entry.key,
             // Wrap the Text widget with Tooltip
             child: Tooltip(
-              message: entry.value, // The description for the tooltip
-              child: Text(entry.key),
+              // Custom tooltip position
+              decoration: BoxDecoration(
+                color: Colors.blueGrey,
+                borderRadius: BorderRadius.circular(5),
+              ),
+              padding: const EdgeInsets.all(8),
+              verticalOffset: 20,
+              preferBelow: false,
+              message: entry.value,
+              child: Transform.translate(
+                offset: const Offset(24, 0), // Adjust the offset as needed
+                child: Text(entry.key),
+              ),
             ),
           );
         }).toList(),
@@ -41,4 +52,3 @@ class CustomDropdown extends StatelessWidget {
     );
   }
 }
-
