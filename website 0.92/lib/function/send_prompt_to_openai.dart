@@ -28,7 +28,7 @@ Future<void> sendPromptToOpenAI({
     return;
   }
   Stream<OpenAIStreamCompletionModel> completionStream = OpenAI.instance.completion.createStream(
-    model: "text-davinci-003",
+    model: "gpt-3.5-turbo-0125",
     prompt: text,
     maxTokens: 100,
     temperature: 0.5,
