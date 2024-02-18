@@ -5,6 +5,16 @@
       "firebase.json",
       "**/node_modules/**"
     ],
+    "rewrites": [
+      {
+        "source": "/getGpt35ApiKey",
+        "function": "getGpt35ApiKey"
+      },
+      {
+        "source": "/getRecaptchaToken",
+        "function": "getRecaptchaToken"
+      }
+    ],
     "headers": [
       {
         "source": "**/*.@(jpg|jpeg|gif|png)",
@@ -25,19 +35,8 @@
         ]
       }
     ]
-  },
-  "functions": [
-    {
-      "source": "functions",
-      "codebase": "default",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log"
-      ]
-    }
-  ]
+  }
 }
+
 
 

@@ -22,10 +22,11 @@ const functions = require('firebase-functions');
 const {SecretManagerServiceClient} = require('@google-cloud/secret-manager');
 
 const client = new SecretManagerServiceClient();
-// 함수가 설치된 region을 firebase.json이 아니라 함수에 직접 삽입한다.
-exports.getSecretValue = functions.region("asia-northeast3").https.onCall(async (data, context) => {
+
+// 리캡챠 토큰을 가져오는 함수
+exports.getRecaptchaToken = functions.region("asia-northeast3").https.onCall(async (data, context) => {
     const [version] = await client.accessSecretVersion({
-        name: 'projects/432019525707/secrets/RECAPTCHA_TOKEN',
+        name: 'projects/432019525707/secrets/RECAPTCHA_TOKEN/versions/latest',
     });
 
     const payload = version.payload.data.toString('utf8');
@@ -33,15 +34,17 @@ exports.getSecretValue = functions.region("asia-northeast3").https.onCall(async 
     return { secretValue: payload };
 });
 
-exports.getSecretValue = functions.region("asia-northeast3").https.onCall(async (data, context) => {
+// OpenAI API 키를 가져오는 함수
+exports.getGpt35ApiKey = functions.region("asia-northeast3").https.onCall(async (data, context) => {
     const [version] = await client.accessSecretVersion({
-        name: 'projects/432019525707/secrets/firestore-chatgpt-bot-OPENAI_API_KEY',
+        name: 'projects/432019525707/secrets/GPT35_API_KEY/versions/latest',
     });
 
     const payload = version.payload.data.toString('utf8');
 
     return { gpt35SecretValue: payload };
 });
+
 
 
 

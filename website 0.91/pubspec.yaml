@@ -35,6 +35,7 @@ dev_dependencies:
   firebase_storage: ^11.6.4
   firebase_storage_web: ^3.6.21
   flutter_riverpod: ^2.4.10
+  dart_openai: ^5.0.0
   cloud_firestore: ^4.15.3
   cloud_firestore_web: ^3.10.3
   google_sign_in: ^6.2.1

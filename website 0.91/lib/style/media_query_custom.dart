@@ -47,7 +47,6 @@ class MQSize {
     // 화면 너비의 1%를 계산합니다. 이메일과 포인트 표시용
     double calculatedWidth = MediaQuery.of(context).size.width * 0.01;
 
-    // 최소값 50.0, 최대값 200.0으로 설정합니다.
     double minWidth = 10.0;
     double maxWidth = 15.0;
 
@@ -59,7 +58,6 @@ class MQSize {
     // 화면 너비의 2%를 계산합니다. 제목과 공지 등.
     double calculatedWidth = MediaQuery.of(context).size.width * 0.02;
 
-    // 최소값 50.0, 최대값 200.0으로 설정합니다.
     double minWidth = 17.0;
     double maxWidth = 30.0;
 
