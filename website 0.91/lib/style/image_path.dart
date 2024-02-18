@@ -8,10 +8,6 @@ class ImagePaths {
     // Add more image paths as needed
   ];
 
-  static final List<String> getADrink = [
-    'lib/images/한잔해.jpg',
-    // Add more image paths as needed
-  ];
   static final List<String> popPop = [
     'lib/images/뻐끔뻐끔.gif',
     'lib/images/뻐끔뻐끔.gif',

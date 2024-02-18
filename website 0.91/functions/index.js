@@ -32,3 +32,6 @@ exports.getSecretValue = functions.region("asia-northeast3").https.onCall(async 
 
     return { secretValue: payload };
 });
+
+
+
