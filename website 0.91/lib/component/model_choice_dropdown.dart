@@ -15,20 +15,26 @@ class CustomDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, String> modelDescriptions = {
+      MainPageLan.modelNameGemini: MainPageLan.toolTipGemini,
+      MainPageLan.modelNameGpt35: MainPageLan.toolTipGpt35,
+      MainPageLan.modelNameGpt4: MainPageLan.toolTipGpt4,
+      MainPageLan.modelNamePalm: MainPageLan.toolTipPalm,
+      MainPageLan.modelNameFb: MainPageLan.toolTipFb,
+    };
+
     return SizedBox(
       child: DropdownButton<String>(
         value: selectedModel,
         onChanged: onChanged,
-        items: <String>[
-          MainPageLan.modelNameGemini,
-          MainPageLan.modelNameGpt35,
-          MainPageLan.modelNameGpt4,
-          MainPageLan.modelNamePalm,
-          MainPageLan.modelNameFb]
-            .map<DropdownMenuItem<String>>((String value) {
+        items: modelDescriptions.entries.map((entry) {
           return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
+            value: entry.key,
+            // Wrap the Text widget with Tooltip
+            child: Tooltip(
+              message: entry.value, // The description for the tooltip
+              child: Text(entry.key),
+            ),
           );
         }).toList(),
       ),

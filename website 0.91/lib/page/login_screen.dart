@@ -24,7 +24,7 @@ class LoginScreen extends StatelessWidget {
               imageHeight: MQSize.getDetailHeight5(context),
               textYouWant: MainPageLan.briefExplanation,
             ),
-            Text("로그인 후 이용해주세요", style: TextStyle(fontSize: MQSize.getDetailWidth1(context), color: AppColors.whiteTextColor),),
+            Text(MainPageLan.pleaseLogin, style: TextStyle(fontSize: MQSize.getDetailWidth1(context), color: AppColors.whiteTextColor),),
           ],
         ),
       ],

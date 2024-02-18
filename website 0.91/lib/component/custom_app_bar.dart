@@ -55,7 +55,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
               Text("GeminiPoint: $gp", style: TextStyle(fontSize: MQSize.getDetailWidth01(context)),),
             ]
                 : [
-              const Text("오른쪽의 아이콘을 눌러 로그인 해주세요.")
+              const Text(MainPageLan.clickGoogleIcon)
             ], // 혹은 빈 리스트를 사용하여 아무것도 표시하지 않음
           ),
           IconButton(

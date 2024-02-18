@@ -3,6 +3,7 @@ import 'package:website/style/color.dart';
 import 'package:website/style/media_query_custom.dart';
 import 'package:website/function/delete_chat_log.dart';
 import 'package:website/component/button/delete_buttons_style.dart';
+import 'package:website/style/language.dart';
 
 class ChatLogBox extends StatefulWidget {
   final double height;
@@ -77,7 +78,7 @@ class _ChatLogBoxState extends State<ChatLogBox> {
                   showDeleteConfirmationDialog(context, widget.deleteDocArg);
                 },
                 child: Text(
-                  '기록 삭제',
+                  MainPageLan.deleteHistory,
                   style: TextStyle(
                     color: AppColors.whiteTextColor,
                     fontSize: MQSize.getDetailHeight11(context),
