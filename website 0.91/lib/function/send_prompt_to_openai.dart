@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dart_openai/dart_openai.dart';
 
 
 Future<void> sendPromptToOpenAI({
@@ -26,25 +27,16 @@ Future<void> sendPromptToOpenAI({
     print('포인트가 부족합니다.');
     return;
   }
-
-  // 사용자 문서 내의 'discussions' 컬렉션에 접근
-  CollectionReference discussionsRef = userDocRef.collection('discussions');
-
-  // 해당 docId의 문서가 이미 존재하는지 확인
-  DocumentSnapshot discussionDoc = await discussionsRef.doc(docId).get();
-
-  if (!discussionDoc.exists) {
-    // 존재하지 않는 경우, 새로 생성
-    await discussionsRef.doc(docId).set({});
-  }
-
-  // 'messages' 컬렉션에 새 메시지 문서 추가
-  DocumentReference discussionRef = discussionsRef.doc(docId);
-  CollectionReference messagesRef = discussionRef.collection('messages');
-  await messagesRef.add({
-    messageFieldName: text,
-    'title': title,
-  });
+  Stream<OpenAIStreamCompletionModel> completionStream = OpenAI.instance.completion.createStream(
+    model: "text-davinci-003",
+    prompt: text,
+    maxTokens: 100,
+    temperature: 0.5,
+    topP: 1,
+    seed: 42,
+    stop: '###',
+    n: 2,
+  );
 
   // 사용자의 포인트 차감
   await userDocRef.update({'GeminiPoint': FieldValue.increment(-pointCost)});
