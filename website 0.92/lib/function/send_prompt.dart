@@ -7,10 +7,7 @@ Future<void> sendPromptToFirestore({
   required int pointCost,
   required String docId,
   required String messageFieldName,
-  required int titleLength
 }) async {
-  // 타이틀 길이에 따라 텍스트의 앞부분을 잘라내어 타이틀로 사용
-  String title = text.length > titleLength ? text.substring(0, titleLength) : text;
 
   // 'users' 컬렉션에 접근
   CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
@@ -43,7 +40,6 @@ Future<void> sendPromptToFirestore({
   CollectionReference messagesRef = discussionRef.collection('messages');
   await messagesRef.add({
     messageFieldName: text,
-    'title': title,
   });
 
   // 사용자의 포인트 차감

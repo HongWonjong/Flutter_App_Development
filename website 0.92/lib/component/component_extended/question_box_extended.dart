@@ -3,10 +3,10 @@ import 'package:website/style/color.dart';
 import 'package:website/style/language.dart';
 import 'package:website/style/media_query_custom.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:website/function/send_prompt.dart';
 import 'model_choice_dropdown_extended.dart';
+import 'package:website/function/send_prompt_to_openai.dart';
 
-class QBox extends StatefulWidget {
+class QBoxExtended extends StatefulWidget {
   final double height;
   final double width;
   final Color backgroundColor;
@@ -16,7 +16,7 @@ class QBox extends StatefulWidget {
   final EdgeInsets margin;
   final EdgeInsets padding;
 
-  const QBox({
+  const QBoxExtended({
     Key? key,
     required this.height,
     required this.width,
@@ -29,13 +29,13 @@ class QBox extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _QBoxState createState() => _QBoxState();
+  _QBoxExtended createState() => _QBoxExtended();
 }
 
-class _QBoxState extends State<QBox> {
+class _QBoxExtended extends State<QBoxExtended> {
   final TextEditingController _textController = TextEditingController();
   bool isTextEmpty = true;
-  String selectedModel = MainPageLan.modelNameGemini; // 추가: 선택된 모델을 저장할 변수
+  String selectedModel = ExtendedMainPageLan.modelNameGpt35; // 추가: 선택된 모델을 저장할 변수
   bool showAIPreparingMessage = false; // AI 답변 준비 메시지를 보여줄지 결정하는 상태 변수
 
 
@@ -63,13 +63,13 @@ class _QBoxState extends State<QBox> {
 
       if (selectedModel == ExtendedMainPageLan.modelNameGpt35) {
         // GPT 3.5 선택 시
-        sendPromptToFirestore(
+        sendPromptToOpenAI(
             uid: uid,
             text: promptText,
             pointCost: 2,
-            docId: FunctionLan.gpt35Doc,
-            messageFieldName: 'gpt35_prompt',
-            titleLength: 15
+            docId: ExtendedfunctionLan.gpt35Doc,
+            messageFieldName: "stream_gpt35_prompt",
+            responseKeyName: "stream_gpt35_response"
         );
       }
 

@@ -69,7 +69,6 @@ class _QBoxState extends State<QBox> {
             pointCost: 1,
             docId: FunctionLan.geminiDoc,
             messageFieldName: 'prompt',
-            titleLength: 15
         );
       } else if (selectedModel == MainPageLan.modelNameGpt35) {
         // GPT 3.5 선택 시
@@ -79,7 +78,6 @@ class _QBoxState extends State<QBox> {
             pointCost: 2,
             docId: FunctionLan.gpt35Doc,
             messageFieldName: 'gpt35_prompt',
-            titleLength: 15
         );
       } else if (selectedModel == MainPageLan.modelNameGpt4) {
         // GPT 4 선택 시
@@ -89,7 +87,6 @@ class _QBoxState extends State<QBox> {
             pointCost: 10,
             docId: FunctionLan.gpt4Doc,
             messageFieldName: 'gpt4_prompt',
-            titleLength: 15
         );
       }
       else if (selectedModel == MainPageLan.modelNamePalm) {
@@ -100,7 +97,6 @@ class _QBoxState extends State<QBox> {
             pointCost: 1,
             docId: FunctionLan.palmDoc,
             messageFieldName: 'palm_prompt',
-            titleLength: 15
         );
       }
       else if (selectedModel == MainPageLan.modelNameFb) {
@@ -111,7 +107,6 @@ class _QBoxState extends State<QBox> {
             pointCost: 1,
             docId: FunctionLan.fibiDoc,
             messageFieldName: 'fb_prompt',
-            titleLength: 15
         );
       }
 

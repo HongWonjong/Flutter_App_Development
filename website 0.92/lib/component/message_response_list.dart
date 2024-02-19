@@ -6,12 +6,12 @@ import 'selectable_formatted_text.dart';
 
 class MessageListWidget extends StatelessWidget {
   final Stream<List<String>> modelResponseStream;
-  final Stream<List<String>> titleResponseStream;
+
 
   const MessageListWidget({
     Key? key,
     required this.modelResponseStream,
-    required this.titleResponseStream,
+
 
   }) : super(key: key);
 

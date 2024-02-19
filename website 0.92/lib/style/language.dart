@@ -41,7 +41,11 @@ class FunctionLan {
 }
 
 class ExtendedMainPageLan {
-  static const String modelNameGpt35 = 'GPT 3.5(2p 소모)';
-  static const String gpt35 = "GPT 3.5";
-  static const String gpt35Doc = "GPT35";
+  static const String modelNameGpt35 = 'GPT 3.5_stream(2p 소모)';
+  static const String gpt35 = "GPT 3.5_stream";
+  static const String gpt35Doc = "GPT35_stream";
+}
+
+class ExtendedfunctionLan {
+  static const String gpt35Doc = "GPT35_stream";
 }

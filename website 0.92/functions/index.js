@@ -23,17 +23,6 @@ const {SecretManagerServiceClient} = require('@google-cloud/secret-manager');
 
 const client = new SecretManagerServiceClient();
 
-// 리캡챠 토큰을 가져오는 함수
-exports.getRecaptchaToken = functions.region("asia-northeast3").https.onCall(async (data, context) => {
-    const [version] = await client.accessSecretVersion({
-        name: 'projects/432019525707/secrets/RECAPTCHA_TOKEN/versions/latest',
-    });
-
-    const payload = version.payload.data.toString('utf8');
-
-    return { secretValue: payload };
-});
-
 // OpenAI API 키를 가져오는 함수
 exports.getGpt35ApiKey = functions.region("asia-northeast3").https.onCall(async (data, context) => {
     const [version] = await client.accessSecretVersion({

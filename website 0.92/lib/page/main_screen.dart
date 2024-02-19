@@ -9,7 +9,7 @@ import '../component/question_box.dart';
 import '../component/message_response_list.dart';
 import '../function/get_chat_response.dart';
 import '../component/basic_box.dart';
-import 'package:website/function/get_chat_title.dart';
+import 'package:website/component/component_extended/question_box_extended.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -65,7 +65,6 @@ class MainScreen extends StatelessWidget {
                         deleteDocArg: FunctionLan.geminiDoc,
                         child: MessageListWidget(
                             modelResponseStream:listenForResponses(FunctionLan.geminiDoc, 'prompt', 'response','createTime'),
-                            titleResponseStream: listenForTitle(FunctionLan.geminiDoc, 'createTime')
                         ),
                       )),
                   Expanded(
@@ -76,7 +75,6 @@ class MainScreen extends StatelessWidget {
                       deleteDocArg: FunctionLan.gpt35Doc,
                       child: MessageListWidget(
                           modelResponseStream: listenForResponses(FunctionLan.gpt35Doc, 'gpt35_prompt', 'gpt35_response', 'status.created_at'),
-                          titleResponseStream: listenForTitle(FunctionLan.gpt35Doc, 'status.created_at')
                       ),
                     ),
                   ),
@@ -92,7 +90,6 @@ class MainScreen extends StatelessWidget {
                       deleteDocArg: FunctionLan.gpt4Doc,
                       child: MessageListWidget(
                           modelResponseStream: listenForResponses(FunctionLan.gpt4Doc, 'gpt4_prompt', 'gpt4_response', 'status.created_at'),
-                          titleResponseStream: listenForTitle(FunctionLan.gpt4Doc, 'status.created_at')
                       ),
                     ),
                   ),
@@ -104,7 +101,6 @@ class MainScreen extends StatelessWidget {
                       deleteDocArg: FunctionLan.palmDoc,
                       child: MessageListWidget(
                           modelResponseStream: listenForResponses(FunctionLan.palmDoc, 'palm_prompt', 'palm_response', 'createTime'),
-                          titleResponseStream: listenForTitle(FunctionLan.palmDoc, 'createTime')
                       ),
                     ),
                   ),
@@ -120,7 +116,17 @@ class MainScreen extends StatelessWidget {
                       deleteDocArg: FunctionLan.fibiDoc,
                       child: MessageListWidget(
                           modelResponseStream: listenForResponses(FunctionLan.fibiDoc, 'fb_prompt', 'fb_response', 'createTime'),
-                          titleResponseStream: listenForTitle(FunctionLan.fibiDoc, 'createTime')
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: ChatLogBox(
+                      title: ExtendedMainPageLan.modelNameGpt35,
+                      height: MQSize.getDetailHeightHalf(context),
+                      width: MQSize.getDetailWidth5(context),
+                      deleteDocArg: ExtendedfunctionLan.gpt35Doc,
+                      child: MessageListWidget(
+                          modelResponseStream: listenForResponses(ExtendedfunctionLan.gpt35Doc, 'stream_gpt35_prompt', 'stream_gpt35_response', 'createTime'),
                       ),
                     ),
                   ),
@@ -131,6 +137,16 @@ class MainScreen extends StatelessWidget {
                   Expanded(
                     child: BasicBox(
                       title: MainPageLan.autoGpt,
+                      height: MQSize.getDetailHeight5(context),
+                      width: MQSize.getDetailWidth5(context),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: QBoxExtended(
                       height: MQSize.getDetailHeight5(context),
                       width: MQSize.getDetailWidth5(context),
                     ),
