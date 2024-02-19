@@ -55,6 +55,9 @@ void deleteDoc(BuildContext context, String docType) async {
     else if (docType == FunctionLan.fibiDoc) {
       docId = FunctionLan.fibiDoc;
     }
+    else if (docType == ExtendedfunctionLan.gpt35Doc) {
+      docId = ExtendedfunctionLan.gpt35Doc;
+    }
     else {
       return null;
     }

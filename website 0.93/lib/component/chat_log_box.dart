@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:website/style/color.dart';
 import 'package:website/style/media_query_custom.dart';
 import 'package:website/function/delete_chat_log.dart';
-import 'package:website/component/button/delete_buttons_style.dart';
+import 'package:website/component/delete_buttons_style.dart';
 import 'package:website/style/language.dart';
 
 class ChatLogBox extends StatefulWidget {
