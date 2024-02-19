@@ -36,7 +36,7 @@ Future<void> sendPromptToOpenAI({
     await userDocRef.update({'GeminiPoint': FieldValue.increment(-pointCost)});
 
     final chatStream = OpenAI.instance.chat.createStream(
-      model: "ft:gpt-3.5-turbo-1106:personal::8s0kD8jw", // 내가 커스텀으로 만든 모델.
+      model: "ft:gpt-3.5-turbo-1106:personal::8u1sgqt4", // 내가 커스텀으로 만든 모델.
       messages: [userMessage],
       seed: 423,
       n: 2,

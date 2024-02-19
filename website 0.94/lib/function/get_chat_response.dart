@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
 Stream<List<String>> listenForResponses(
     String docId, String promptField, String responseField, String orderByField) {
   CollectionReference messagesRef = FirebaseFirestore.instance
