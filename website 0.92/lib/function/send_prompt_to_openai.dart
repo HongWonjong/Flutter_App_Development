@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dart_openai/dart_openai.dart';
 
 
+
 Future<void> sendPromptToOpenAI({
   required String uid,
   required String text,
@@ -37,6 +38,10 @@ Future<void> sendPromptToOpenAI({
     stop: '###',
     n: 2,
   );
+  completionStream.listen((event) {
+    final firstCompletionChoice = event.choices.first;
+    final responseText = firstCompletionChoice.text;
+  });
 
   // 사용자의 포인트 차감
   await userDocRef.update({'GeminiPoint': FieldValue.increment(-pointCost)});
