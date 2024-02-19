@@ -45,7 +45,4 @@ Future<void> sendPromptToOpenAI({
 
   // 사용자의 포인트 차감
   await userDocRef.update({'GeminiPoint': FieldValue.increment(-pointCost)});
-
-  print('Prompt sent to Firestore!');
-  print('Discussion ID: $docId');
 }

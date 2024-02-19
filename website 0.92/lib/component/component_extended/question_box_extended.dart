@@ -61,17 +61,7 @@ class _QBoxState extends State<QBox> {
         isTextEmpty = false; // false로 해야 버튼이 한번에 눌린다.
       });
 
-      if (selectedModel == MainPageLan.modelNameGemini) {
-        // Gemini Pro 선택 시
-        sendPromptToFirestore(
-            uid: uid,
-            text: promptText,
-            pointCost: 1,
-            docId: FunctionLan.geminiDoc,
-            messageFieldName: 'prompt',
-            titleLength: 15
-        );
-      } else if (selectedModel == MainPageLan.modelNameGpt35) {
+      if (selectedModel == ExtendedMainPageLan.modelNameGpt35) {
         // GPT 3.5 선택 시
         sendPromptToFirestore(
             uid: uid,
@@ -79,38 +69,6 @@ class _QBoxState extends State<QBox> {
             pointCost: 2,
             docId: FunctionLan.gpt35Doc,
             messageFieldName: 'gpt35_prompt',
-            titleLength: 15
-        );
-      } else if (selectedModel == MainPageLan.modelNameGpt4) {
-        // GPT 4 선택 시
-        sendPromptToFirestore(
-            uid: uid,
-            text: promptText,
-            pointCost: 10,
-            docId: FunctionLan.gpt4Doc,
-            messageFieldName: 'gpt4_prompt',
-            titleLength: 15
-        );
-      }
-      else if (selectedModel == MainPageLan.modelNamePalm) {
-        // GPT 4 선택 시
-        sendPromptToFirestore(
-            uid: uid,
-            text: promptText,
-            pointCost: 1,
-            docId: FunctionLan.palmDoc,
-            messageFieldName: 'palm_prompt',
-            titleLength: 15
-        );
-      }
-      else if (selectedModel == MainPageLan.modelNameFb) {
-        // GPT 4 선택 시
-        sendPromptToFirestore(
-            uid: uid,
-            text: promptText,
-            pointCost: 1,
-            docId: FunctionLan.fibiDoc,
-            messageFieldName: 'fb_prompt',
             titleLength: 15
         );
       }

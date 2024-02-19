@@ -39,3 +39,9 @@ class FunctionLan {
   static const String palmDoc = "Palm";
   static const String fibiDoc = "Fibi";
 }
+
+class ExtendedMainPageLan {
+  static const String modelNameGpt35 = 'GPT 3.5(2p 소모)';
+  static const String gpt35 = "GPT 3.5";
+  static const String gpt35Doc = "GPT35";
+}
