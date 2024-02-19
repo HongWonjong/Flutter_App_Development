@@ -25,13 +25,17 @@ const client = new SecretManagerServiceClient();
 
 // OpenAI API 키를 가져오는 함수
 exports.getGpt35ApiKey = functions.region("asia-northeast3").https.onCall(async (data, context) => {
-    const [version] = await client.accessSecretVersion({
-        name: 'projects/432019525707/secrets/GPT35_API_KEY',
-    });
+    try {
+        const [version] = await client.accessSecretVersion({
+            name: 'projects/432019525707/secrets/GPT35_API_KEY',
+        });
 
-    const payload = version.payload.data.toString('utf8');
-
-    return { gpt35SecretValue: payload };
+        const payload = version.payload.data.toString('utf8');
+        return { gpt35SecretValue: payload };
+    } catch (error) {
+        console.error("Error accessing secret version:", error);
+        throw new functions.https.HttpsError('internal', 'Unable to access secret version');
+    }
 });
 
 
