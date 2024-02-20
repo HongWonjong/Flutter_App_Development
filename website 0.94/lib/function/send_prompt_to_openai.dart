@@ -12,10 +12,23 @@ Future<void> sendPromptToOpenAI({
   required String responseKeyName,
 }) async {
   String finalResponse = ''; // String을 누적할 변수 초기화
-  StreamController<String> messageStreamController = StreamController<String>();
   CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
-  DocumentReference userDocRef = usersRef.doc(uid);
-  OpenAI.apiKey = await fetchGpt35ApiKey(); // API 키 가져오기
+
+  try {
+    OpenAI.apiKey = await fetchGpt35ApiKey(); // API 키 가져오기
+  } catch (e) {
+    print('API 키를 가져오는 중 에러 발생: $e');
+    return;
+  }
+
+  final systemMessage = OpenAIChatCompletionChoiceMessageModel(
+    content: [
+      OpenAIChatCompletionChoiceMessageContentItemModel.text(
+        "한국말로 정중하게 대답해.",
+      ),
+    ],
+    role: OpenAIChatMessageRole.assistant,
+  );
 
   final userMessage = OpenAIChatCompletionChoiceMessageModel(
     content: [
@@ -24,8 +37,13 @@ Future<void> sendPromptToOpenAI({
     role: OpenAIChatMessageRole.user,
   );
 
+  final requestMessages = [
+    systemMessage,
+    userMessage,
+  ];
+
   try {
-    DocumentSnapshot userDoc = await userDocRef.get();
+    DocumentSnapshot userDoc = await usersRef.doc(uid).get();
     int geminiPoints = userDoc['GeminiPoint'] ?? 0;
 
     if (geminiPoints < pointCost) {
@@ -33,52 +51,42 @@ Future<void> sendPromptToOpenAI({
       return;
     }
 
-    await userDocRef.update({'GeminiPoint': FieldValue.increment(-pointCost)});
-
-    final chatStream = OpenAI.instance.chat.createStream(
-      model: "ft:gpt-3.5-turbo-1106:personal::8u1sgqt4", // 내가 커스텀으로 만든 모델.
-      messages: [userMessage],
-      seed: 423,
-      n: 2,
-    );
-
-    chatStream.listen(
-          (streamChatCompletion) {
-        final oneWord = streamChatCompletion.choices.first.delta.content;
-        print(oneWord![0].text);
-        final oneWordString = oneWord[0].text.toString(); // 문자열을 추출
-        messageStreamController.add(oneWordString); // StreamController에 추가
-      },
-      onDone: () async {
-        // StreamController를 닫습니다.
-        messageStreamController.close();
-        // 최종 응답을 Firestore에 저장
-        CollectionReference discussionsRef = userDocRef.collection('discussions');
-        DocumentReference discussionRef = discussionsRef.doc(docId);
-
-        await discussionRef.collection('messages').add({
-          messageFieldName: text,
-          responseKeyName: finalResponse, // 최종 문자열 사용
-          "createTime": FieldValue.serverTimestamp(),
-        });
-      },
-      onError: (error) => print("Error in stream: $error"),
-    );
-
-    // StreamController의 스트림을 구독하고, 각 문자열을 finalResponse에 누적합니다.
-    messageStreamController.stream.listen(
-          (data) {
-        finalResponse += data; // 각 문자열을 누적
-      },
-      onDone: () {
-        // 스트림이 완료되면 여기에서는 아무것도 할 필요가 없습니다.
-        // 필요한 모든 처리는 chatStream의 onDone에서 수행됩니다.
-      },
-      onError: (error) => print("Error in messageStreamController: $error"),
-    );
+    await usersRef.doc(uid).update({'GeminiPoint': FieldValue.increment(-pointCost)});
   } catch (e) {
-    print('처리 중 에러 발생: $e');
+    print('사용자 점수 업데이트 중 에러 발생: $e');
+    return;
+  }
+
+  try {
+    OpenAIChatCompletionModel chatCompletion = await OpenAI.instance.chat.create(
+      model: "ft:gpt-3.5-turbo-1106:personal::8s0kD8jw",
+      seed: 6,
+      messages: requestMessages,
+      temperature: 0.2,
+      maxTokens: 500,
+      //// tool은 그냥 없애라. 오류만 뜸.
+    );
+    String jsonString = chatCompletion.choices.first.message.content!.first.text!;
+    print(jsonString);
+    finalResponse = jsonString;
+  } catch (e) {
+    print('OpenAI 챗 완성 중 에러 발생: $e');
+    return;
+  }
+
+  try {
+    CollectionReference discussionsRef = usersRef.doc(uid).collection('discussions');
+    DocumentReference discussionRef = discussionsRef.doc(docId);
+
+    await discussionRef.collection('messages').add({
+      messageFieldName: text,
+      responseKeyName: finalResponse, // 최종 문자열 사용
+      "createTime": FieldValue.serverTimestamp(),
+    });
+  } catch (e) {
+    print('Firestore에 메시지 저장 중 에러 발생: $e');
   }
 }
+
 
 

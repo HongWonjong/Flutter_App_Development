@@ -41,11 +41,12 @@ class FunctionLan {
 }
 
 class ExtendedMainPageLan {
-  static const String modelNameGpt35 = 'GPT 3.5_stream(2p 소모)';
-  static const String gpt35 = "GPT 3.5_stream";
-  static const String gpt35Doc = "GPT35_stream";
+  static const String modelNameGpt35 = 'GPT 3.5_finetuned(2p 소모)';
+  static const String gpt35 = "GPT 3.5_finetuned";
+  static const String gpt35Doc = "GPT35_finetuned";
+  static const String loadingText = "파인튜닝한 AI들은 특수한 목적을 위해 제작되었습니다. 아직 실험단계임을 참고하세요..";
 }
 
 class ExtendedfunctionLan {
-  static const String gpt35Doc = "GPT35_stream";
+  static const String gpt35Doc = "GPT35_finetuned";
 }
