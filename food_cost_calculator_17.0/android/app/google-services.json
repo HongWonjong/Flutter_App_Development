@@ -8,6 +8,35 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:767226177534:android:be1729b661aee5985702af",
+        "android_client_info": {
+          "package_name": "com.example.food_cost_calculator_3_0"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "767226177534-gs7ao9ucu9g1m4fhom7h6eabtc6ttd0q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiD72kJusn0jLNUKG3pW99lVWIR7HG79c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "767226177534-g5mte6d68h9lmv8kjtv6rpjb8jo4oqio.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:767226177534:android:918de71b9c6dbb345702af",
         "android_client_info": {
           "package_name": "com.example.retopia_chess"
@@ -65,6 +94,14 @@
           "android_info": {
             "package_name": "this.is.food_cost_calculator_3_0",
             "certificate_hash": "a467cbda2263d17b2784208155874b4434862c34"
+          }
+        },
+        {
+          "client_id": "767226177534-m8sqgpiulc7cvkps7go89sljubg3abov.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "this.is.food_cost_calculator_3_0",
+            "certificate_hash": "11b7d21cbce632b519c77843d597a3089ca0ab83"
           }
         },
         {

@@ -10,29 +10,21 @@ class AuthService {
 
   AuthService(this._ref);
 
-  Future<UserCredential> signInWithGoogle() async {
+  static Future<void> signInWithGoogle() async {
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) return; // 사용자가 로그인을 취소한 경우
 
-      final OAuthCredential credential = GoogleAuthProvider.credential(
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      final UserCredential userCredential = await _firebaseAuth.signInWithCredential(credential);
-      final User? user = userCredential.user;
-
-      if (user != null) {
-        // 로그인 처리 및 사용자 정보 가져오기
-        _ref.read(loggedInUserProvider.notifier).state = user;
-      }
-
-      return userCredential;
-
-    } catch (error) {
-      // 로그인 실패 처리
-      rethrow;
+      await FirebaseAuth.instance.signInWithCredential(credential);
+    } catch (e) {
+      print('Google 로그인 오류: $e');
+      // 오류 처리 로직을 추가하세요 (예: 사용자에게 알림을 표시하거나 다른 조치를 취함)
     }
   }
 
