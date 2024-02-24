@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../logic/auth_service.dart';
 import '../main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:food_cost_calculator_3_0/logic/upload_user_basic_data.dart';
 
 class LoginPage extends ConsumerWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -29,7 +30,11 @@ class LoginPage extends ConsumerWidget {
                     if (ref.watch(loggedInUserProvider)?.displayName != null) {
                       Navigator.pushReplacementNamed(context, '/cost-input');
                     } else {
-                      await AuthFunctions.signInWithGoogle();
+                      AuthFunctions.signInWithGoogle();
+                      UserDataUpload userDataUpload = UserDataUpload();
+                      userDataUpload.addUserToFirestore();
+                      UserDataUpload userDataUpload2 = UserDataUpload();
+                      userDataUpload2.checkAndAddDefaultUserData();
                         Navigator.pushReplacementNamed(context, '/cost-input');
                     }
                   },
