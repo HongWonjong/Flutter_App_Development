@@ -13,8 +13,9 @@ class CustomDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentUser = ref.watch(loggedInUserProvider.notifier).state!.displayName;
+    final currentUser = ref.watch(uidProvider);
     final currentEmail = ref.watch(userEmailProvider).value;
+    final currentDisplayName = ref.watch(userDisplayNameProvider).value;
 
     String formatEmail(String? email) {
       if (email != null && email.length > 8) {
@@ -37,7 +38,7 @@ class CustomDrawer extends ConsumerWidget {
                 decoration: const BoxDecoration(
                   color: Colors.deepPurpleAccent,
                 ),
-                accountName: Text(currentUser.toString() ?? "?",
+                accountName: Text(currentDisplayName ?? "?",
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
                 ),
                 accountEmail: Text(formatEmail(currentEmail).toString() ?? "?",
@@ -45,7 +46,7 @@ class CustomDrawer extends ConsumerWidget {
                 ),
                 currentAccountPicture: CircleAvatar(
                   backgroundColor: Colors.white,
-                  child: Text(currentUser.toString().substring(0, 1).toUpperCase() ?? '?',
+                  child: Text(currentDisplayName?.substring(0, 1).toUpperCase() ?? '?',
                     style: const TextStyle(fontSize: 40, color: Colors.deepPurpleAccent),
                   ),
                 ),
