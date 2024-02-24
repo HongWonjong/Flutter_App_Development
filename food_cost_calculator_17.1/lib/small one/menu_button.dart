@@ -6,19 +6,21 @@ import '../logic/auth_service.dart';
 import '../main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:food_cost_calculator_3_0/big one/help_page.dart';
+import 'package:food_cost_calculator_3_0/logic/user_riverpod.dart';
 
 class CustomDrawer extends ConsumerWidget {
   const CustomDrawer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    User? currentUser = ref.watch(loggedInUserProvider.notifier).state;
+    final currentUser = ref.watch(loggedInUserProvider.notifier).state!.displayName;
+    final currentEmail = ref.watch(userEmailProvider).value;
 
-    String formatEmail(String email) {
-      if (email.length > 8) {
+    String formatEmail(String? email) {
+      if (email != null && email.length > 8) {
         return '${email.substring(0, 8)}...';
       } else {
-        return email;
+        return email ?? "No Email";
       }
     }
 
@@ -35,15 +37,15 @@ class CustomDrawer extends ConsumerWidget {
                 decoration: const BoxDecoration(
                   color: Colors.deepPurpleAccent,
                 ),
-                accountName: Text(currentUser?.displayName ?? 'Guest',
+                accountName: Text(currentUser.toString() ?? "?",
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
                 ),
-                accountEmail: Text(currentUser?.email ?? 'Login',
+                accountEmail: Text(formatEmail(currentEmail).toString() ?? "?",
                   style: const TextStyle(color: Colors.white70),
                 ),
                 currentAccountPicture: CircleAvatar(
                   backgroundColor: Colors.white,
-                  child: Text(currentUser?.displayName?.substring(0, 1).toUpperCase() ?? '?',
+                  child: Text(currentUser.toString().substring(0, 1).toUpperCase() ?? '?',
                     style: const TextStyle(fontSize: 40, color: Colors.deepPurpleAccent),
                   ),
                 ),

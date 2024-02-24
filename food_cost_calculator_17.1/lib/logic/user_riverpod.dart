@@ -7,14 +7,18 @@ final uidProvider = Provider<String>((ref) {
   return myuid;
 }); // 유저의 uid를 가져와야 할 때
 
-final userEmailProvider = FutureProvider.autoDispose<String>((ref) async {
-  final uid = ref.watch(uidProvider);
+final userEmailProvider = StreamProvider<String?>((ref) {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+    final uid = user.uid;
 
-  // Firestore에서 해당 UID의 사용자 정보 가져오기
-  final userDoc = await FirebaseFirestore.instance.collection('user').doc(uid).get();
-
-  // 사용자 정보에서 이메일 가져오기
-  final userEmail = userDoc.data()?['user_email'] ?? ''; // 예외 처리를 통한 안전한 접근
-
-  return userEmail;
+    return FirebaseFirestore.instance.collection('users').doc(uid).snapshots().map((snapshot) {
+      return snapshot.data()?['email'] ?? '';
+    });
+  } else {
+    // 로그인되지 않은 경우, null 반환
+    return Stream.value("");
+  }
 });
+
+// 회원가입할 때 자동으로 이메일과 displayname을 저장하고, 먼저 가입한 사용자들의 경우 추후에 등록이 되도록 해야 함.
