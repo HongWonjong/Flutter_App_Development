@@ -1,9 +1,7 @@
 plugins {
-    id "com.android.application"
-    id "dev.flutter.flutter-gradle-plugin"
-    id "org.jetbrains.kotlin.android"
-    id "com.google.gms.google-services"
-    id "com.google.firebase.crashlytics"
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'com.google.gms.google-services'
 }
 
 def keystoreProperties = new Properties()
@@ -18,12 +16,17 @@ def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
     localProperties.load(new FileInputStream(localPropertiesFile))
 }
+def flutterRoot = localProperties.getProperty('flutter.sdk')
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')?.toInteger() ?: 1
 def flutterVersionName = localProperties.getProperty('flutter.versionName') ?: '1.0.0'
 
 
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+
 android {
+    compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -45,12 +48,10 @@ android {
     defaultConfig {
         namespace "com.example.food_cost_calculator_3_0"
         applicationId "com.example.food_cost_calculator_3_0"
-        compileSdkVersion 34
         minSdkVersion 21
         targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-        multiDexEnabled true
     }
 
     buildTypes {
