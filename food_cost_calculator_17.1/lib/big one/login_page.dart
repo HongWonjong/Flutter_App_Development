@@ -30,7 +30,7 @@ class LoginPage extends ConsumerWidget {
                     if (ref.watch(loggedInUserProvider)?.displayName != null) {
                       Navigator.pushReplacementNamed(context, '/cost-input');
                     } else {
-                      AuthFunctions.signInWithGoogle();
+                      AuthFunctions.signInWithGoogle(ref);
                       UserDataUpload userDataUpload = UserDataUpload();
                       userDataUpload.addUserToFirestore();
                       UserDataUpload userDataUpload2 = UserDataUpload();

@@ -16,6 +16,7 @@ class CustomDrawer extends ConsumerWidget {
     final currentUser = ref.watch(uidProvider);
     final currentEmail = ref.watch(userEmailProvider).value;
     final currentDisplayName = ref.watch(userDisplayNameProvider).value;
+    AuthFunctions authFunctions = AuthFunctions();
 
     String formatEmail(String? email) {
       if (email != null && email.length > 8) {
@@ -106,11 +107,10 @@ class CustomDrawer extends ConsumerWidget {
                 ),
                 onTap: () async {
                   if (currentUser == null) {
-                    await AuthFunctions.signInWithGoogle();
+                    await AuthFunctions.signInWithGoogle(ref);
                   } else {
                     // 로그인되어 있는 경우, 로그아웃 수행
-                    await FirebaseAuth.instance.signOut();
-                    ref.read(loggedInUserProvider.notifier).state = null;
+                    authFunctions.signOut(ref);
                   }
                   // Drawer를 닫음
                   Navigator.pop(context);
