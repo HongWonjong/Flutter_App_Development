@@ -6,7 +6,7 @@ import 'package:website/function/upload_user_basic_data.dart';
 import 'package:website/function/riverpod_setting.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:website/style/color.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+
 
 
 
@@ -78,7 +78,6 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
             iconSize: MQSize.getDetailHeight2(context),
             onPressed: () {
               authFunctions.signOut(ref);
-              DefaultCacheManager().emptyCache();
               },
           ),
         ],

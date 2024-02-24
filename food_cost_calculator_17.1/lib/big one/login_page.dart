@@ -9,7 +9,7 @@ class LoginPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authService = Provider<AuthService>((ref) => AuthService(ref));
+
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -29,12 +29,8 @@ class LoginPage extends ConsumerWidget {
                     if (ref.watch(loggedInUserProvider)?.displayName != null) {
                       Navigator.pushReplacementNamed(context, '/cost-input');
                     } else {
-                      UserCredential userCredential = await ref.read(authService).signInWithGoogle();
-                      User? user = userCredential.user;
-                      if (user != null && user.displayName != null) {
-                        ref.read(loggedInUserProvider.notifier).state = user;
+                      await AuthFunctions.signInWithGoogle();
                         Navigator.pushReplacementNamed(context, '/cost-input');
-                      }
                     }
                   },
                   style: ButtonStyle(

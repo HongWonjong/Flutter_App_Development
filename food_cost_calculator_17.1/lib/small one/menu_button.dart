@@ -12,7 +12,6 @@ class CustomDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authService = Provider<AuthService>((ref) => AuthService(ref));
     User? currentUser = ref.watch(loggedInUserProvider.notifier).state;
 
     String formatEmail(String email) {
@@ -104,12 +103,7 @@ class CustomDrawer extends ConsumerWidget {
                 ),
                 onTap: () async {
                   if (currentUser == null) {
-                    // 로그인되어 있지 않은 경우, Google 로그인 실행
-                    UserCredential userCredential = await ref.read(authService).signInWithGoogle();
-                    User? user = userCredential.user;
-                    if (user != null && user.displayName != null) {
-                      ref.read(loggedInUserProvider.notifier).state = user;
-                    }
+                    await AuthFunctions.signInWithGoogle();
                   } else {
                     // 로그인되어 있는 경우, 로그아웃 수행
                     await FirebaseAuth.instance.signOut();
