@@ -24,11 +24,36 @@ class AuthFunctions {
       // 오류 처리 로직을 추가하세요 (예: 사용자에게 알림을 표시하거나 다른 조치를 취함)
     }
   }
+
   Future<void> signOut(WidgetRef ref) async {
     await _firebaseAuth.signOut();
     await _googleSignIn.signOut();
     // Update login state
 
+  }
+
+  Future<void> deleteUser(WidgetRef ref) async {
+    try {
+      // Get the current user
+      User? user = _firebaseAuth.currentUser;
+
+      // Delete the user
+      await user?.delete();
+      await _googleSignIn.disconnect();
+
+      // Optionally, you might want to clean up user data from your database here
+
+      // After deletion, you can log the user out, clear state, navigate, etc.
+      // For example, if using Riverpod for state management, you might reset some providers to their default state
+      // ref.invalidate(authStateProvider); // This is just an example. Adjust according to your state management solution.
+
+      // Show a success message or navigate the user to a different screen
+      print("User deleted successfully.");
+    } on FirebaseAuthException catch (e) {
+      // Handle errors, for example, show an error message
+      // You might need to handle specific errors, such as requiring the user to reauthenticate
+      throw Exception("Error deleting user: ${e.message}");
+    }
   }
 }
 

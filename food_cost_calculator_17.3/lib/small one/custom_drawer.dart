@@ -96,6 +96,17 @@ class CustomDrawer extends ConsumerWidget {
                         );
                       },
                     ),
+                    ListTile(
+                      leading: const Icon(Icons.unsubscribe, color: Colors.white),
+                      title: const Text(
+                        '회원탈퇴',
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25),
+                      ),
+                      onTap: () {
+                        // Call the handleUnsubscribe method here
+                        authFunctions.deleteUser(ref);
+                      },
+                    ),
                   ],
                 ),
               ),
