@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../logic/auth_service.dart';
-import '../main.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:food_cost_calculator_3_0/logic/user_riverpod.dart';
 import 'package:food_cost_calculator_3_0/logic/upload_user_basic_data.dart';
 
 class LoginPage extends ConsumerWidget {
@@ -10,6 +9,8 @@ class LoginPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authStateProvider);
+    AuthFunctions authFunctions = AuthFunctions();
 
 
     return Scaffold(
@@ -27,7 +28,7 @@ class LoginPage extends ConsumerWidget {
                 height: 60, // 원하는 높이로 변경
                 child: ElevatedButton(
                   onPressed: () async {
-                    if (ref.watch(loggedInUserProvider)?.displayName != null) {
+                    if (authState!= null) {
                       Navigator.pushReplacementNamed(context, '/cost-input');
                     } else {
                       AuthFunctions.signInWithGoogle(ref);
@@ -66,8 +67,7 @@ class LoginPage extends ConsumerWidget {
                 height: 60, // 원하는 높이로 변경
                 child: ElevatedButton(
                   onPressed: () async {
-                    await FirebaseAuth.instance.signOut();
-                    ref.read(loggedInUserProvider.notifier).state = null;
+                    authFunctions.signOut(ref);
                     Navigator.pushReplacementNamed(context, '/cost-input');
                   },
                   style: ButtonStyle(

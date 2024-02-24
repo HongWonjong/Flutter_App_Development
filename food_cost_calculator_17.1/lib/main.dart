@@ -7,14 +7,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'logic/user_riverpod.dart';
 import 'package:food_cost_calculator_3_0/big one/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
-import 'small one/loading_donut.dart';
 
-final loggedInUserProvider = StateProvider<User?>((ref) => null);
-final loadingProvider = StateProvider<bool>((ref) => false); // Loading Provider 추가
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -69,10 +66,10 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(languageProvider);
     final appLocalizations = AppLocalizations.of(context);
+    final authState = ref.watch(authStateProvider);
 
     // Check the login state of the user
-    final user = ref.watch(loggedInUserProvider.notifier).state;
-    String initialRoute = user != null ? "/cost-input" : "/login";
+    String initialRoute = authState != null ? "/cost-input" : "/login";
 
     return MaterialApp(
       title: appLocalizations?.costInputPage ?? '',
@@ -102,16 +99,6 @@ class MyApp extends ConsumerWidget {
               quantity: args['quantity'],
               foodPrice: args['itemPrice']);
         },
-      },
-      builder: (context, child) {
-        return Stack(
-          children: [
-            child!,
-            if (ref.watch(loadingProvider.notifier).state) ...[
-              const LoadingDonut(),
-            ],
-          ],
-        );
       },
     );
   }

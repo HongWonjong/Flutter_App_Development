@@ -3,8 +3,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../big one/sales_report_page.dart';
 import '../big one/ai_analysis_page.dart';
 import '../logic/auth_service.dart';
-import '../main.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:food_cost_calculator_3_0/big one/help_page.dart';
 import 'package:food_cost_calculator_3_0/logic/user_riverpod.dart';
 
@@ -13,7 +11,7 @@ class CustomDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentUser = ref.watch(uidProvider);
+    final authState = ref.watch(authStateProvider);
     final currentEmail = ref.watch(userEmailProvider).value;
     final currentDisplayName = ref.watch(userDisplayNameProvider).value;
     AuthFunctions authFunctions = AuthFunctions();
@@ -98,15 +96,15 @@ class CustomDrawer extends ConsumerWidget {
                 ),
               ),
               ListTile(
-                leading: Icon(currentUser == null ? Icons.login : Icons.logout, color: Colors.white),
+                leading: Icon(authState == null ? Icons.login : Icons.logout, color: Colors.white),
                 title: Text(
-                  currentUser == null
+                  authState == null
                       ? '로그인'
                       : '로그아웃',
                   style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25),
                 ),
                 onTap: () async {
-                  if (currentUser == null) {
+                  if (authState == null) {
                     await AuthFunctions.signInWithGoogle(ref);
                   } else {
                     // 로그인되어 있는 경우, 로그아웃 수행
