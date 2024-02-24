@@ -40,7 +40,7 @@ class CustomDrawer extends ConsumerWidget {
                 accountName: Text(currentDisplayName ?? "?",
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
                 ),
-                accountEmail: Text(formatEmail(currentEmail).toString() ?? "?",
+                accountEmail: Text(formatEmail(currentEmail).toString(),
                   style: const TextStyle(color: Colors.white70),
                 ),
                 currentAccountPicture: CircleAvatar(
@@ -109,9 +109,8 @@ class CustomDrawer extends ConsumerWidget {
                   } else {
                     // 로그인되어 있는 경우, 로그아웃 수행
                     authFunctions.signOut(ref);
+                    Navigator.pushReplacementNamed(context, "/login");
                   }
-                  // Drawer를 닫음
-                  Navigator.pop(context);
                 },
               ),
             ],

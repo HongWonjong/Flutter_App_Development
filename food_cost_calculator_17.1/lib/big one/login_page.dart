@@ -36,7 +36,7 @@ class LoginPage extends ConsumerWidget {
                       userDataUpload.addUserToFirestore();
                       UserDataUpload userDataUpload2 = UserDataUpload();
                       userDataUpload2.checkAndAddDefaultUserData();
-                        Navigator.pushReplacementNamed(context, '/cost-input');
+                      Navigator.pushReplacementNamed(context, '/cost-input');
                     }
                   },
                   style: ButtonStyle(

@@ -7,12 +7,6 @@ final authStateProvider = StreamProvider<User?>((ref) {
   return FirebaseAuth.instance.authStateChanges();
 });
 
-final uidProvider = Provider<String>((ref) {
-  String myuid = FirebaseAuth.instance.currentUser!.uid;
-  return myuid;
-}); // 유저의 uid를 가져와야 할 때
-
-
 final userEmailProvider = StreamProvider<String?>((ref) {
   final user = FirebaseAuth.instance.currentUser;
   if (user != null) {
@@ -40,5 +34,3 @@ final userDisplayNameProvider = StreamProvider<String?>((ref) {
     return Stream.value("");
   }
 });
-
-// 회원가입할 때 자동으로 이메일과 displayname을 저장하고, 먼저 가입한 사용자들의 경우 추후에 등록이 되도록 해야 함.
