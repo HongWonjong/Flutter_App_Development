@@ -11,15 +11,15 @@ final userEmailProvider = StreamProvider<String?>((ref) {
   final user = FirebaseAuth.instance.currentUser;
   if (user != null) {
     final uid = user.uid;
-
     return FirebaseFirestore.instance.collection('users').doc(uid).snapshots().map((snapshot) {
-      return snapshot.data()?['email'] ?? '';
+      return snapshot.data()?['email'] ?? Stream.value(null);
     });
   } else {
     // 로그인되지 않은 경우, null 반환
-    return Stream.value("");
+    return Stream.value(null);
   }
 });
+
 
 final userDisplayNameProvider = StreamProvider<String?>((ref) {
   final user = FirebaseAuth.instance.currentUser;
@@ -27,10 +27,10 @@ final userDisplayNameProvider = StreamProvider<String?>((ref) {
     final uid = user.uid;
 
     return FirebaseFirestore.instance.collection('users').doc(uid).snapshots().map((snapshot) {
-      return snapshot.data()?['userDisplayName'] ?? '';
+      return snapshot.data()?['userDisplayName'] ?? Stream.value(null);
     });
   } else {
     // 로그인되지 않은 경우, null 반환
-    return Stream.value("");
+    return Stream.value(null);
   }
 });

@@ -11,6 +11,10 @@ class LoginPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
     AuthFunctions authFunctions = AuthFunctions();
+    final isLoggedIn = authState.maybeWhen(
+      data: (user) => user != null, // User 객체가 null이 아니면 로그인한 것으로 간주
+      orElse: () => false, // 그 외의 경우에는 로그인하지 않은 것으로 간주
+    );
 
 
     return Scaffold(
@@ -28,7 +32,7 @@ class LoginPage extends ConsumerWidget {
                 height: 60, // 원하는 높이로 변경
                 child: ElevatedButton(
                   onPressed: () async {
-                    if (authState!= null) {
+                    if (isLoggedIn!= null) {
                       Navigator.pushReplacementNamed(context, '/cost-input');
                     } else {
                       AuthFunctions authfunctions = AuthFunctions();
@@ -38,6 +42,7 @@ class LoginPage extends ConsumerWidget {
                       UserDataUpload userDataUpload2 = UserDataUpload();
                       userDataUpload2.checkAndAddDefaultUserData();
                       Navigator.pushReplacementNamed(context, '/cost-input');
+
                     }
                   },
                   style: ButtonStyle(

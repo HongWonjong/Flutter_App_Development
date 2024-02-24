@@ -5,6 +5,7 @@ import '../big one/ai_analysis_page.dart';
 import '../logic/auth_service.dart';
 import 'package:food_cost_calculator_3_0/big one/help_page.dart';
 import 'package:food_cost_calculator_3_0/logic/user_riverpod.dart';
+import 'package:food_cost_calculator_3_0/logic/upload_user_basic_data.dart';
 
 class CustomDrawer extends ConsumerWidget {
   const CustomDrawer({super.key});
@@ -16,17 +17,8 @@ class CustomDrawer extends ConsumerWidget {
       data: (user) => user != null, // User 객체가 null이 아니면 로그인한 것으로 간주
       orElse: () => false, // 그 외의 경우에는 로그인하지 않은 것으로 간주
     );
-    final currentEmail = ref.watch(userEmailProvider).value;
-    final currentDisplayName = ref.watch(userDisplayNameProvider).value;
     AuthFunctions authFunctions = AuthFunctions();
 
-    String formatEmail(String? email) {
-      if (email != null && email.length > 8) {
-        return '${email.substring(0, 8)}...';
-      } else {
-        return email ?? "No Email";
-      }
-    }
 
     return Container(
       decoration: const BoxDecoration(
@@ -37,23 +29,6 @@ class CustomDrawer extends ConsumerWidget {
           color: Colors.deepPurpleAccent,
           child: Column(
             children: [
-              UserAccountsDrawerHeader(
-                decoration: const BoxDecoration(
-                  color: Colors.deepPurpleAccent,
-                ),
-                accountName: Text(currentDisplayName ?? "?",
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
-                ),
-                accountEmail: Text(formatEmail(currentEmail).toString(),
-                  style: const TextStyle(color: Colors.white70),
-                ),
-                currentAccountPicture: CircleAvatar(
-                  backgroundColor: Colors.white,
-                  child: Text(currentDisplayName?.substring(0, 1).toUpperCase() ?? '?',
-                    style: const TextStyle(fontSize: 40, color: Colors.deepPurpleAccent),
-                  ),
-                ),
-              ),
               Expanded(
                 child: ListView(
                   children: [
@@ -121,6 +96,11 @@ class CustomDrawer extends ConsumerWidget {
                 onTap: ()  {
                   if (isLoggedIn == false) {
                     authFunctions.signInWithGoogle(ref);
+                    UserDataUpload userDataUpload = UserDataUpload();
+                    userDataUpload.addUserToFirestore();
+                    UserDataUpload userDataUpload2 = UserDataUpload();
+                    userDataUpload2.checkAndAddDefaultUserData();
+                    Navigator.pushReplacementNamed(context, "/cost-input");
                   } else {
                     // 로그인되어 있는 경우, 로그아웃 수행
                     authFunctions.signOut(ref);

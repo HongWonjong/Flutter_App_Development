@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'function/init_app.dart';
 
 
+
 void main() async {
   await AppInitializer.initializeApp();
   runApp(ProviderScope(child: MyApp()));

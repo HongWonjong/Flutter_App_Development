@@ -64,10 +64,8 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(languageProvider);
     final appLocalizations = AppLocalizations.of(context);
-    final authState = ref.watch(authStateProvider);
 
-    // Check the login state of the user
-    String initialRoute =/* authState != null ? "/cost-input" :*/ "/login";
+    String initialRoute = "/login";
 
     return MaterialApp(
       title: appLocalizations?.costInputPage ?? '',

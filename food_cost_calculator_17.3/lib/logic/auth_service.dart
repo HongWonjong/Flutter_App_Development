@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:food_cost_calculator_3_0/logic/user_riverpod.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class AuthFunctions {
@@ -28,6 +30,9 @@ class AuthFunctions {
   Future<void> signOut(WidgetRef ref) async {
     await _firebaseAuth.signOut();
     await _googleSignIn.signOut();
+    ref.invalidate(authStateProvider);
+    ref.invalidate(userEmailProvider);
+    ref.invalidate(userDisplayNameProvider);
     // Update login state
 
   }
@@ -36,18 +41,18 @@ class AuthFunctions {
     try {
       // Get the current user
       User? user = _firebaseAuth.currentUser;
+      // Delete the user document from Firestore
+      await FirebaseFirestore.instance.collection('users').doc(user!.uid).delete();
+      print("User Firestore document deleted successfully.");
+
 
       // Delete the user
       await user?.delete();
       await _googleSignIn.disconnect();
+      ref.invalidate(authStateProvider);
+      ref.invalidate(userEmailProvider);
+      ref.invalidate(userDisplayNameProvider);
 
-      // Optionally, you might want to clean up user data from your database here
-
-      // After deletion, you can log the user out, clear state, navigate, etc.
-      // For example, if using Riverpod for state management, you might reset some providers to their default state
-      // ref.invalidate(authStateProvider); // This is just an example. Adjust according to your state management solution.
-
-      // Show a success message or navigate the user to a different screen
       print("User deleted successfully.");
     } on FirebaseAuthException catch (e) {
       // Handle errors, for example, show an error message
