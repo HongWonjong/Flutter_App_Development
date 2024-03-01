@@ -71,7 +71,7 @@ class MyAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
 final languages = <Map<String, String>>[
   {'value': 'en', 'name': 'English'},
-  {'value': 'ko', 'name': 'Korean'},
+  {'value': 'ko', 'name': '한국어'},
   {'value': 'zh', 'name': 'Mandarin'},
   {'value': 'es', 'name': 'Spanish'},
   {'value': 'ja', 'name': 'Japanese'},

@@ -46,8 +46,8 @@ android {
     }
 
     defaultConfig {
-        namespace "com.example.food_cost_calculator_3_0"
-        applicationId "com.example.food_cost_calculator_3_0"
+        namespace "com.food_cost_calculator_3_0"
+        applicationId "com.food_cost_calculator_3_0"
         minSdkVersion 21
         targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()

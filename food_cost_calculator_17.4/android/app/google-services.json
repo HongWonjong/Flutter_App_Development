@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:767226177534:android:be1729b661aee5985702af",
         "android_client_info": {
-          "package_name": "com.example.food_cost_calculator_3_0"
+          "package_name": "com.food_cost_calculator_3_0"
         }
       },
       "oauth_client": [
@@ -84,7 +84,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:767226177534:android:22f10d1230a6d2295702af",
         "android_client_info": {
-          "package_name": "com.example.food_cost_calculator_3_0"
+          "package_name": "com.food_cost_calculator_3_0"
         }
       },
       "oauth_client": [
@@ -92,7 +92,7 @@
           "client_id": "767226177534-6qvbosu1om81i082ram83527hcc90dqf.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.food_cost_calculator_3_0",
+            "package_name": "com.food_cost_calculator_3_0",
             "certificate_hash": "a467cbda2263d17b2784208155874b4434862c34"
           }
         },
@@ -100,7 +100,7 @@
           "client_id": "767226177534-m8sqgpiulc7cvkps7go89sljubg3abov.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.food_cost_calculator_3_0",
+            "package_name": "com.food_cost_calculator_3_0",
             "certificate_hash": "11b7d21cbce632b519c77843d597a3089ca0ab83"
           }
         },

@@ -117,7 +117,7 @@ class CustomDrawer extends ConsumerWidget {
                 leading: Icon(isLoggedIn == false ? Icons.login : Icons.logout, color: Colors.white),
                 title: Text(
                   isLoggedIn == false
-                      ? '로그인'
+                      ? '회원가입/로그인'
                       : '로그아웃',
                   style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25),
                 ),

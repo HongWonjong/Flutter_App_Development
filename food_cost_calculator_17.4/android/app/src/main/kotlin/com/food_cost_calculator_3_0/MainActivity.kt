@@ -1,4 +1,4 @@
-package com.example.food_cost_calculator_3_0
+package com.food_cost_calculator_3_0
 
 import io.flutter.embedding.android.FlutterActivity
 

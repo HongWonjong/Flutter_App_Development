@@ -67,7 +67,7 @@ class MyApp extends ConsumerWidget {
       initialRoute: initialRoute,
       theme: ThemeData(
         primaryColor: Colors.greenAccent,
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.lightGreen)
+        colorScheme: ColorScheme.fromSwatch(backgroundColor: Colors.white)
             .copyWith(secondary: Colors.orange),
       ),
       locale: locale,
