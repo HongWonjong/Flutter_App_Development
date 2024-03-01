@@ -166,8 +166,9 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
                       decoration: InputDecoration(
                         labelText: lang.foodType,
                         labelStyle: const TextStyle(fontSize: 25.0),
-                        border: const OutlineInputBorder(),
+                        border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
                       ),
+
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return lang.foodTypeHint;
@@ -182,7 +183,7 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
                       decoration: InputDecoration(
                         labelText: lang.unitPrice,
                         labelStyle: const TextStyle(fontSize: 25.0),
-                        border: const OutlineInputBorder(),
+                        border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
                       ),
                       keyboardType: TextInputType.number,
                       validator: (value) {
@@ -198,7 +199,7 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
                       decoration: InputDecoration(
                         labelText: lang.salesVolume,
                         labelStyle: const TextStyle(fontSize: 25.0),
-                        border: const OutlineInputBorder(),
+                        border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
                       ),
                       keyboardType: TextInputType.number,
                       validator: (value) {
@@ -214,7 +215,7 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
                       decoration: InputDecoration(
                         labelText: lang.costItem,
                         labelStyle: const TextStyle(fontSize: 25.0),
-                        border: const OutlineInputBorder(),
+                        border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -256,7 +257,7 @@ class _CostInputPageState extends ConsumerState<CostInputPage> {
                       decoration: InputDecoration(
                         labelText: lang.costItemPrice,
                         labelStyle: const TextStyle(fontSize: 25.0),
-                        border: const OutlineInputBorder(),
+                        border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
                       ),
                       keyboardType: TextInputType.number,
                       validator: (value) {

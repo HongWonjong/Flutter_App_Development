@@ -41,7 +41,7 @@ Future<void> loadPreferredLanguage() async {
 }
 
 final languageProvider = StateNotifierProvider<LanguageNotifier, Locale>((ref) {
-  return LanguageNotifier(preferredLocale ?? const Locale('en'));
+  return LanguageNotifier(preferredLocale ?? const Locale('ko'));
 });
 
 class LanguageNotifier extends StateNotifier<Locale> {
