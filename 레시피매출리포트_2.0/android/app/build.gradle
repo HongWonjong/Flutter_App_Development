@@ -17,8 +17,8 @@ if (localPropertiesFile.exists()) {
     localProperties.load(new FileInputStream(localPropertiesFile))
 }
 def flutterRoot = localProperties.getProperty('flutter.sdk')
-def versionComponents = flutterVersionName.split("\\.")
-def flutterVersionCode = versionComponents[0].toInteger()
+def flutterVersionCode = 3
+// 코드는 네임과 딱히 같이 따라갈 필요는 없다. code는 구글에서 분류하기 위해서 씀.
 def flutterVersionName = localProperties.getProperty('flutter.versionName') ?: '1.0.0'
 
 
@@ -65,6 +65,7 @@ android {
         debug {
             debuggable true
             jniDebuggable true
+            minifyEnabled false
         }
     }
 
