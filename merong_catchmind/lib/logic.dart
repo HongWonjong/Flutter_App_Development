@@ -20,7 +20,7 @@ class WordManager {
     if (_words.isNotEmpty) {
       int randomIndex = _random.nextInt(_words.length);
       String randomWord = _words[randomIndex];
-      _words.removeAt(randomIndex);  // 목록에서 단어를 제거합니다.
+      _words.removeAt(randomIndex); // 목록에서 단어를 제거합니다.
       return randomWord;
     }
     return '';
@@ -48,8 +48,15 @@ class ParticipantManager {
   }
 
   void decreaseScore(String name) {
-    if (_scores.containsKey(name)) {
+    if (_scores.containsKey(name) && _scores[name]! > 0) {
       _scores[name] = (_scores[name] ?? 0) - 1;
     }
+  }
+
+  int getHighestScore() {
+    if (_scores.isEmpty) {
+      return 0;
+    }
+    return _scores.values.reduce((a, b) => a > b ? a : b);
   }
 }

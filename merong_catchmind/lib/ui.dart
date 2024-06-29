@@ -259,35 +259,3 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-// In logic.dart, add this method to ParticipantManager
-class ParticipantManager {
-  final List<String> _participants = [];
-  final Map<String, int> _scores = {};
-
-  List<String> get participants => _participants;
-  Map<String, int> get scores => _scores;
-
-  void addParticipant(String name) {
-    _participants.add(name);
-    _scores[name] = 0;
-  }
-
-  void increaseScore(String name) {
-    if (_scores.containsKey(name)) {
-      _scores[name] = (_scores[name] ?? 0) + 1;
-    }
-  }
-
-  void decreaseScore(String name) {
-    if (_scores.containsKey(name) && (_scores[name] ?? 0) > 0) {
-      _scores[name] = (_scores[name] ?? 0) - 1;
-    }
-  }
-
-  int getHighestScore() {
-    if (_scores.isEmpty) {
-      return 0;
-    }
-    return _scores.values.reduce((a, b) => a > b ? a : b);
-  }
-}
