@@ -43,8 +43,15 @@ dev_dependencies:
   flutter_lints: ^3.0.0
 
 
+
 flutter:
-
-
   uses-material-design: true
+
+  assets:
+    - assets/
+
+  fonts:
+    - family: NotoSansKR
+      fonts:
+        - asset: assets/fonts/Noto_Sans_KR/NotoSansKR-Regular.otf
 
