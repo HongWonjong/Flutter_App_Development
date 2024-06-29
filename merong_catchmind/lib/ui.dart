@@ -13,8 +13,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final WordManager _wordManager = WordManager();
   final FocusNode _focusNode = FocusNode();
 
-  final List<String> _participants = [];
-  final Map<String, int> _scores = {};
+  final ParticipantManager _participantManager = ParticipantManager();
   final TextEditingController _nameController = TextEditingController();
 
   void _addWords() {
@@ -25,15 +24,14 @@ class _MyHomePageState extends State<MyHomePage> {
         });
         _controller.clear();
       });
-      _focusNode.requestFocus(); // 단어 추가 후 텍스트 필드에 포커스 설정
+      _focusNode.requestFocus();
     }
   }
 
   void _addParticipant() {
     if (_nameController.text.isNotEmpty) {
       setState(() {
-        _participants.add(_nameController.text);
-        _scores[_nameController.text] = 0;
+        _participantManager.addParticipant(_nameController.text);
         _nameController.clear();
       });
     }
@@ -74,13 +72,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _increaseScore(String name) {
     setState(() {
-      _scores[name] = (_scores[name] ?? 0) + 1;
+      _participantManager.increaseScore(name);
     });
   }
 
   void _decreaseScore(String name) {
     setState(() {
-      _scores[name] = (_scores[name] ?? 0) - 1;
+      _participantManager.decreaseScore(name);
     });
   }
 
@@ -93,12 +91,12 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start, // 점수판과 랜덤 단어가 위로 정렬되도록 수정
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               flex: 1,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch, // Column 내부 요소들이 가로로 확장되도록 수정
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   TextField(
                     controller: _nameController,
@@ -125,9 +123,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       child: ListView.builder(
-                        itemCount: _participants.length,
+                        itemCount: _participantManager.participants.length,
                         itemBuilder: (context, index) {
-                          String participant = _participants[index];
+                          String participant = _participantManager.participants[index];
                           return ListTile(
                             title: Text(participant),
                             trailing: Row(
@@ -137,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   icon: const Icon(Icons.remove, color: Colors.deepPurple),
                                   onPressed: () => _decreaseScore(participant),
                                 ),
-                                Text(_scores[participant].toString()),
+                                Text(_participantManager.scores[participant].toString()),
                                 IconButton(
                                   icon: const Icon(Icons.add, color: Colors.deepPurple),
                                   onPressed: () => _increaseScore(participant),
@@ -148,6 +146,11 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                       ),
                     ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '저장된 단어 수: ${_wordManager.words.length}',
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -219,5 +222,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+
 
 

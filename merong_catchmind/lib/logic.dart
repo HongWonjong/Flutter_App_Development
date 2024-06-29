@@ -26,3 +26,30 @@ class WordManager {
     return '';
   }
 }
+
+class ParticipantManager {
+  final List<String> _participants = [];
+  final Map<String, int> _scores = {};
+
+  List<String> get participants => List.unmodifiable(_participants);
+  Map<String, int> get scores => Map.unmodifiable(_scores);
+
+  void addParticipant(String name) {
+    if (name.isNotEmpty && !_participants.contains(name)) {
+      _participants.add(name);
+      _scores[name] = 0;
+    }
+  }
+
+  void increaseScore(String name) {
+    if (_scores.containsKey(name)) {
+      _scores[name] = (_scores[name] ?? 0) + 1;
+    }
+  }
+
+  void decreaseScore(String name) {
+    if (_scores.containsKey(name)) {
+      _scores[name] = (_scores[name] ?? 0) - 1;
+    }
+  }
+}
