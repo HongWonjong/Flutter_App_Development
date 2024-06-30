@@ -158,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(isHighestScorer? Icons.wine_bar_outlined : null, color: Colors.pink),
+                                  Icon(isHighestScorer? Icons.star : null, color: Colors.orange),
                                   IconButton(
                                     icon: const Icon(Icons.remove, color: Colors.deepPurple),
                                     onPressed: () => _decreaseScore(participant),
