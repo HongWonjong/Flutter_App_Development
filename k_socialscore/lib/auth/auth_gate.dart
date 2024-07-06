@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../homepage/home_page.dart';
 import 'login_page.dart';
-
+import 'package:k_socialscore/homepage/quiz_list_page.dart';
 final authProvider = StreamProvider<User?>((ref) {
   return FirebaseAuth.instance.authStateChanges();
 });
@@ -18,9 +17,9 @@ class AuthGate extends ConsumerWidget {
     return authState.when(
       data: (user) {
         if (user == null) {
-          return const LoginPage();
+          return LoginPage();
         } else {
-          return const HomePage();
+          return const QuizListPage();
         }
       },
       loading: () => const Center(child: CircularProgressIndicator()),

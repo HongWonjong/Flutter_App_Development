@@ -1,34 +1,10 @@
 import 'package:flutter/material.dart';
-import '../overall_settings.dart'; // settings.dart 파일을 import 합니다.
+import 'package:k_socialscore/overall_settings.dart';
 
-class AnswerButton extends StatelessWidget {
-  final String text;
-  final VoidCallback onPressed;
-
-  const AnswerButton({required this.text, required this.onPressed, Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: buttonColor,
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10), // 모서리를 둥글게 만듭니다.
-          ),
-        ),
-        onPressed: onPressed,
-        child: Text(
-          text,
-          style: const TextStyle(
-            color: textColor,
-            fontSize: textSize,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
-  }
-}
+final ButtonStyle answerButtonStyle = ElevatedButton.styleFrom(
+  backgroundColor: buttonColor,
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(8.0), // 직사각형에 가깝게 만들기
+  ),
+  padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+);
