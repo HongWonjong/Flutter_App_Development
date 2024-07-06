@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
-import 'homepage/home_page.dart'; // home_page.dart 파일을 import 합니다.
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'firebase_options.dart'; // Firebase 초기화 옵션
+import 'auth/auth_gate.dart'; // AuthGate 추가
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.web,
+  );
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -11,12 +18,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'K-사회점수 퀴즈게임',
+      title: 'Social Score Quiz',
       theme: ThemeData(
         primarySwatch: Colors.purple,
       ),
-      home: const HomePage(),
+      home: const AuthGate(),
     );
   }
 }
+
 

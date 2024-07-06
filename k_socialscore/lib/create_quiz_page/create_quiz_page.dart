@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../overall_settings.dart';
-import '../quizpage/quiz_data.dart';
 
 class CreateQuizPage extends StatefulWidget {
   const CreateQuizPage({Key? key}) : super(key: key);
@@ -24,22 +25,29 @@ class _CreateQuizPageState extends State<CreateQuizPage> {
     super.dispose();
   }
 
-  void _saveQuiz() {
+  Future<void> _saveQuiz() async {
     if (_formKey.currentState!.validate()) {
-      Quiz newQuiz = Quiz(
-        question: _questionController.text,
-        options: _optionControllers.map((controller) => controller.text).toList(),
-        answerIndex: _answerIndex,
-        image: null,
-        answerExplanation: _explanationController.text,
-        socialPointsGain: 10, // 고정된 값으로 설정
-        socialPointsLoss: 10, // 고정된 값으로 설정
-      );
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) {
+        // Handle user not logged in
+        return;
+      }
 
-      // quizList에 새로운 퀴즈를 추가합니다.
-      quizList.add(newQuiz);
+      Map<String, dynamic> newQuiz = {
+        'question': _questionController.text,
+        'options': _optionControllers.map((controller) => controller.text).toList(),
+        'answerIndex': _answerIndex,
+        'answerExplanation': _explanationController.text,
+        'socialPointsGain': 10, // 고정된 값으로 설정
+        'socialPointsLoss': 10, // 고정된 값으로 설정
+      };
 
-      // 퀴즈 저장 후 이전 화면으로 돌아갑니다.
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .collection('quiz_set')
+          .add(newQuiz);
+
       Navigator.pop(context);
     }
   }
@@ -47,7 +55,6 @@ class _CreateQuizPageState extends State<CreateQuizPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: initialBackgroundColor,
       appBar: AppBar(
         title: const Text('Create Quiz'),
       ),
@@ -60,10 +67,10 @@ class _CreateQuizPageState extends State<CreateQuizPage> {
               children: [
                 TextFormField(
                   controller: _questionController,
-                  decoration: const InputDecoration(labelText: '질문'),
+                  decoration: const InputDecoration(labelText: 'Question'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return '질문을 적어주세요';
+                      return 'Please enter a question';
                     }
                     return null;
                   },
@@ -71,10 +78,10 @@ class _CreateQuizPageState extends State<CreateQuizPage> {
                 ...List.generate(4, (index) {
                   return TextFormField(
                     controller: _optionControllers[index],
-                    decoration: InputDecoration(labelText: '선택지 ${index + 1}'),
+                    decoration: InputDecoration(labelText: 'Option ${index + 1}'),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return '선택지를 적어주세요';
+                        return 'Please enter an option';
                       }
                       return null;
                     },
@@ -85,7 +92,7 @@ class _CreateQuizPageState extends State<CreateQuizPage> {
                   items: List.generate(4, (index) {
                     return DropdownMenuItem(
                       value: index,
-                      child: Text('선택지 ${index + 1}'),
+                      child: Text('Option ${index + 1}'),
                     );
                   }),
                   onChanged: (value) {
@@ -93,14 +100,14 @@ class _CreateQuizPageState extends State<CreateQuizPage> {
                       _answerIndex = value!;
                     });
                   },
-                  decoration: const InputDecoration(labelText: '정답'),
+                  decoration: const InputDecoration(labelText: 'Correct Answer'),
                 ),
                 TextFormField(
                   controller: _explanationController,
-                  decoration: const InputDecoration(labelText: '해설'),
+                  decoration: const InputDecoration(labelText: 'Explanation'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return '정답인 이유에 대한 설명이나 해설을 적어주세요';
+                      return 'Please enter an explanation';
                     }
                     return null;
                   },
@@ -108,7 +115,7 @@ class _CreateQuizPageState extends State<CreateQuizPage> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _saveQuiz,
-                  child: const Text('퀴즈 저장'),
+                  child: const Text('Save Quiz'),
                 ),
               ],
             ),
@@ -118,3 +125,4 @@ class _CreateQuizPageState extends State<CreateQuizPage> {
     );
   }
 }
+
