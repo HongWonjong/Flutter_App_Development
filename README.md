@@ -15,3 +15,7 @@ freedomcompass => 메모장 앱
 what did you do yesterday: 비슷한 메모장 앱
 
 website ~ : Gemini Pro, GPT3.5, GPT4 PalM2 등의 AI들을 사용할 수 있는 기초적인 세팅을 맞춰놓았고, 파인튜닝과 프롬프트 엔지니어링을 살짝 해본 것도 넣었다.
+
+merong_catchmind: 팬심에서 만든 간단한 캐치마인드 보조 웹사이트. 별 건 없다.
+k_socialscore: 중국의 사회점수 퀴즈 밈을 바탕으로 비슷하게 만들어보는 중인 누구나 만들 수 있는 사지선다 퀴즈 사이트..
+
