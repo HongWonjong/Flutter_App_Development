@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:k_socialscore/quizpage/answer_button.dart';
 import '../overall_settings.dart';
 import 'package:k_socialscore/quizpage/quiz_set_page.dart';
 import 'package:k_socialscore/create_quiz_page/create_quiz_page.dart';
@@ -21,50 +22,68 @@ class _QuizListPageState extends State<QuizListPage> {
       backgroundColor: initialBackgroundColor,
       appBar: AppBar(
         backgroundColor: initialBackgroundColor,
-        title: const Text(
-          '퀴즈 리스트',
-          style: TextStyle(
-            color: textColor,
-          ),
+        title:  Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              '퀴즈 리스트',
+              style: TextStyle(
+                  color: textColor,
+                  fontSize: questionText
+              ),
+            ),
+            ElevatedButton(
+              style: answerButtonStyle,
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.of(context).pushReplacementNamed('/login');
+              },
+              child: Text("로그아웃", style: TextStyle(fontSize: textSize, color: Colors.white)),
+            )
+          ],
         ),
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  '정렬 기준:',
-                  style: TextStyle(
-                    color: textColor,
-                    fontSize: textSize,
-                    fontWeight: FontWeight.bold,
+          Container(
+            color: identifySpaceColor,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    '정렬 기준:',
+                    style: TextStyle(
+                      color: textColor,
+                      fontSize: textSize,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                DropdownButton<String>(
-                  dropdownColor: initialBackgroundColor,
-                  value: _sortCriteria,
-                  items: const [
-                    DropdownMenuItem(
-                      value: 'views',
-                      child: Text('조회수 순', style: TextStyle(color: textColor)),
-                    ),
-                    DropdownMenuItem(
-                      value: 'createdAt',
-                      child: Text('최신 순', style: TextStyle(color: textColor)),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      _sortCriteria = value!;
-                    });
-                  },
-                ),
-              ],
+                  DropdownButton<String>(
+                    dropdownColor: identifySpaceColor,
+                    value: _sortCriteria,
+                    items: const [
+                      DropdownMenuItem(
+                        value: 'views',
+                        child: Text('조회수 순', style: TextStyle(color: textColor)),
+                      ),
+                      DropdownMenuItem(
+                        value: 'createdAt',
+                        child: Text('최신 순', style: TextStyle(color: textColor)),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        _sortCriteria = value!;
+                      });
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
+          const Text(descriptionText, style: TextStyle(color: textColor, fontSize: questionText)),
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {
@@ -172,7 +191,7 @@ class _QuizListPageState extends State<QuizListPage> {
             ),
           );
         },
-        backgroundColor: Colors.blue,
+        backgroundColor: identifySpaceColor,
         child: const Icon(Icons.add),
       ),
     );
