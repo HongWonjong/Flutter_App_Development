@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:website/function/listen_for_response.dart';
-import 'package:website/function/response_processing.dart';
+import 'package:website/function/response_to_tts.dart';
 import 'package:website/function/speech_recognition.dart';
 
 
@@ -45,7 +45,6 @@ class _AIVtuberWidgetState extends State<AIVtuberWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("AI Vtuber")),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -68,8 +67,8 @@ class _AIVtuberWidgetState extends State<AIVtuberWidget> {
             ),
             SizedBox(
               height: 400,
-              child: StreamBuilder<List<String>>(
-                stream: listenForResponses(docId, messageFieldName, responseFieldName, orderByField),
+              child: StreamBuilder<List<Map<String, String>>>(
+                stream: listenForResponsesWithQuestions(docId, messageFieldName, responseFieldName, orderByField),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -80,8 +79,10 @@ class _AIVtuberWidgetState extends State<AIVtuberWidget> {
                   } else {
                     final responses = snapshot.data!;
                     if (responses.isNotEmpty) {
-                      for (final response in responses) {
-                        if (response != _responseService.lastResponseId) {
+                      for (final responseMap in responses) {
+                        final question = responseMap[messageFieldName];
+                        final response = responseMap[responseFieldName];
+                        if (response != null && response != _responseService.lastResponseId) {
                           _responseService.addResponseToQueue(response);
                           _responseService.lastResponseId = response;
                         }
@@ -89,7 +90,25 @@ class _AIVtuberWidgetState extends State<AIVtuberWidget> {
                     }
                     return ListView(
                       shrinkWrap: true,
-                      children: responses.map((response) => ListTile(title: Text(response))).toList(),
+                      children: responses.map((responseMap) {
+                        final question = responseMap[messageFieldName];
+                        final response = responseMap[responseFieldName];
+                        return Container(
+                          margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.8),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (question != null) Text('질문: $question'),
+                              if (response != null) Text('응답: $response'),
+                            ],
+                          ),
+                        );
+                      }).toList(),
                     );
                   }
                 },
@@ -101,4 +120,6 @@ class _AIVtuberWidgetState extends State<AIVtuberWidget> {
     );
   }
 }
+
+
 
