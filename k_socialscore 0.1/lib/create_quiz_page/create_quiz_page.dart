@@ -70,6 +70,18 @@ class _CreateQuizPageState extends State<CreateQuizPage> {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Create Quiz'),
+        ),
+        body: const Center(
+          child: Text('You must be logged in to create a quiz.'),
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Quiz Set'),

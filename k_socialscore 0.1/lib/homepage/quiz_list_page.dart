@@ -18,6 +18,8 @@ class _QuizListPageState extends State<QuizListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       backgroundColor: initialBackgroundColor,
       appBar: AppBar(
@@ -25,7 +27,7 @@ class _QuizListPageState extends State<QuizListPage> {
         title:  Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               '퀴즈 리스트',
               style: TextStyle(
                   color: textColor,
@@ -35,11 +37,16 @@ class _QuizListPageState extends State<QuizListPage> {
             ElevatedButton(
               style: answerButtonStyle,
               onPressed: () async {
-                await FirebaseAuth.instance.signOut();
+                if (user != null) {
+                  await FirebaseAuth.instance.signOut();
+                }
                 Navigator.of(context).pushReplacementNamed('/login');
               },
-              child: Text("로그아웃", style: TextStyle(fontSize: textSize, color: Colors.white)),
-            )
+              child: Text(
+                user != null ? "로그아웃" : "로그인",
+                style: TextStyle(fontSize: textSize, color: Colors.white),
+              ),
+            ),
           ],
         ),
       ),
@@ -197,6 +204,7 @@ class _QuizListPageState extends State<QuizListPage> {
     );
   }
 }
+
 
 
 
