@@ -10,6 +10,7 @@ import '../component/message_response_list.dart';
 import '../function/get_chat_response.dart';
 import '../component/basic_box.dart';
 import 'package:website/component/component_extended/question_box_extended.dart';
+import 'package:website/component/AIVtuberWidget.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -149,6 +150,18 @@ class MainScreen extends StatelessWidget {
                     child: QBoxExtended(
                       height: MQSize.getDetailHeight5(context),
                       width: MQSize.getDetailWidth5(context),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: BasicBox(
+                      title: MainPageLan.aiVtuber,
+                      height: MQSize.getDetailHeight90(context),
+                      width: MQSize.getDetailWidth5(context),
+                      child: AIVtuberWidget(),
                     ),
                   ),
                 ],

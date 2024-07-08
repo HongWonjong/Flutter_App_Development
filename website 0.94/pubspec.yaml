@@ -42,13 +42,17 @@ dev_dependencies:
   rxdart: ^0.27.7
   build_test: ^2.1.0
   flutter_lints: ^2.0.0
+  speech_to_text: ^6.6.0
+  permission_handler: ^11.3.1
+  flutter_tts: ^4.0.2
+
 
 
 flutter:
   assets:
     - lib/images/
+    - assets/
 
 
   uses-material-design: true
-
 

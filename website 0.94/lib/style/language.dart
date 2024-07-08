@@ -26,6 +26,8 @@ class MainPageLan {
   static const String palm = "PaLM 2";
   static const String fibi = "지렁이";
   static const String autoGpt = "다중 AI(개발중)";
+  static const String aiVtuber = "스트리밍에 사용 가능한 음성인식 AI 캐릭터";
+
 
   static const String noChatLog = "물어본 기록이 없습니다.";
 
