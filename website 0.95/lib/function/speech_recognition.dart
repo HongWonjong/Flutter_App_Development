@@ -33,6 +33,8 @@ class SpeechRecognitionService {
           _resetListeningState(context);
         } else {
           _showErrorSnackBar(context, '음성 인식 중 오류가 발생했습니다: ${val.errorMsg}');
+          Future.delayed(const Duration(seconds: 1), () => listen(context));
+
         }
       },
     );
@@ -93,7 +95,7 @@ class SpeechRecognitionService {
     _currentImage = 'assets/idle.png';
     _speech.stop();
     onListeningStateChanged();
-    Future.delayed(const Duration(milliseconds: 500), () => listen(context));
+    Future.delayed(const Duration(milliseconds: 50), () => listen(context)); // 음성인식을 재시작 할 때는 거의 즉시 일어나도록
   }
 
   Future<void> sendTextToFirestore(String text, String uid, String docId, String messageFieldName) async {

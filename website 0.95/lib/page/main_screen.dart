@@ -45,6 +45,18 @@ class MainScreen extends StatelessWidget {
                 imageHeight: MQSize.getDetailHeight4(context),
                 textYouWant: MainPageLan.briefExplanation,
               ),
+              Row(
+                children: [
+                  Expanded(
+                    child: BasicBox(
+                      title: MainPageLan.aiVtuber,
+                      height: MQSize.getDetailHeight90(context),
+                      width: MQSize.getDetailWidth5(context),
+                      child: AIVtuberWidget(),
+                    ),
+                  ),
+                ],
+              ),
               SizedBox(height: MQSize.getDetailHeight1(context)),
               Row(
                 children: [
@@ -150,18 +162,6 @@ class MainScreen extends StatelessWidget {
                     child: QBoxExtended(
                       height: MQSize.getDetailHeight5(context),
                       width: MQSize.getDetailWidth5(context),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: BasicBox(
-                      title: MainPageLan.aiVtuber,
-                      height: MQSize.getDetailHeight90(context),
-                      width: MQSize.getDetailWidth5(context),
-                      child: AIVtuberWidget(),
                     ),
                   ),
                 ],

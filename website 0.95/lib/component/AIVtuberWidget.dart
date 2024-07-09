@@ -45,8 +45,7 @@ class _AIVtuberWidgetState extends State<AIVtuberWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
+      body: Column(
           children: [
             Center(
               child: SizedBox(
@@ -66,7 +65,6 @@ class _AIVtuberWidgetState extends State<AIVtuberWidget> {
               child: Icon(_speechService.isListening ? Icons.mic : Icons.mic_none),
             ),
             SizedBox(
-              height: 400,
               child: StreamBuilder<List<Map<String, String>>>(
                 stream: listenForResponsesWithQuestions(docId, messageFieldName, responseFieldName, orderByField),
                 builder: (context, snapshot) {
@@ -116,7 +114,6 @@ class _AIVtuberWidgetState extends State<AIVtuberWidget> {
             ),
           ],
         ),
-      ),
     );
   }
 }
