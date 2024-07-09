@@ -75,7 +75,7 @@ class SpeechRecognitionService {
           }
         },
         listenFor: const Duration(seconds: 120),
-        pauseFor: const Duration(seconds: 5),
+        pauseFor: const Duration(seconds: 3),
         partialResults: true,
         localeId: 'ko_KR',
       );

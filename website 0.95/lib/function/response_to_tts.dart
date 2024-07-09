@@ -40,7 +40,7 @@ class ResponseProcessingService {
   void _speak(String text) async {
     _isSpeaking = true;
     await _flutterTts.setLanguage("ko-KR");
-    await _flutterTts.setPitch(1.2);
+    await _flutterTts.setPitch(1.8);
     await _flutterTts.setSpeechRate(1.1);
     //await _flutterTts.getVoices; // 현재 테스트 중,
     await _flutterTts.speak(text);

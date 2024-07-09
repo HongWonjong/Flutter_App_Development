@@ -101,7 +101,6 @@ class _AIVtuberWidgetState extends State<AIVtuberWidget> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (question != null) Text('질문: $question'),
                               if (response != null) Text('응답: $response'),
                             ],
                           ),
