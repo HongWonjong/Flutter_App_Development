@@ -2,14 +2,14 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class ResponseProcessingService {
+class ResponseToTTS {
   late FlutterTts _flutterTts;
   bool _isSpeaking = false;
   String? _lastResponseId;
-  List<String> _responseQueue = [];
+  List<Map<String, String>> _responseQueue = [];
   Set<String> _processedResponses = {}; // 이미 처리된 응답을 추적
 
-  ResponseProcessingService() {
+  ResponseToTTS() {
     _flutterTts = FlutterTts();
     _flutterTts.setCompletionHandler(() {
       _isSpeaking = false;
@@ -21,19 +21,19 @@ class ResponseProcessingService {
   String? get lastResponseId => _lastResponseId;
   set lastResponseId(String? value) => _lastResponseId = value;
 
-  Future<void> addResponseToQueue(String response) async {
+  Future<void> addResponseToQueue(String response, String question) async {
     if (!_processedResponses.contains(response)) {
-      _responseQueue.insert(0, response); // 큐의 앞에 추가하여 오래된 응답부터 읽기
+      _responseQueue.insert(0, {'question': question, 'response': response}); // 큐의 앞에 추가하여 오래된 응답부터 읽기
       _processedResponses.add(response);
-      await _saveProcessedResponse(response); // 응답을 파이어스토어에 저장
+      await _saveProcessedResponse(response, question); // 응답을 파이어스토어에 저장
       _processQueue();
     }
   }
 
   void _processQueue() {
     if (!_isSpeaking && _responseQueue.isNotEmpty) {
-      final nextResponse = _responseQueue.removeLast(); // 오래된 응답부터 읽기
-      _speak(nextResponse);
+      final nextResponseMap = _responseQueue.removeLast(); // 오래된 응답부터 읽기
+      _speak(nextResponseMap['response'] ?? '');
     }
   }
 
@@ -42,15 +42,20 @@ class ResponseProcessingService {
     await _flutterTts.setLanguage("ko-KR");
     await _flutterTts.setPitch(1.8);
     await _flutterTts.setSpeechRate(1.1);
-    //await _flutterTts.getVoices; // 현재 테스트 중,
+    // await _flutterTts.getVoices; // 현재 테스트 중,
     await _flutterTts.speak(text);
   }
 
-  Future<void> _saveProcessedResponse(String response) async {
+  Future<void> _saveProcessedResponse(String response, String question) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       final userRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
-      await userRef.collection('processed_responses').doc(response).set({'response': response});
+      final timestamp = FieldValue.serverTimestamp(); // 타임스탬프 생성
+      await userRef.collection('processed_responses').doc(response).set({
+        'response': response,
+        'question': question,
+        'timestamp': timestamp, // 타임스탬프 추가
+      });
     }
   }
 
@@ -65,5 +70,7 @@ class ResponseProcessingService {
     }
   }
 }
+
+
 
 

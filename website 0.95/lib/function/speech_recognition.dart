@@ -33,7 +33,7 @@ class SpeechRecognitionService {
           _resetListeningState(context);
         } else {
           _showErrorSnackBar(context, '음성 인식 중 오류가 발생했습니다: ${val.errorMsg}');
-          Future.delayed(const Duration(seconds: 1), () => listen(context));
+          _resetListeningState(context);
 
         }
       },
@@ -62,7 +62,6 @@ class SpeechRecognitionService {
     if (_speechRecognitionAvailable && !_isListening) {
       print("Starting to listen");
       _isListening = true;
-      _currentImage = 'assets/speaking.png';
       _text = "Listening...";
       onListeningStateChanged();
       _speech.listen(
@@ -70,7 +69,10 @@ class SpeechRecognitionService {
           _text = val.recognizedWords.isEmpty ? "..." : val.recognizedWords;
           onListeningStateChanged();
           if (val.finalResult) {
-            onResult(_text);
+            if (_text.length >= 3) { // 텍스트 길이 조건 추가
+              onResult(_text);
+              sendTextToFirestore(_text, "uid", "docId", "messageFieldName");
+            }
             _resetListeningState(context);
           }
         },
@@ -82,13 +84,13 @@ class SpeechRecognitionService {
     } else if (_isListening) {
       print("Stopping listening");
       _isListening = false;
-      _currentImage = 'assets/idle.png';
       _speech.stop();
       _showSnackBar(context, 'Recognized Text: $_text');
       onListeningStateChanged();
       Future.delayed(const Duration(seconds: 1), () => listen(context));
     }
   }
+
 
   void _resetListeningState(BuildContext context) {
     _isListening = false;
