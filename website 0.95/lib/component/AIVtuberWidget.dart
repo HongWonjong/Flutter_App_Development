@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:website/function/listen_for_response.dart';
 import 'package:website/function/response_to_tts.dart';
 import 'package:website/function/speech_recognition.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AIVtuberWidget extends StatefulWidget {
   const AIVtuberWidget({super.key});
@@ -41,6 +42,24 @@ class _AIVtuberWidgetState extends State<AIVtuberWidget> {
     setState(() {});
   }
 
+  Future<void> deleteDiscussionMessages() async {
+    CollectionReference messagesRef = FirebaseFirestore.instance.collection('users').doc(uid).collection('discussions').doc(docId).collection('messages');
+    QuerySnapshot querySnapshot = await messagesRef.get();
+
+    for (var doc in querySnapshot.docs) {
+      await doc.reference.delete();
+    }
+  }
+
+  Future<void> deleteProcessedResponses() async {
+    CollectionReference responsesRef = FirebaseFirestore.instance.collection('users').doc(uid).collection('processed_responses');
+    QuerySnapshot querySnapshot = await responsesRef.get();
+
+    for (var doc in querySnapshot.docs) {
+      await doc.reference.delete();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,6 +81,24 @@ class _AIVtuberWidgetState extends State<AIVtuberWidget> {
           FloatingActionButton(
             onPressed: () => _speechService.listen(context),
             child: Icon(_speechService.isListening ? Icons.mic : Icons.mic_none),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await deleteDiscussionMessages();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('대화 기록이 삭제되었습니다.')),
+              );
+            },
+            child: Text('대화 기록 삭제'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await deleteProcessedResponses();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('장기 기억이 삭제되었습니다.')),
+              );
+            },
+            child: Text('장기 기억 삭제'),
           ),
           SizedBox(
             child: StreamBuilder<List<Map<String, String>>>(

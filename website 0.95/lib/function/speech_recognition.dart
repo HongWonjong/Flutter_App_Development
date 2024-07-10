@@ -32,7 +32,6 @@ class SpeechRecognitionService {
         if (val.errorMsg == 'aborted' || val.errorMsg == 'no match') {
           _resetListeningState(context);
         } else {
-          _showErrorSnackBar(context, '음성 인식 중 오류가 발생했습니다: ${val.errorMsg}');
           _resetListeningState(context);
 
         }
@@ -76,8 +75,8 @@ class SpeechRecognitionService {
             _resetListeningState(context);
           }
         },
-        listenFor: const Duration(seconds: 120),
-        pauseFor: const Duration(seconds: 3),
+        listenFor: const Duration(seconds: 180),
+        pauseFor: const Duration(seconds: 5),
         partialResults: true,
         localeId: 'ko_KR',
       );
