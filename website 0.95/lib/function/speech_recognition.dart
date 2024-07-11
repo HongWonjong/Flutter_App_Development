@@ -58,6 +58,7 @@ class SpeechRecognitionService {
   }
 
   void listen(BuildContext context) async {
+
     if (_speechRecognitionAvailable && !_isListening) {
       print("Starting to listen");
       _isListening = true;
@@ -76,9 +77,10 @@ class SpeechRecognitionService {
           }
         },
         listenFor: const Duration(seconds: 180),
-        pauseFor: const Duration(seconds: 5),
+        pauseFor: const Duration(seconds: 6),
         partialResults: true,
         localeId: 'ko_KR',
+
       );
     } else if (_isListening) {
       print("Stopping listening");
