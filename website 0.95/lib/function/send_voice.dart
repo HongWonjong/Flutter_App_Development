@@ -32,7 +32,7 @@ Future<void> sendPromptToFirestore({
   CollectionReference messagesRef = discussionRef.collection('messages');
 
   // 과거 질의응답 내용을 포함한 메시지 생성
-  String prompt = "이건 너와 내가 전에 나눴던 질의응답을 저장한 내용들이야.// $pastResponses // 너는 이 내용을 장기기억으로써 생각하고, 이걸 바탕으로 나와 대화를 해야 해. 대화 내용은 다음부터 시작이야. &&&\n$text";
+  String prompt = "이건 너와 내가 전에 나눴던 질의응답을 저장한 내용들이야.// $pastResponses // 너는 이 내용을 장기기억으로써 생각하고, 이걸 바탕으로 나와 대화를 하면 돼. 대화 내용은 다음부터 시작이야. &&&\n$text";
 
   await messagesRef.add({
     messageFieldName: prompt,

@@ -8,7 +8,7 @@ class MainPageLan {
   static const String briefExplanation
   = "다양한 AI챗봇을 무료로 사용하세요.\n(오류 문의는 wonhong1996@naver.com)";
   static const String clickGoogleIcon = "오른쪽의 아이콘을 눌러 로그인 해주세요.";
-  static const String pleaseLogin = "로그인 후 이용해주세요";
+  static const String pleaseLogin = "로그인 후 이용해주세요. 비 로그인 시  장기기억-탑재 AI 대화 봇만 사용 가능";
   static const String hintText = "물어볼 질문을 입력하세요...";
   static const String sendMessage = "전송";
   static const String deleteHistory = '기록 삭제';
