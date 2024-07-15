@@ -8,7 +8,6 @@ class SpeechRecognitionService {
   late stt.SpeechToText _speech;
   bool _isListening = false;
   String _text = "Say something...";
-  String _currentImage = 'assets/idle.png';
   bool _speechRecognitionAvailable = false;
   final Function(String) onResult;
   final VoidCallback onListeningStateChanged;
@@ -19,14 +18,18 @@ class SpeechRecognitionService {
   });
 
   String get text => _text;
-  String get currentImage => _currentImage;
   bool get isListening => _isListening;
 
   Future<void> initSpeech(BuildContext context) async {
     await _requestMicrophonePermission(context);
     _speech = stt.SpeechToText();
     bool available = await _speech.initialize(
-      onStatus: (val) => print('onStatus: $val'),
+      onStatus: (status) => {
+        print('onStatus: $status'),
+        if (status == 'done') {
+          listen(context)
+        },
+      },
       onError: (val) {
         print('onError: $val');
         if (val.errorMsg == 'aborted' || val.errorMsg == 'no match') {
@@ -57,10 +60,9 @@ class SpeechRecognitionService {
   }
 
   void listen(BuildContext context) async {
-    if (_speechRecognitionAvailable && !_isListening) {
+
       print("Starting to listen");
       _isListening = true;
-      _currentImage = 'assets/speaking.png';
       _text = "Listening...";
       onListeningStateChanged();
       _speech.listen(
@@ -77,20 +79,10 @@ class SpeechRecognitionService {
         partialResults: true,
         localeId: 'ko_KR',
       );
-    } else if (_isListening) {
-      print("Stopping listening");
-      _isListening = false;
-      _currentImage = 'assets/idle.png';
-      _speech.stop();
-      _showSnackBar(context, 'Recognized Text: $_text');
-      onListeningStateChanged();
-      Future.delayed(const Duration(seconds: 1), () => listen(context));
-    }
   }
 
   void _resetListeningState(BuildContext context) {
     _isListening = false;
-    _currentImage = 'assets/idle.png';
     _speech.stop();
     onListeningStateChanged();
     Future.delayed(const Duration(milliseconds: 500), () => listen(context));

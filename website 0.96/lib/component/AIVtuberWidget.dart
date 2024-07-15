@@ -76,7 +76,7 @@ class _AIVtuberWidgetState extends State<AIVtuberWidget> {
             child: SizedBox(
               height: 150,
               width: 150,
-              child: Image.asset(_speechService.currentImage),
+              child: Image.asset("assets/idle.png"),
             ),
           ),
           const SizedBox(height: 20),

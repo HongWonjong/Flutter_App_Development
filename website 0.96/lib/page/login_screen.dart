@@ -37,18 +37,6 @@ class LoginScreen extends StatelessWidget {
                 textYouWant: MainPageLan.briefExplanation,
               ),
               Text(MainPageLan.pleaseLogin, style: TextStyle(fontSize: MQSize.getDetailWidth1(context), color: AppColors.whiteTextColor),),
-              Row(
-                children: [
-                  Expanded(
-                    child: BasicBox(
-                      title: MainPageLan.aiVtuber,
-                      height: MQSize.getDetailHeight90(context),
-                      width: MQSize.getDetailWidth5(context),
-                      child: AIVtuberWidget(),
-                    ),
-                  ),
-                ],
-              ),
             ],
           ),
         ),
