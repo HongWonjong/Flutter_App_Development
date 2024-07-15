@@ -26,7 +26,7 @@ class SpeechRecognitionService {
     bool available = await _speech.initialize(
       onStatus: (status) => {
         print('onStatus: $status'),
-        if (status == 'done') {
+        if (status == 'done') { // notListening 은 내가 아무 말도 하지 않아서 자동 정지된 경우의 상태, done은 충분한 단어를 인식해서 listen(context)의 if문이 작동했을 경우의 상태
           listen(context)
         },
       },
