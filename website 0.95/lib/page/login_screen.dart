@@ -5,7 +5,7 @@ import '../style/language.dart';
 import '../component/header.dart';
 import '../style/media_query_custom.dart';
 import 'package:website/component/basic_box.dart';
-import 'package:website/component/AIVtuberWidget_unlogged.dart';
+import 'package:website/component/AIVtuberWidget.dart';
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -44,7 +44,7 @@ class LoginScreen extends StatelessWidget {
                       title: MainPageLan.aiVtuber,
                       height: MQSize.getDetailHeight90(context),
                       width: MQSize.getDetailWidth5(context),
-                      child: AIVtuberWidget_Unlogged(),
+                      child: AIVtuberWidget(),
                     ),
                   ),
                 ],

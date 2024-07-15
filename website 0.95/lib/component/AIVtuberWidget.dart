@@ -86,7 +86,12 @@ class _AIVtuberWidgetState extends State<AIVtuberWidget> {
           ),
           const SizedBox(height: 20),
           FloatingActionButton(
-            onPressed: () => _speechService.listen(context),
+            onPressed: () {
+              _speechService.listen(context);
+              if (!_speechService.isListening) {
+                _onSpeechResult(_speechService.text);
+              }
+            },
             child: Icon(_speechService.isListening ? Icons.mic : Icons.mic_none),
           ),
           ElevatedButton(
