@@ -32,8 +32,8 @@ class SpeechRecognitionService {
         if (val.errorMsg == 'aborted' || val.errorMsg == 'no match') {
           _resetListeningState(context);
         } else {
+          _showErrorSnackBar(context, '음성 인식 중 오류가 발생했습니다: ${val.errorMsg}');
           _resetListeningState(context);
-
         }
       },
     );
@@ -43,7 +43,7 @@ class SpeechRecognitionService {
     } else {
       await Future.delayed(const Duration(seconds: 1));
       print("Speech recognition initialized and ready to use");
-      listen(context);
+      listen(context); // 초기화가 완료된 후에 호출
     }
   }
 
@@ -58,10 +58,10 @@ class SpeechRecognitionService {
   }
 
   void listen(BuildContext context) async {
-
     if (_speechRecognitionAvailable && !_isListening) {
-      print("Starting to listen");
+      print("Starting listening...");
       _isListening = true;
+      _currentImage = 'assets/speaking.png';
       _text = "Listening...";
       onListeningStateChanged();
       _speech.listen(
@@ -69,36 +69,37 @@ class SpeechRecognitionService {
           _text = val.recognizedWords.isEmpty ? "..." : val.recognizedWords;
           onListeningStateChanged();
           if (val.finalResult) {
-            if (_text.length >= 3) { // 텍스트 길이 조건 추가
-              onResult(_text);
-              sendTextToFirestore(_text, "uid", "docId", "messageFieldName");
-            }
+            onResult(_text);
             _resetListeningState(context);
           }
         },
-        listenFor: const Duration(seconds: 180),
-        pauseFor: const Duration(seconds: 6),
+        listenFor: const Duration(seconds: 120),
         partialResults: true,
         localeId: 'ko_KR',
-
       );
-    } else if (_isListening) {
-      print("Stopping listening");
+    } else if (_isListening) { // 이 경우가 반복되는 듯
+      print("Stopping listening...");
       _isListening = false;
+      _currentImage = 'assets/idle.png';
       _speech.stop();
       _showSnackBar(context, 'Recognized Text: $_text');
       onListeningStateChanged();
-      Future.delayed(const Duration(seconds: 1), () => listen(context));
+      listen(context);
     }
   }
 
-
   void _resetListeningState(BuildContext context) {
+    print("Resetting listening state...");
     _isListening = false;
     _currentImage = 'assets/idle.png';
     _speech.stop();
     onListeningStateChanged();
-    Future.delayed(const Duration(milliseconds: 50), () => listen(context)); // 음성인식을 재시작 할 때는 거의 즉시 일어나도록
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (!_isListening) { // 이미 듣고 있는지 다시 확인
+        print("Re-listening after reset...");
+        listen(context);
+      }
+    });
   }
 
   Future<void> sendTextToFirestore(String text, String uid, String docId, String messageFieldName) async {

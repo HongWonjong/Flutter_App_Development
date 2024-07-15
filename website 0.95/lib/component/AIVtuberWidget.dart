@@ -39,8 +39,15 @@ class _AIVtuberWidgetState extends State<AIVtuberWidget> {
   }
 
   void _onListeningStateChanged() {
-    setState(() {});
+    setState(() {
+      // 마이크 아이콘이나 다른 UI를 업데이트 하는 로직 추가
+      // 필요에 따라 재시작 로직을 추가
+      if (!_speechService.isListening) {
+        _speechService.listen(context);
+      }
+    });
   }
+
 
   Future<void> deleteDiscussionMessages() async {
     CollectionReference messagesRef = FirebaseFirestore.instance.collection('users').doc(uid).collection('discussions').doc(docId).collection('messages');
