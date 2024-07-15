@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:website/style/language.dart';
 
-
 Future<void> showDeleteConfirmationDialog(BuildContext context, String docName) async {
   return showDialog<void>(
     context: context,
@@ -32,8 +31,7 @@ Future<void> showDeleteConfirmationDialog(BuildContext context, String docName) 
   );
 }
 
-
-void deleteDoc(BuildContext context, String docType) async {
+Future<void> deleteDoc(BuildContext context, String docType) async {
   try {
     String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
     CollectionReference discussionsRef = FirebaseFirestore.instance
@@ -41,37 +39,40 @@ void deleteDoc(BuildContext context, String docType) async {
         .doc(currentUserUid)
         .collection('discussions');
 
-    String docId;
+    String? docId;
     if (docType == FunctionLan.geminiDoc) {
       docId = FunctionLan.geminiDoc;
     } else if (docType == FunctionLan.gpt35Doc) {
       docId = FunctionLan.gpt35Doc;
     } else if (docType == FunctionLan.gpt4Doc) {
       docId = FunctionLan.gpt4Doc;
-    }
-    else if (docType == FunctionLan.palmDoc) {
+    } else if (docType == FunctionLan.palmDoc) {
       docId = FunctionLan.palmDoc;
-    }
-    else if (docType == FunctionLan.fibiDoc) {
+    } else if (docType == FunctionLan.fibiDoc) {
       docId = FunctionLan.fibiDoc;
-    }
-    else if (docType == ExtendedfunctionLan.gpt35Doc) {
+    } else if (docType == ExtendedfunctionLan.gpt35Doc) {
       docId = ExtendedfunctionLan.gpt35Doc;
-    }
-    else {
-      return null;
+    } else {
+      return;
     }
 
-    // 해당 문서의 messages 하위 컬렉션 삭제
-    await discussionsRef
+    // messages 하위 컬렉션 삭제
+    QuerySnapshot messagesSnapshot = await discussionsRef
         .doc(docId)
         .collection('messages')
-        .get()
-        .then((querySnapshot) {
-      querySnapshot.docs.forEach((document) {
-        document.reference.delete();
-      });
-    });
+        .get();
+    for (DocumentSnapshot document in messagesSnapshot.docs) {
+      await document.reference.delete();
+    }
+
+    // commands 하위 컬렉션 삭제
+    QuerySnapshot commandsSnapshot = await discussionsRef
+        .doc(docId)
+        .collection('commands')
+        .get();
+    for (DocumentSnapshot document in commandsSnapshot.docs) {
+      await document.reference.delete();
+    }
 
     // 해당 문서 삭제
     await discussionsRef.doc(docId).delete();
@@ -93,3 +94,4 @@ void deleteDoc(BuildContext context, String docType) async {
     );
   }
 }
+

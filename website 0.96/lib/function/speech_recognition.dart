@@ -2,7 +2,8 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:website/function/send_voice.dart';
+import 'package:website/function/send_voice_to_main_ai.dart';
+import 'package:website/function/send_voice_to_assistant_ai.dart';
 
 class SpeechRecognitionService {
   late stt.SpeechToText _speech;
@@ -35,7 +36,7 @@ class SpeechRecognitionService {
         if (val.errorMsg == 'aborted' || val.errorMsg == 'no match') {
           _resetListeningState(context);
         } else {
-          _showErrorSnackBar(context, '음성 인식 중 오류가 발생했습니다: ${val.errorMsg}');
+          _resetListeningState(context);
         }
       },
     );
@@ -45,7 +46,7 @@ class SpeechRecognitionService {
     } else {
       await Future.delayed(const Duration(seconds: 1));
       print("Speech recognition initialized and ready to use");
-      listen(context);
+      _resetListeningState(context);
     }
   }
 
@@ -85,17 +86,31 @@ class SpeechRecognitionService {
     _isListening = false;
     _speech.stop();
     onListeningStateChanged();
-    Future.delayed(const Duration(milliseconds: 500), () => listen(context));
+
+    // Check the state after a delay to ensure the previous listen has fully stopped
+    Future.delayed(const Duration(milliseconds: 500), () { // 백그라운드로 프로그램이 가 있다가 다시 돌아왔을 때 무한루프를 방지하는 부분
+      if (!_isListening && _speechRecognitionAvailable) {
+        listen(context);
+      }
+    });
   }
+
 
   Future<void> sendTextToFirestore(String text, String uid, String docId, String messageFieldName) async {
     try {
-      await sendPromptToFirestore(
+      await sendPromptToFirestore( //메인ai에게 대화를 전달
         uid: uid,
         text: text,
         docId: docId,
         messageFieldName: messageFieldName,
       );
+      await sendPromptToAssistantFirestore( //보조ai에게 대화를 전달
+        uid: uid,
+        text: text,
+        docId: docId,
+        commandFieldName: messageFieldName,
+      );
+
       print("Text sent to Firestore: $text");
     } catch (e) {
       print("Error sending text to Firestore: $e");
