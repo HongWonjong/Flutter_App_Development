@@ -40,6 +40,8 @@ class FunctionLan {
   static const String gpt4Doc = "GPT4";
   static const String palmDoc = "Palm";
   static const String fibiDoc = "Fibi";
+  static const String gpt35VTuberDoc = "GPT35_VTuber";
+
 }
 
 class ExtendedMainPageLan {
