@@ -88,9 +88,6 @@ class _AIVtuberWidgetState extends State<AIVtuberWidget> {
           FloatingActionButton(
             onPressed: () {
               _speechService.listen(context);
-              if (!_speechService.isListening) {
-                _onSpeechResult(_speechService.text);
-              }
             },
             child: Icon(_speechService.isListening ? Icons.mic : Icons.mic_none),
           ),
