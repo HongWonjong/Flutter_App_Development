@@ -1,0 +1,12 @@
+{
+  "projects": {
+    "default": "x-news-korea-f1830"
+  },
+  "targets": {},
+  "etags": {
+    "x-news-korea-f1830": {
+      "extensionInstances": {}
+    }
+  },
+  "dataconnectEmulatorConfig": {}
+}
