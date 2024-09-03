@@ -6,7 +6,7 @@ const logger = require('firebase-functions/logger');
 // Firebase Function: 비밀을 가져오는 함수 (HTTP 호출)
 exports.getSecretsFunction = functions.https.onCall(async (data, context) => {
     const projectId = '459934345714';
-    const secretIds = data.secretIds || ['bearer_token', 'X_api_key', 'X_secret_api_key'];
+    const secretIds = data.secretIds || ['bearer_token', 'access_token', 'X_secret_api_key'];
 
     try {
         const secrets = await getSecrets(projectId, secretIds);
@@ -19,7 +19,7 @@ exports.getSecretsFunction = functions.https.onCall(async (data, context) => {
 });
 
 // Firebase Function: 커뮤니티 포스트를 5분마다 가져오는 함수 (Cloud Scheduler)
-exports.fetchCommunityPostsFunction = functions.pubsub.schedule('every 5 minutes').onRun(async (context) => {
+exports.fetchCommunityPostsFunction = functions.pubsub.schedule('every 3 minutes').onRun(async (context) => {
     try {
         const posts = await fetchCommunityPosts();
         logger.log('Successfully fetched community posts');
