@@ -6,7 +6,7 @@ const logger = require('firebase-functions/logger');
 // Firebase Function: 비밀을 가져오는 함수 (HTTP 호출)
 exports.getSecretsFunction = functions.https.onCall(async (data, context) => {
     const projectId = '459934345714';
-    const secretIds = data.secretIds || ['bearer_token', 'access_token', 'X_secret_api_key'];
+    const secretIds = data.secretIds || ['bearer_token', 'access_token','X_api_key', 'X_secret_api_key'];
 
     try {
         const secrets = await getSecrets(projectId, secretIds);

@@ -5,7 +5,7 @@ const { sendPostsToFirestore } = require('../send_data_to_firestore/send_data_to
 async function fetchCommunityPosts() {
     try {
         console.log('Fetching secrets...');
-        const secrets = await getSecrets('459934345714', ['bearer_token', 'access_token']);
+        const secrets = await getSecrets('459934345714', ['bearer_token', 'access_token', 'X_api_key']);
         if (!secrets.bearer_token) {
             throw new Error('Bearer token is missing');
         }
@@ -13,8 +13,8 @@ async function fetchCommunityPosts() {
         console.log('Secrets fetched successfully.');
         const config = {
             headers: {
-                'Authorization': `${secrets.bearer_token}`,
-               // 'oauth_token': secrets.access_token, // 추가된 부분, bearer_token 과 api키 둘 다 있어야 접근 허가가 되는 듯?
+                'Authorization': `Bearer ${secrets.bearer_token}`,
+               'x-api-key':`${secrets.X_api_key}`
             },
         };
 
