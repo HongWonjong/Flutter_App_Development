@@ -13,7 +13,7 @@ async function fetchCommunityPosts() {
         console.log('Secrets fetched successfully.');
         const config = {
             headers: {
-                'Authorization': `Bearer ${secrets.bearer_token}`,
+                'Authorization': `${secrets.bearer_token}`,
                // 'oauth_token': secrets.access_token, // 추가된 부분, bearer_token 과 api키 둘 다 있어야 접근 허가가 되는 듯?
             },
         };
