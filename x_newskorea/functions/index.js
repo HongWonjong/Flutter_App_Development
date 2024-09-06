@@ -19,7 +19,7 @@ exports.getSecretsFunction = functions.https.onCall(async (data, context) => {
 });
 
 // Firebase Function: 커뮤니티 포스트를 5분마다 가져오는 함수 (Cloud Scheduler)
-exports.fetchCommunityPostsFunction = functions.pubsub.schedule('every 3 minutes').onRun(async (context) => {
+exports.fetchCommunityPostsFunction = functions.pubsub.schedule('every 24 hours').onRun(async (context) => { // 시간은 나중에 바꾸지
     try {
         const posts = await fetchCommunityPosts();
         logger.log('Successfully fetched community posts');

@@ -603,6 +603,18 @@ file:///Users/wonjonghong/.pub-cache/hosted/pub.dev/typed_data-1.3.2/lib/src/typ
 file:///Users/wonjonghong/.pub-cache/hosted/pub.dev/typed_data-1.3.2/lib/src/typed_queue.dart
 file:///Users/wonjonghong/.pub-cache/hosted/pub.dev/typed_data-1.3.2/lib/typed_buffers.dart
 file:///Users/wonjonghong/.pub-cache/hosted/pub.dev/typed_data-1.3.2/lib/typed_data.dart
+file:///Users/wonjonghong/.pub-cache/hosted/pub.dev/url_launcher-6.3.0/lib/src/legacy_api.dart
+file:///Users/wonjonghong/.pub-cache/hosted/pub.dev/url_launcher-6.3.0/lib/src/type_conversion.dart
+file:///Users/wonjonghong/.pub-cache/hosted/pub.dev/url_launcher-6.3.0/lib/src/types.dart
+file:///Users/wonjonghong/.pub-cache/hosted/pub.dev/url_launcher-6.3.0/lib/src/url_launcher_string.dart
+file:///Users/wonjonghong/.pub-cache/hosted/pub.dev/url_launcher-6.3.0/lib/src/url_launcher_uri.dart
+file:///Users/wonjonghong/.pub-cache/hosted/pub.dev/url_launcher-6.3.0/lib/url_launcher.dart
+file:///Users/wonjonghong/.pub-cache/hosted/pub.dev/url_launcher-6.3.0/lib/url_launcher_string.dart
+file:///Users/wonjonghong/.pub-cache/hosted/pub.dev/url_launcher_platform_interface-2.3.2/lib/link.dart
+file:///Users/wonjonghong/.pub-cache/hosted/pub.dev/url_launcher_platform_interface-2.3.2/lib/method_channel_url_launcher.dart
+file:///Users/wonjonghong/.pub-cache/hosted/pub.dev/url_launcher_platform_interface-2.3.2/lib/src/types.dart
+file:///Users/wonjonghong/.pub-cache/hosted/pub.dev/url_launcher_platform_interface-2.3.2/lib/src/url_launcher_platform.dart
+file:///Users/wonjonghong/.pub-cache/hosted/pub.dev/url_launcher_platform_interface-2.3.2/lib/url_launcher_platform_interface.dart
 file:///Users/wonjonghong/.pub-cache/hosted/pub.dev/vector_math-2.1.4/lib/src/vector_math_64/aabb2.dart
 file:///Users/wonjonghong/.pub-cache/hosted/pub.dev/vector_math-2.1.4/lib/src/vector_math_64/aabb3.dart
 file:///Users/wonjonghong/.pub-cache/hosted/pub.dev/vector_math-2.1.4/lib/src/vector_math_64/colors.dart
@@ -1435,6 +1447,7 @@ file:///Users/wonjonghong/StudioProjects/x_newskorea/.dart_tool/flutter_build/84
 file:///Users/wonjonghong/StudioProjects/x_newskorea/.dart_tool/flutter_build/846120b4c5c0513ff1e25f1352e8304a/web_plugin_registrant.dart
 file:///Users/wonjonghong/StudioProjects/x_newskorea/lib/firebase_options.dart
 file:///Users/wonjonghong/StudioProjects/x_newskorea/lib/login_page.dart
+file:///Users/wonjonghong/StudioProjects/x_newskorea/lib/logo_link.dart
 file:///Users/wonjonghong/StudioProjects/x_newskorea/lib/main.dart
 file:///Users/wonjonghong/StudioProjects/x_newskorea/lib/news_home_page.dart
 file:///Users/wonjonghong/StudioProjects/x_newskorea/lib/register_page.dart

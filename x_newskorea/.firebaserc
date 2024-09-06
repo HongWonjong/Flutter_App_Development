@@ -5,7 +5,9 @@
   "targets": {},
   "etags": {
     "x-news-korea-f1830": {
-      "extensionInstances": {}
+      "extensionInstances": {
+        "firestore-genai-chatbot": "90b307626faadc21be763d2ac5e36937da31b2e6fb7a14a20223b461007b226a"
+      }
     }
   },
   "dataconnectEmulatorConfig": {}

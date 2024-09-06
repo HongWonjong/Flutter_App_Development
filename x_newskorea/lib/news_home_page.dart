@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:x_newskorea/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'logo_link.dart';
 
 class NewsHomePage extends StatefulWidget {
   @override
@@ -54,7 +55,13 @@ class _NewsHomePageState extends State<NewsHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Image.asset('assets/logo.png', width: 40),
+        leading: InkWell(
+          onTap: launchXProfile, // utils.dart에 정의된 함수를 호출
+          child: Image.asset(
+            'assets/logo.png',
+            width: 40,
+          ),
+        ),
         title: Text('X News Korea'),
         actions: <Widget>[
           StreamBuilder<User?>(

@@ -22,5 +22,7 @@
   "storage": {
     "rules": "storage.rules"
   },
-  "extensions": {}
+  "extensions": {
+    "firestore-genai-chatbot": "googlecloud/firestore-genai-chatbot@0.0.10"
+  }
 }
