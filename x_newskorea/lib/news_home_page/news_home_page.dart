@@ -6,6 +6,7 @@ import 'recommended_news_section.dart';
 import 'package:x_newskorea/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'logo_link.dart';
+import 'dummy_data.dart';
 
 class NewsHomePage extends StatefulWidget {
   @override
@@ -13,27 +14,6 @@ class NewsHomePage extends StatefulWidget {
 }
 
 class _NewsHomePageState extends State<NewsHomePage> {
-// 더미 데이터
-  final List<Map<String, dynamic>> headlines = [
-    {'id': '12345678901234567890', 'title': 'Headline 1', 'image': 'assets/headline1.jpg'},
-    {'id': '23456789012345678901', 'title': 'Headline 2', 'image': 'assets/headline2.jpg'},
-    {'id': '34567890123456789012', 'title': 'Headline 3', 'image': 'assets/headline3.jpg'},
-  ];
-
-  final List<String> categories = ['Politics', 'Tech', 'Sports', 'Entertainment'];
-
-  final List<Map<String, dynamic>> news = [
-    {'id': '45678901234567890123', 'title': 'News 1', 'summary': 'Summary of news 1', 'image': 'assets/news1.jpg'},
-    {'id': '56789012345678901234', 'title': 'News 2', 'summary': 'Summary of news 2', 'image': 'assets/news2.jpg'},
-    {'id': '67890123456789012345', 'title': 'News 3', 'summary': 'Summary of news 3', 'image': 'assets/news3.jpg'},
-  ];
-
-  final List<Map<String, dynamic>> recommendedNews = [
-    {'id': '78901234567890123456', 'title': 'Recommended 1', 'image': 'assets/recommended1.jpg'},
-    {'id': '89012345678901234567', 'title': 'Recommended 2', 'image': 'assets/recommended2.jpg'},
-    {'id': '90123456789012345678', 'title': 'Recommended 3', 'image': 'assets/recommended3.jpg'},
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -99,11 +79,11 @@ class _NewsHomePageState extends State<NewsHomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            HeadlineSection(headlines: headlines),
-            CategorySection(categories: categories),
-            NewsListSection(news: news),
+            HeadlineSection(headlines: DummyData.headlines),
+            CategorySection(categories: DummyData.categories),
+            NewsListSection(news: DummyData.news),
             Container(height: 100, color: Colors.grey[200], child: Center(child: Text('Ad Space'))),
-            RecommendedNewsSection(recommendedNews: recommendedNews),
+            RecommendedNewsSection(recommendedNews: DummyData.recommendedNews),
           ],
         ),
       ),

@@ -26,7 +26,7 @@ class RecommendedNewsSection extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => NewsDetailPage(newsId:,newsItem: recommendedNews[index]),
+                      builder: (context) => NewsDetailPage(newsId: recommendedNews[index]['id'],newsItem: recommendedNews[index]),
                     ),
                   );
                 },

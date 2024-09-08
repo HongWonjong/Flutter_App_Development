@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:x_newskorea/news_detail_page.dart';
+import 'dummy_data.dart';
 
 class NewsListSection extends StatelessWidget {
   final List<Map<String, dynamic>> news;
@@ -21,12 +22,12 @@ class NewsListSection extends StatelessWidget {
           itemCount: news.length,
           itemBuilder: (context, index) {
             return Card(
-              child: InkWell( // Use InkWell for tap gesture
+              child: InkWell(
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => NewsDetailPage(newsItem: news[index]),
+                      builder: (context) => NewsDetailPage(newsId: news[index]['id'], newsItem: news[index]),
                     ),
                   );
                 },
@@ -46,7 +47,7 @@ class NewsListSection extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => NewsDetailPage(newsItem: news[index]),
+                                builder: (context) => NewsDetailPage(newsId: news[index]['id'], newsItem: news[index]),
                               ),
                             );
                           },
