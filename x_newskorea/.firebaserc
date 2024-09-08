@@ -6,8 +6,8 @@
   "etags": {
     "x-news-korea-f1830": {
       "extensionInstances": {
-        "firestore-genai-chatbot": "90b307626faadc21be763d2ac5e36937da31b2e6fb7a14a20223b461007b226a",
-        "firestore-genai-title": "ee93d88b4cd993db94ec3c9cde9ebd8720d6c2920cd9ec4857e185576174aee6"
+        "firestore-genai-chatbot": "7cca44c5edf429cf891623eef95dc40df3bdd6f6a00696f6d2c768ba6bbffa7b",
+        "firestore-genai-title": "cb736ac28d5e2efa121eed736e5f1c0bf3c24ef2d31b454f606f426c95bc6339"
       }
     }
   },
