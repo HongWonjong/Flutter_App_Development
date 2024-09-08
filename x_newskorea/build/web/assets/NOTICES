@@ -7679,6 +7679,7 @@ SOFTWARE.
 
 --------------------------------------------------------------------------------
 flutter_lints
+go_router
 google_identity_services_web
 google_sign_in
 google_sign_in_android

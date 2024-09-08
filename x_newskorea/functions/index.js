@@ -2,6 +2,21 @@ const functions = require('firebase-functions');
 const { getSecrets } = require('./get_secret/get_secret');
 const { fetchCommunityPosts } = require('./get_x_data/get_x_data');
 const logger = require('firebase-functions/logger');
+const { moveNewsData } = require('./move_news_data/move_news_data');
+
+// Firestore의 뉴스 이동 트리거 설정
+exports.detectResponseField = functions.firestore
+  .document('Untranslated News/{newsId}')
+  .onUpdate((change, context) => {
+    const newValue = change.after.data();
+
+    // response 필드가 추가된 경우에만 실행
+    if (!change.before.data().response && newValue.response) {
+      return moveNewsData(change.after, context);
+    }
+    return null;
+  });
+
 
 // Firebase Function: 비밀을 가져오는 함수 (HTTP 호출)
 exports.getSecretsFunction = functions.https.onCall(async (data, context) => {
