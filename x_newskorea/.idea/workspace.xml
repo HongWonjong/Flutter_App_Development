@@ -4,297 +4,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c2ed0ef4-bb2e-42e6-a0b6-b6129fde6f52" name="Changes" comment="버전 1.4,영어 뉴스가 들어왔을 때 한국어로 번역되고, 다른 컬렉션으로 이동해서 제목또한 달리도록 바꿈. 이제 뉴스 자동 전달과 웹사이트 내에서 보이도록 하자.">
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/.metadata" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/analysis_options.yaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/android/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/android/app/build.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/android/app/google-services.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/android/app/src/debug/AndroidManifest.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/android/app/src/main/AndroidManifest.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/android/app/src/main/kotlin/com/example/freedomcompass/MainActivity.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/android/app/src/main/res/drawable-v21/launch_background.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/android/app/src/main/res/drawable/launch_background.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/android/app/src/main/res/mipmap-hdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/android/app/src/main/res/mipmap-mdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/android/app/src/main/res/values-night/styles.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/android/app/src/main/res/values/styles.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/android/app/src/profile/AndroidManifest.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/android/build.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/android/gradle.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/android/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/android/settings.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/functions/.eslintrc.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/functions/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/functions/index.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/functions/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Flutter/AppFrameworkInfo.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Flutter/Debug.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Flutter/Release.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Podfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner.xcodeproj/project.pbxproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner.xcworkspace/contents.xcworkspacedata" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/AppDelegate.swift" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-1024x1024@1x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@1x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@3x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@1x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@3x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@1x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@3x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@3x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@1x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-83.5x83.5@2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Assets.xcassets/LaunchImage.imageset/Contents.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@3x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Assets.xcassets/LaunchImage.imageset/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Base.lproj/LaunchScreen.storyboard" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Base.lproj/Main.storyboard" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/GoogleService-Info.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Info.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/Runner/Runner-Bridging-Header.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/ios/firebase_app_id_file.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/lib/entry_point.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/lib/firebase_options.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/lib/function/osm_map.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/lib/function/sign_in_function.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/lib/function/user_repository.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/lib/l10n/language.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/lib/page/login_page.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/lib/page/main_page.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/lib/rriverpod/map_controller_riverpod.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/lib/rriverpod/user_riverpod.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/lib/style/app_bar.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/lib/style/bottom_bar.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/lib/style/button_style.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/lib/style/color.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/lib/style/icon.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/lib/style/navigator.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/lib/style/sized_box.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/lib/style/text_style.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/linux/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/linux/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/linux/flutter/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/linux/flutter/generated_plugin_registrant.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/linux/flutter/generated_plugin_registrant.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/linux/flutter/generated_plugins.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/linux/main.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/linux/my_application.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/linux/my_application.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Flutter/Flutter-Debug.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Flutter/Flutter-Release.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Podfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner.xcodeproj/project.pbxproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner.xcworkspace/contents.xcworkspacedata" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner/AppDelegate.swift" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_1024.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_128.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_16.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_256.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_32.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_512.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_64.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner/Base.lproj/MainMenu.xib" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner/Configs/AppInfo.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner/Configs/Debug.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner/Configs/Release.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner/Configs/Warnings.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner/DebugProfile.entitlements" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner/GoogleService-Info.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner/Info.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner/MainFlutterWindow.swift" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/Runner/Release.entitlements" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/macos/firebase_app_id_file.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/pubspec.lock" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/pubspec.yaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/test/widget_test.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/web/favicon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/web/icons/Icon-192.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/web/icons/Icon-512.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/web/icons/Icon-maskable-192.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/web/icons/Icon-maskable-512.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/web/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/web/manifest.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/windows/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/windows/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/windows/flutter/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/windows/flutter/generated_plugin_registrant.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/windows/flutter/generated_plugin_registrant.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/windows/flutter/generated_plugins.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/windows/runner/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/windows/runner/Runner.rc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/windows/runner/flutter_window.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/windows/runner/flutter_window.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/windows/runner/main.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/windows/runner/resource.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/windows/runner/resources/app_icon.ico" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/windows/runner/runner.exe.manifest" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/windows/runner/utils.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/windows/runner/utils.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/windows/runner/win32_window.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../기초적인 로그인과 상태관리 끝낸 샘플 1/windows/runner/win32_window.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/.metadata" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/analysis_options.yaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/android/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/android/app/build.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/android/app/google-services.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/android/app/src/debug/AndroidManifest.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/android/app/src/main/AndroidManifest.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/android/app/src/main/kotlin/com/example/freedomcompass/MainActivity.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/android/app/src/main/res/drawable-v21/launch_background.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/android/app/src/main/res/drawable/launch_background.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/android/app/src/main/res/mipmap-hdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/android/app/src/main/res/mipmap-mdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/android/app/src/main/res/values-night/styles.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/android/app/src/main/res/values/styles.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/android/app/src/profile/AndroidManifest.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/android/build.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/android/gradle.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/android/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/android/settings.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Flutter/AppFrameworkInfo.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Flutter/Debug.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Flutter/Release.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Podfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner.xcodeproj/project.pbxproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner.xcworkspace/contents.xcworkspacedata" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/AppDelegate.swift" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-1024x1024@1x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@1x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@3x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@1x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@3x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@1x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@3x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@3x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@1x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-83.5x83.5@2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Assets.xcassets/LaunchImage.imageset/Contents.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@3x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Assets.xcassets/LaunchImage.imageset/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Base.lproj/LaunchScreen.storyboard" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Base.lproj/Main.storyboard" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Info.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/ios/Runner/Runner-Bridging-Header.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/lib/entrypoint.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/lib/l10n/language.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/lib/page/loginpage.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/lib/page/mainpage.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/lib/style/buttonstyle.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/lib/style/color.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/lib/style/textstyle.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/linux/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/linux/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/linux/flutter/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/linux/flutter/generated_plugin_registrant.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/linux/flutter/generated_plugin_registrant.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/linux/flutter/generated_plugins.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/linux/main.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/linux/my_application.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/linux/my_application.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Flutter/Flutter-Debug.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Flutter/Flutter-Release.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Podfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Runner.xcodeproj/project.pbxproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Runner.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Runner.xcworkspace/contents.xcworkspacedata" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Runner.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Runner/AppDelegate.swift" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_1024.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_128.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_16.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_256.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_32.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_512.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_64.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Runner/Base.lproj/MainMenu.xib" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Runner/Configs/AppInfo.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Runner/Configs/Debug.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Runner/Configs/Release.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Runner/Configs/Warnings.xcconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Runner/DebugProfile.entitlements" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Runner/Info.plist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Runner/MainFlutterWindow.swift" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/macos/Runner/Release.entitlements" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/pubspec.lock" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/pubspec.yaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/test/widget_test.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/web/favicon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/web/icons/Icon-192.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/web/icons/Icon-512.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/web/icons/Icon-maskable-192.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/web/icons/Icon-maskable-512.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/web/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/web/manifest.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/windows/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/windows/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/windows/flutter/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/windows/flutter/generated_plugin_registrant.cc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/windows/flutter/generated_plugin_registrant.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/windows/flutter/generated_plugins.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/windows/runner/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/windows/runner/Runner.rc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/windows/runner/flutter_window.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/windows/runner/flutter_window.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/windows/runner/main.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/windows/runner/resource.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/windows/runner/resources/app_icon.ico" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/windows/runner/runner.exe.manifest" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/windows/runner/utils.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/windows/runner/utils.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/windows/runner/win32_window.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../홍원종의 기본 앱 개발 세팅 1/windows/runner/win32_window.h" beforeDir="false" />
-    </list>
+    <list default="true" id="c2ed0ef4-bb2e-42e6-a0b6-b6129fde6f52" name="Changes" comment="약간의 수정" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -322,20 +32,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/wonjonghong/StudioProjects/x_newskorea/assets&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.general&quot;,
-    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "cidr.known.project.marker": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "last_opened_file_path": "/Users/wonjonghong/StudioProjects/x_newskorea/assets",
+    "settings.editor.selected.configurable": "preferences.general",
+    "show.migrate.to.gradle.popup": "false"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/assets" />
@@ -490,7 +202,21 @@
       <option name="project" value="LOCAL" />
       <updated>1725780154675</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="약간의 수정">
+      <created>1725874079940</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1725874079940</updated>
+    </task>
+    <task id="LOCAL-00020" summary="약간의 수정">
+      <created>1725874091656</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1725874091656</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -518,6 +244,7 @@
     <MESSAGE value="버전 1.3, 상세 뉴스마다 별도의 url을 가진 하위 페이지를 만들기 위한 밑작업. 일단 작동은 되는데 url이 안나오네?" />
     <MESSAGE value="버전 1.4,영어 뉴스가 들어왔을 때 한국어로 번역되고, 다른 컬렉션으로 이동해서 제목또한 달리도록 바꿈." />
     <MESSAGE value="버전 1.4,영어 뉴스가 들어왔을 때 한국어로 번역되고, 다른 컬렉션으로 이동해서 제목또한 달리도록 바꿈. 이제 뉴스 자동 전달과 웹사이트 내에서 보이도록 하자." />
-    <option name="LAST_COMMIT_MESSAGE" value="버전 1.4,영어 뉴스가 들어왔을 때 한국어로 번역되고, 다른 컬렉션으로 이동해서 제목또한 달리도록 바꿈. 이제 뉴스 자동 전달과 웹사이트 내에서 보이도록 하자." />
+    <MESSAGE value="약간의 수정" />
+    <option name="LAST_COMMIT_MESSAGE" value="약간의 수정" />
   </component>
 </project>
