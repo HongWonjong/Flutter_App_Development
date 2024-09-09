@@ -4,12 +4,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ec78b198-ecd6-4f62-b70f-c2233b1c0cc6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/StudioProjects.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/StudioProjects.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/x_newskorea/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/x_newskorea/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="ec78b198-ecd6-4f62-b70f-c2233b1c0cc6" name="Changes" comment="설명 수정" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -46,6 +41,18 @@
       <option name="presentableId" value="Default" />
       <updated>1725874176001</updated>
     </task>
+    <task id="LOCAL-00001" summary="설명 수정">
+      <created>1725874643136</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1725874643136</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="설명 수정" />
+    <option name="LAST_COMMIT_MESSAGE" value="설명 수정" />
   </component>
 </project>
