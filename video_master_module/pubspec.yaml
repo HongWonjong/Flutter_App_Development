@@ -1,0 +1,45 @@
+name: video_master_module
+description: "This simple module handles text, photos, videos, and sound, offering full editing capabilities."
+
+publish_to:
+
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+
+dependencies:
+
+  flutter:
+    sdk: flutter
+
+
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  video_player: ^2.9.1
+  image_picker: ^1.1.2
+  video_editor: ^3.0.0
+  image_pixels: ^3.0.2
+  path_provider: ^2.1.4
+  flutter_quick_video_encoder: ^1.6.0
+  image: ^4.2.0
+
+
+  flutter_test:
+    sdk: flutter
+
+
+
+  flutter_lints: ^3.0.0
+
+
+flutter:
+
+
+
+  uses-material-design: true
+
+
