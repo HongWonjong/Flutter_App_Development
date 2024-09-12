@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'service/media_service.dart';
-import 'video_editing_page.dart'; // 에디팅 페이지 import
+import 'service2/video_editing_page.dart'; // 에디팅 페이지 import
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
