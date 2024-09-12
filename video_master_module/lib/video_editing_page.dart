@@ -24,15 +24,17 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
   double _contrastValue = 1.0;
   double _saturationValue = 1.0;
   String? _outputPath;
+  String? _previewImagePath; // 썸네일 이미지 경로
 
   @override
   void initState() {
     super.initState();
     _initializeController(widget.videoPath);
+    _generatePreview(); // 초기 썸네일 생성
   }
 
   Future<void> _initializeController(String videoPath) async {
-    _controller?.dispose(); // 기존 컨트롤러 제거
+    _controller?.dispose();
     _controller = VideoPlayerController.file(File(videoPath))
       ..initialize().then((_) {
         setState(() {
@@ -41,11 +43,33 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
       });
   }
 
+  Future<void> _generatePreview() async {
+    final tempDir = await getTemporaryDirectory();
+    final previewImagePath = '${tempDir.path}/preview_${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+    String command = '-i ${widget.videoPath} -ss $_startValue '
+        '-vf "curves=all=\'0/0 0.5/${_contrastValue.toStringAsFixed(2)} 1/1\','
+        'colorbalance=rs=${_brightnessValue.toStringAsFixed(2)}:gs=${_brightnessValue.toStringAsFixed(2)}:bs=${_brightnessValue.toStringAsFixed(2)},'
+        'hue=s=${_saturationValue.toStringAsFixed(2)}" '
+        '-vframes 1 "$previewImagePath"'; // 썸네일 생성
+
+    print('Executing FFmpeg command: $command');
+    await FFmpegKit.execute(command).then((session) async {
+      final returnCode = await session.getReturnCode();
+      if (ReturnCode.isSuccess(returnCode)) {
+        print('Preview image generated at: $previewImagePath');
+        setState(() {
+          _previewImagePath = previewImagePath;
+        });
+      } else {
+        print('Failed to generate preview.');
+      }
+    });
+  }
+
   Future<void> _applyChangesAndSaveVideo() async {
     final tempDir = await getTemporaryDirectory();
     final outputPath = '${tempDir.path}/output_${DateTime.now().millisecondsSinceEpoch}.mp4';
-
-
 
     String command = '-i ${widget.videoPath} -ss $_startValue -to $_endValue '
         '-vf "curves=all=\'0/0 0.5/${_contrastValue.toStringAsFixed(2)} 1/1\','
@@ -54,22 +78,10 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
         'setpts=${1 / _speedValue}*PTS" '
         '"$outputPath"';
 
-
-
-
-
-
-
-
-
-
-
     print('Executing FFmpeg command: $command');
 
     await FFmpegKit.execute(command).then((session) async {
       final returnCode = await session.getReturnCode();
-
-      // FFmpeg의 실행 로그 출력
       final logs = await session.getAllLogs();
       print('FFmpeg logs:');
       for (var log in logs) {
@@ -81,18 +93,13 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
         setState(() {
           _outputPath = outputPath;
         });
-        _playEditedVideo(); // 저장된 비디오를 재생하는 함수 호출
+        _playEditedVideo();
       } else {
-        // 실패 시 오류 로그 출력
         final failStackTrace = await session.getFailStackTrace();
         print('Failed to save video. Error: $failStackTrace');
       }
     });
   }
-
-
-
-
 
   void _playEditedVideo() {
     if (_outputPath != null) {
@@ -106,10 +113,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
   }
 
   Future<void> _refreshPreview() async {
-    if (_controller != null && _controller!.value.isInitialized) {
-      await _controller!.seekTo(Duration(seconds: _startValue.toInt()));
-      _controller?.play(); // 동영상 재생
-    }
+    await _generatePreview(); // 설정이 변경되면 썸네일 이미지 생성
   }
 
   void _togglePlayPause() {
@@ -122,20 +126,11 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     }
   }
 
-  ColorFilter _createColorFilter() {
-    return ColorFilter.matrix(<double>[
-      _contrastValue, 0, 0, 0, _brightnessValue * 255,
-      0, _contrastValue, 0, 0, _brightnessValue * 255,
-      0, 0, _contrastValue, 0, _brightnessValue * 255,
-      0, 0, 0, _saturationValue, 0,
-    ]);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('동영상 에디팅')),
-      body: SingleChildScrollView( // 스크롤 가능하도록 추가
+      body: SingleChildScrollView(
         child: Column(
           children: [
             _controller != null && _controller!.value.isInitialized
@@ -143,10 +138,9 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
               onTap: _togglePlayPause,
               child: AspectRatio(
                 aspectRatio: _controller!.value.aspectRatio,
-                child: ColorFiltered(
-                  colorFilter: _createColorFilter(),
-                  child: VideoPlayer(_controller!),
-                ),
+                child: _previewImagePath != null
+                    ? Image.file(File(_previewImagePath!)) // 썸네일 이미지 표시
+                    : VideoPlayer(_controller!),
               ),
             )
                 : const CircularProgressIndicator(),
@@ -225,6 +219,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
                 setState(() {
                   _brightnessValue = value;
                 });
+                _refreshPreview(); // 설정이 변경되면 미리보기 업데이트
               },
             ),
             Slider(
@@ -237,6 +232,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
                 setState(() {
                   _contrastValue = value;
                 });
+                _refreshPreview(); // 설정이 변경되면 미리보기 업데이트
               },
             ),
             Slider(
@@ -249,6 +245,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
                 setState(() {
                   _saturationValue = value;
                 });
+                _refreshPreview(); // 설정이 변경되면 미리보기 업데이트
               },
             ),
 
@@ -272,7 +269,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
 
   @override
   void dispose() {
-    _controller?.dispose(); // 컨트롤러 해제
+    _controller?.dispose();
     super.dispose();
   }
 
@@ -285,5 +282,6 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     return "$hours:$minutes:$secs";
   }
 }
+
 
 
