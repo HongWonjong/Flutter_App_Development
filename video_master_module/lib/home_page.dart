@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import 'media_service.dart';
+import 'service/media_service.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -17,7 +17,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // 미디어 선택 및 변환
   Future<void> _pickMedia() async {
-    List<File> media = await _mediaService.pickMedia(); // File 형식으로 반환
+    List<File> media = await _mediaService.pickMedia(context); // File 형식으로 반환
     setState(() {
       _mediaFiles = media;
     });

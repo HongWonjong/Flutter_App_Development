@@ -97,6 +97,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.3"
+  ffmpeg_kit_flutter:
+    dependency: "direct dev"
+    description:
+      name: ffmpeg_kit_flutter
+      sha256: "843aae41823ca94a0988d975b4b6cdc6948744b9b7e2707d81a3a9cd237b0100"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.3"
+  ffmpeg_kit_flutter_platform_interface:
+    dependency: transitive
+    description:
+      name: ffmpeg_kit_flutter_platform_interface
+      sha256: addf046ae44e190ad0101b2fde2ad909a3cd08a2a109f6106d2f7048b7abedee
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.1"
   file_selector_linux:
     dependency: transitive
     description:
@@ -201,7 +217,7 @@ packages:
     source: hosted
     version: "4.2.0"
   image_picker:
-    dependency: "direct dev"
+    dependency: transitive
     description:
       name: image_picker
       sha256: "021834d9c0c3de46bf0fe40341fa07168407f694d9b2bb18d532dc1261867f7a"
@@ -264,14 +280,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.1+1"
-  image_pixels:
-    dependency: "direct dev"
-    description:
-      name: image_pixels
-      sha256: "01ba99b6f1bf6a553df8d9cc858f55000d949bc3ccbb9af6f5d5494d304a8736"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.2"
   leak_tracker:
     dependency: transitive
     description:
@@ -320,6 +328,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.8.0"
+  media_picker_widget:
+    dependency: "direct dev"
+    description:
+      name: media_picker_widget
+      sha256: "0058a3b050df8e9aeebec300df906ddc31127ae9612085146b0e7c01b316800c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.8-pre.1"
   meta:
     dependency: transitive
     description:
@@ -345,7 +361,7 @@ packages:
     source: hosted
     version: "1.9.0"
   path_provider:
-    dependency: "direct dev"
+    dependency: transitive
     description:
       name: path_provider
       sha256: fec0d61223fba3154d87759e3cc27fe2c8dc498f6386c6d6fc80d1afdd1bf378
@@ -400,6 +416,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.2"
+  photo_manager:
+    dependency: "direct dev"
+    description:
+      name: photo_manager
+      sha256: e29619443803c40385ee509abc7937835d9b5122f899940080d28b2dceed59c1
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.3.0"
   platform:
     dependency: transitive
     description:
@@ -421,6 +445,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.99"
+  sliding_up_panel:
+    dependency: transitive
+    description:
+      name: sliding_up_panel
+      sha256: "578e90956a6212d1e406373250b2436a0f3afece29aee3c24c8360094d6cf968"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0+1"
   source_span:
     dependency: transitive
     description:
@@ -582,5 +614,5 @@ packages:
     source: hosted
     version: "6.5.0"
 sdks:
-  dart: ">=3.3.0 <4.0.0"
+  dart: ">=3.3.0 <=3.10.1"
   flutter: ">=3.19.0"
