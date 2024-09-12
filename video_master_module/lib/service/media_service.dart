@@ -15,37 +15,78 @@ class MediaService {
     return await _mediaPickerService.pickMedia(context);
   }
 
-  Future<String?> mergeMedia(List<File> imageFiles) async {
+  // Helper method to check if the file is an image based on extension
+  bool _isImageFile(File file) {
+    final String extension = file.path.split('.').last.toLowerCase();
+    return ['jpg', 'jpeg', 'png', 'bmp', 'gif'].contains(extension);
+  }
+
+  Future<String?> mergeMedia(List<File> mediaFiles) async {
     final tempDir = await getTemporaryDirectory();
     final videoPath = '${tempDir.path}/output_${DateTime.now().millisecondsSinceEpoch}.mp4';
 
-    await FlutterQuickVideoEncoder.setup(
-      width: 1920,
-      height: 1080,
-      fps: 30,
-      videoBitrate: 5000000,
-      audioChannels: 2,
-      audioBitrate: 128000,
-      sampleRate: 44100,
-      profileLevel: ProfileLevel.highAutoLevel,
-      filepath: videoPath,
-    );
+    List<File> imageFiles = [];
+    List<File> videoFiles = [];
 
-    for (File imageFile in imageFiles) {
-      await _imageProcessingService.processImage(imageFile);
+    // Separate image and video files based on their extensions
+    for (File mediaFile in mediaFiles) {
+      if (_isImageFile(mediaFile)) {
+        imageFiles.add(mediaFile);
+      } else {
+        videoFiles.add(mediaFile);
+      }
     }
 
-    await FlutterQuickVideoEncoder.finish();
+    // Process images and convert them to video
+    if (imageFiles.isNotEmpty) {
+      await FlutterQuickVideoEncoder.setup(
+        width: 1920,
+        height: 1080,
+        fps: 30,
+        videoBitrate: 5000000,
+        audioChannels: 2,
+        audioBitrate: 128000,
+        sampleRate: 44100,
+        profileLevel: ProfileLevel.highAutoLevel,
+        filepath: videoPath,
+      );
+
+      for (File imageFile in imageFiles) {
+        await _imageProcessingService.processImage(imageFile);
+      }
+
+      await FlutterQuickVideoEncoder.finish();
+    }
+
     return videoPath;
   }
 
-  Future<String?> mergeAllVideos(List<File> imageFiles, List<File> videoFiles) async {
-    final imageVideoPath = await mergeMedia(imageFiles);
-    final videoFilesWithImage = [...videoFiles];
-    if (imageVideoPath != null) {
-      videoFilesWithImage.add(File(imageVideoPath));
+  Future<String?> mergeAllVideos(List<File> mediaFiles) async {
+    // Separate image files and video files
+    List<File> imageFiles = [];
+    List<File> videoFiles = [];
+
+    for (File mediaFile in mediaFiles) {
+      if (_isImageFile(mediaFile)) {
+        imageFiles.add(mediaFile);
+      } else {
+        videoFiles.add(mediaFile);
+      }
     }
-    return await _videoMergingService.mergeAllVideos(videoFilesWithImage);
+
+    // If there are images, merge them into a video
+    String? imageVideoPath;
+    if (imageFiles.isNotEmpty) {
+      imageVideoPath = await mergeMedia(imageFiles);
+    }
+
+    // Add the resulting image video to the list of video files if it exists
+    if (imageVideoPath != null) {
+      videoFiles.add(File(imageVideoPath));
+    }
+
+    // Now merge all the video files together
+    return await _videoMergingService.mergeAllVideos(videoFiles);
   }
 }
 
