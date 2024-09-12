@@ -12,13 +12,14 @@ class MediaService {
   Uint8List _convertABGRtoRGBA(Uint8List abgrBytes) {
     Uint8List rgbaBytes = Uint8List(abgrBytes.length);
     for (int i = 0; i < abgrBytes.length; i += 4) {
-      rgbaBytes[i] = abgrBytes[i + 3];     // R
-      rgbaBytes[i + 1] = abgrBytes[i + 2]; // G
-      rgbaBytes[i + 2] = abgrBytes[i + 1]; // B
-      rgbaBytes[i + 3] = abgrBytes[i];     // A
+      rgbaBytes[i] = abgrBytes[i + 2];     // B -> R
+      rgbaBytes[i + 1] = abgrBytes[i + 1]; // G -> G
+      rgbaBytes[i + 2] = abgrBytes[i];     // R -> B
+      rgbaBytes[i + 3] = abgrBytes[i + 3]; // A -> A (그대로 유지)
     }
     return rgbaBytes;
   }
+
 
   // 미디어 선택 (이미지 선택) 함수
   Future<List<File>> pickMedia() async {
