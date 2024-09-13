@@ -25,6 +25,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
   double _saturationValue = 1.0;
   String? _outputPath;
   String? _previewImagePath;
+  bool _isDrawerOpen = false; // 서랍 상태를 확인하는 플래그
 
   @override
   void initState() {
@@ -69,12 +70,15 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     final tempDir = await getTemporaryDirectory();
     final outputPath = '${tempDir.path}/output_${DateTime.now().millisecondsSinceEpoch}.mp4';
 
-    String command = '-i ${widget.videoPath} -ss $_startValue -to $_endValue '
+    String command = '-ss $_startValue -to $_endValue ' // 입력 단계에서 먼저 트림 적용
+        '-i ${widget.videoPath} '
         '-vf "curves=all=\'0/0 0.5/${_contrastValue.toStringAsFixed(2)} 1/1\','
         'colorbalance=rs=${_brightnessValue.toStringAsFixed(2)}:gs=${_brightnessValue.toStringAsFixed(2)}:bs=${_brightnessValue.toStringAsFixed(2)},'
         'hue=s=${_saturationValue.toStringAsFixed(2)},'
-        'setpts=${1 / _speedValue}*PTS" '
+        'setpts=${1 / _speedValue}*PTS" ' // 배속 적용
         '"$outputPath"';
+
+
 
     await FFmpegKit.execute(command).then((session) async {
       final returnCode = await session.getReturnCode();
@@ -120,150 +124,195 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
         backgroundColor: Colors.black,
       ),
       backgroundColor: Colors.black,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Video thumbnail or player
-            _controller != null && _controller!.value.isInitialized
+      body: Stack(
+        children: [
+          // 원래대로 돌아간 동영상 플레이어 크기
+          Positioned.fill(
+            child: _controller != null && _controller!.value.isInitialized
                 ? GestureDetector(
               onTap: _togglePlayPause,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  AspectRatio(
-                    aspectRatio: _controller!.value.aspectRatio,
-                    child: _previewImagePath != null
-                        ? Image.file(File(_previewImagePath!), fit: BoxFit.cover)
-                        : VideoPlayer(_controller!),
-                  ),
-                  if (!_controller!.value.isPlaying)
-                    const Icon(Icons.play_circle_outline, size: 80, color: Colors.white),
-                ],
+              child: AspectRatio(
+                aspectRatio: _controller!.value.aspectRatio,
+                child: VideoPlayer(_controller!),
               ),
             )
                 : const Center(child: CircularProgressIndicator()),
+          ),
 
-            const SizedBox(height: 15), // Reduced spacing
-
-            // Trim and Speed in one row
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0), // Reduced padding
-              child: Row(
-                children: [
-                  Expanded(
-                    child: _buildControlRow(
-                      'Trim',
-                      '${formatDuration(_startValue)} - ${formatDuration(_endValue)}',
-                      RangeSlider(
-                        values: RangeValues(_startValue, _endValue),
-                        min: 0,
-                        max: _controller?.value.duration.inSeconds.toDouble() ?? 1,
-                        onChanged: (RangeValues values) {
-                          setState(() {
-                            _startValue = values.start;
-                            _endValue = values.end;
-                          });
-                          _refreshPreview();
-                        },
-                      ),
+          // Animated Drawer from the left
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 300),
+            left: _isDrawerOpen ? 0 : -300, // 서랍의 위치, 열리면 0, 닫히면 왼쪽 밖으로 나감
+            top: 0,
+            bottom: 0,
+            width: 300, // 서랍의 너비
+            child: GestureDetector(
+              onHorizontalDragUpdate: (details) {
+                if (details.delta.dx > 0 && !_isDrawerOpen) {
+                  setState(() {
+                    _isDrawerOpen = true; // 드래그해서 열기
+                  });
+                } else if (details.delta.dx < 0 && _isDrawerOpen) {
+                  setState(() {
+                    _isDrawerOpen = false; // 드래그해서 닫기
+                  });
+                }
+              },
+              child: Container(
+                color: Colors.black.withOpacity(0.8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      onPressed: () {
+                        setState(() {
+                          _isDrawerOpen = false; // 닫기 버튼
+                        });
+                      },
                     ),
-                  ),
-                  Expanded(
-                    child: _buildControlRow(
-                      'Speed',
-                      '${_speedValue.toStringAsFixed(1)}x',
-                      Slider(
-                        value: _speedValue,
-                        min: 0.5,
-                        max: 2.0,
-                        divisions: 15,
-                        label: "${_speedValue.toStringAsFixed(1)}x",
-                        onChanged: (value) {
-                          setState(() {
-                            _speedValue = value;
-                          });
-                          if (_controller != null && _controller!.value.isInitialized) {
-                            _controller!.setPlaybackSpeed(_speedValue);
-                          }
-                        },
-                      ),
-                    ),
-                  ),
-                ],
+                    _buildTrimAndSpeedControls(),
+                    _buildBrightnessContrastSaturationControls(),
+                    _buildSaveButton(),
+                  ],
+                ),
               ),
             ),
+          ),
 
-            // Brightness, Contrast, and Saturation in one row
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0), // Reduced padding
-              child: Row(
-                children: [
-                  Expanded(
-                    child: _buildControlRow(
-                      'Brightness',
-                      _brightnessValue.toStringAsFixed(2),
-                      Slider(
-                        value: _brightnessValue,
-                        min: -1.0,
-                        max: 1.0,
-                        divisions: 20,
-                        label: "${_brightnessValue.toStringAsFixed(2)}",
-                        onChanged: (value) {
-                          setState(() {
-                            _brightnessValue = value;
-                          });
-                          _refreshPreview();
-                        },
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: _buildControlRow(
-                      'Contrast',
-                      _contrastValue.toStringAsFixed(1),
-                      Slider(
-                        value: _contrastValue,
-                        min: 0.0,
-                        max: 1.0,
-                        divisions: 25,
-                        label: "${_contrastValue.toStringAsFixed(1)}",
-                        onChanged: (value) {
-                          setState(() {
-                            _contrastValue = value;
-                          });
-                          _refreshPreview();
-                        },
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: _buildControlRow(
-                      'Saturation',
-                      _saturationValue.toStringAsFixed(1),
-                      Slider(
-                        value: _saturationValue,
-                        min: 0.0,
-                        max: 2.0,
-                        divisions: 20,
-                        label: "${_saturationValue.toStringAsFixed(1)}",
-                        onChanged: (value) {
-                          setState(() {
-                            _saturationValue = value;
-                          });
-                          _refreshPreview();
-                        },
-                      ),
-                    ),
-                  ),
-                ],
+          // Toggle button to open drawer
+          Positioned(
+            left: _isDrawerOpen ? 280 : 0,
+            top: 50,
+            child: IconButton(
+              icon: Icon(
+                _isDrawerOpen ? Icons.arrow_back_ios : Icons.arrow_forward_ios,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                setState(() {
+                  _isDrawerOpen = !_isDrawerOpen;
+                });
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTrimAndSpeedControls() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: _buildControlRow(
+              'Trim',
+              '${formatDuration(_startValue)} - ${formatDuration(_endValue)}',
+              RangeSlider(
+                values: RangeValues(_startValue, _endValue),
+                min: 0,
+                max: _controller?.value.duration.inSeconds.toDouble() ?? 1,
+                onChanged: (RangeValues values) {
+                  setState(() {
+                    _startValue = values.start;
+                    _endValue = values.end;
+                  });
+                  _refreshPreview();
+                },
               ),
             ),
+          ),
+          Expanded(
+            child: _buildControlRow(
+              'Speed',
+              '${_speedValue.toStringAsFixed(1)}x',
+              Slider(
+                value: _speedValue,
+                min: 0.5,
+                max: 2.0,
+                divisions: 15,
+                label: "${_speedValue.toStringAsFixed(1)}x",
+                onChanged: (value) {
+                  setState(() {
+                    _speedValue = value;
+                  });
+                  if (_controller != null && _controller!.value.isInitialized) {
+                    _controller!.setPlaybackSpeed(_speedValue);
+                  }
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-            const SizedBox(height: 15), // Reduced spacing
-            _buildSaveButton(),
-          ],
-        ),
+  Widget _buildBrightnessContrastSaturationControls() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: _buildControlRow(
+              'Brightness',
+              _brightnessValue.toStringAsFixed(2),
+              Slider(
+                value: _brightnessValue,
+                min: -1.0,
+                max: 1.0,
+                divisions: 20,
+                label: "${_brightnessValue.toStringAsFixed(2)}",
+                onChanged: (value) {
+                  setState(() {
+                    _brightnessValue = value;
+                  });
+                  _refreshPreview();
+                },
+              ),
+            ),
+          ),
+          Expanded(
+            child: _buildControlRow(
+              'Contrast',
+              _contrastValue.toStringAsFixed(1),
+              Slider(
+                value: _contrastValue,
+                min: 0.0,
+                max: 1.0,
+                divisions: 25,
+                label: "${_contrastValue.toStringAsFixed(1)}",
+                onChanged: (value) {
+                  setState(() {
+                    _contrastValue = value;
+                  });
+                  _refreshPreview();
+                },
+              ),
+            ),
+          ),
+          Expanded(
+            child: _buildControlRow(
+              'Saturation',
+              _saturationValue.toStringAsFixed(1),
+              Slider(
+                value: _saturationValue,
+                min: 0.0,
+                max: 2.0,
+                divisions: 20,
+                label: "${_saturationValue.toStringAsFixed(1)}",
+                onChanged: (value) {
+                  setState(() {
+                    _saturationValue = value;
+                  });
+                  _refreshPreview();
+                },
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -271,90 +320,26 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
   Widget _buildControlRow(String label, String value, Widget controlWidget) {
     return Card(
       color: Colors.grey[900],
-      margin: const EdgeInsets.symmetric(vertical: 4), // Reduced vertical margin
+      margin: const EdgeInsets.symmetric(vertical: 4),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6), // Reduced padding inside card
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Label and value on separate lines
             Text(
               label,
               style: const TextStyle(color: Colors.white),
-              overflow: TextOverflow.ellipsis,  // Ensure long text is truncated
             ),
-            const SizedBox(height: 2), // Reduced spacing between label and value
+            const SizedBox(height: 2),
             Text(
               value,
               style: const TextStyle(color: Colors.white, fontSize: 12),
-              overflow: TextOverflow.ellipsis,  // Ensure long text is truncated
             ),
-            const SizedBox(height: 2), // Reduced spacing between value and control widget
-            controlWidget,  // Slider or RangeSlider
+            const SizedBox(height: 2),
+            controlWidget,
           ],
         ),
       ),
-    );
-  }
-
-
-
-
-  Widget _buildColorControlRow() {
-    return Column(
-      children: [
-        _buildControlRow(
-          'Brightness',
-          _brightnessValue.toStringAsFixed(2),
-          Slider(
-            value: _brightnessValue,
-            min: -1.0,
-            max: 1.0,
-            divisions: 20,
-            label: "${_brightnessValue.toStringAsFixed(2)}",
-            onChanged: (value) {
-              setState(() {
-                _brightnessValue = value;
-              });
-              _refreshPreview();
-            },
-          ),
-        ),
-        _buildControlRow(
-          'Contrast',
-          _contrastValue.toStringAsFixed(1),
-          Slider(
-            value: _contrastValue,
-            min: 0.0,
-            max: 1.0,
-            divisions: 25,
-            label: "${_contrastValue.toStringAsFixed(1)}",
-            onChanged: (value) {
-              setState(() {
-                _contrastValue = value;
-              });
-              _refreshPreview();
-            },
-          ),
-        ),
-        _buildControlRow(
-          'Saturation',
-          _saturationValue.toStringAsFixed(1),
-          Slider(
-            value: _saturationValue,
-            min: 0.0,
-            max: 2.0,
-            divisions: 20,
-            label: "${_saturationValue.toStringAsFixed(1)}",
-            onChanged: (value) {
-              setState(() {
-                _saturationValue = value;
-              });
-              _refreshPreview();
-            },
-          ),
-        ),
-      ],
     );
   }
 
@@ -387,6 +372,8 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     return "$hours:$minutes:$secs";
   }
 }
+
+
 
 
 
