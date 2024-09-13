@@ -40,8 +40,8 @@ class MediaService {
     // Process images and convert them to video
     if (imageFiles.isNotEmpty) {
       await FlutterQuickVideoEncoder.setup(
-        width: 1920,
-        height: 1080,
+        width: 1080,
+        height: 1920,
         fps: 30,
         videoBitrate: 5000000,
         audioChannels: 2,

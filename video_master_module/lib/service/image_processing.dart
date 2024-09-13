@@ -39,12 +39,12 @@ class ImageProcessingService {
     final img.Image? decodedImage = img.decodeImage(imageBytes);
 
     if (decodedImage != null) {
-      img.Image resizedImage = _resizeImageToFit(decodedImage, 1920, 1080);
-      img.Image background = img.Image(width: 1920, height: 1080);
+      img.Image resizedImage = _resizeImageToFit(decodedImage, 1080, 1920);
+      img.Image background = img.Image(width: 1080, height: 1920);
       img.fill(background, color: img.ColorInt8.rgba(0, 0, 0, 255));
 
-      int xOffset = (1920 - resizedImage.width) ~/ 2;
-      int yOffset = (1080 - resizedImage.height) ~/ 2;
+      int xOffset = (1080 - resizedImage.width) ~/ 2;
+      int yOffset = (1920 - resizedImage.height) ~/ 2;
       img.Image finalImage = img.compositeImage(background, resizedImage, dstX: xOffset, dstY: yOffset);
 
       img.Image rgbaImage = finalImage.convert(numChannels: 4);

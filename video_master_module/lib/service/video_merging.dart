@@ -7,8 +7,8 @@ import 'package:path_provider/path_provider.dart';
 
 class VideoMergingService {
   // Standard resolution, codec, and fps for all videos
-  final String targetResolution = '1920x1080';
-  final String targetCodec = 'libx265'; // HEVC (H.265) codec
+  final String targetResolution = '1080x1920';
+  final String targetCodec = 'libx264'; // (H.264) codec로 통일
   final int targetFps = 30;
 
   // Re-encode video to HEVC (H.265) codec with standard resolution and fps
@@ -20,7 +20,7 @@ class VideoMergingService {
     String command =
         '-i ${videoFile.path} -vf "scale=$targetResolution,fps=$targetFps" -c:v $targetCodec -preset fast -y $outputFilePath';
 
-    print('Running FFmpeg command for converting to HEVC: $command');
+    print('Running FFmpeg command for converting to H.264: $command');
 
     final session = await FFmpegKit.execute(command);
     final returnCode = await session.getReturnCode();
@@ -33,10 +33,10 @@ class VideoMergingService {
     }
 
     if (ReturnCode.isSuccess(returnCode)) {
-      print('Video converted to HEVC successfully: $outputFilePath');
+      print('Video converted to H.264 successfully: $outputFilePath');
       return outputFilePath;
     } else {
-      print('HEVC conversion failed: $failStackTrace');
+      print('H.264 conversion failed: $failStackTrace');
       return null;
     }
   }
@@ -61,7 +61,7 @@ class VideoMergingService {
       String inputs = hevcVideoPaths.map((path) => '-i $path').join(' ');
       String command = '$inputs -filter_complex "concat=n=${hevcVideoPaths.length}:v=1:a=1" -c:v $targetCodec -preset fast -y $outputPath';
 
-      print('Running FFmpeg command for merging HEVC videos: $command');
+      print('Running FFmpeg command for merging H.264 videos: $command');
 
       final session = await FFmpegKit.execute(command);
       final returnCode = await session.getReturnCode();
@@ -74,10 +74,10 @@ class VideoMergingService {
       }
 
       if (ReturnCode.isSuccess(returnCode)) {
-        print('HEVC videos merged successfully: $outputPath');
+        print('H.264 videos merged successfully: $outputPath');
         return outputPath;
       } else {
-        print('HEVC video merging failed: $failStackTrace');
+        print('H.264 video merging failed: $failStackTrace');
         return null;
       }
     }

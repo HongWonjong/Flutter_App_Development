@@ -5,6 +5,8 @@ import 'package:ffmpeg_kit_flutter/return_code.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 import '../edited_video_screen.dart';
+import 'package:video_master_module/mq_size.dart';
+import 'components/brightness_contrast_saturation_control.dart';
 
 class VideoEditingPage extends StatefulWidget {
   final String videoPath;
@@ -24,14 +26,15 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
   double _contrastValue = 1.0;
   double _saturationValue = 1.0;
   String? _outputPath;
-  String? _previewImagePath;
-  bool _isDrawerOpen = false; // 서랍 상태를 확인하는 플래그
+  bool _isDrawerOpen = false;
+
+  // Add this
+  String _selectedProperty = '밝기'; // Default selected property
 
   @override
   void initState() {
     super.initState();
     _initializeController(widget.videoPath);
-    _generatePreview();
   }
 
   Future<void> _initializeController(String videoPath) async {
@@ -44,41 +47,18 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
       });
   }
 
-  Future<void> _generatePreview() async {
-    final tempDir = await getTemporaryDirectory();
-    final previewImagePath = '${tempDir.path}/preview_${DateTime.now().millisecondsSinceEpoch}.jpg';
-
-    String command = '-i ${widget.videoPath} -ss $_startValue '
-        '-vf "curves=all=\'0/0 0.5/${_contrastValue.toStringAsFixed(2)} 1/1\','
-        'colorbalance=rs=${_brightnessValue.toStringAsFixed(2)}:gs=${_brightnessValue.toStringAsFixed(2)}:bs=${_brightnessValue.toStringAsFixed(2)},'
-        'hue=s=${_saturationValue.toStringAsFixed(2)}" '
-        '-vframes 1 "$previewImagePath"';
-
-    await FFmpegKit.execute(command).then((session) async {
-      final returnCode = await session.getReturnCode();
-      if (ReturnCode.isSuccess(returnCode)) {
-        setState(() {
-          _previewImagePath = previewImagePath;
-        });
-      } else {
-        print('Failed to generate preview.');
-      }
-    });
-  }
 
   Future<void> _applyChangesAndSaveVideo() async {
     final tempDir = await getTemporaryDirectory();
     final outputPath = '${tempDir.path}/output_${DateTime.now().millisecondsSinceEpoch}.mp4';
 
-    String command = '-ss $_startValue -to $_endValue ' // 입력 단계에서 먼저 트림 적용
+    String command = '-ss $_startValue -to $_endValue ' // 트림 적용
         '-i ${widget.videoPath} '
         '-vf "curves=all=\'0/0 0.5/${_contrastValue.toStringAsFixed(2)} 1/1\','
         'colorbalance=rs=${_brightnessValue.toStringAsFixed(2)}:gs=${_brightnessValue.toStringAsFixed(2)}:bs=${_brightnessValue.toStringAsFixed(2)},'
         'hue=s=${_saturationValue.toStringAsFixed(2)},'
         'setpts=${1 / _speedValue}*PTS" ' // 배속 적용
         '"$outputPath"';
-
-
 
     await FFmpegKit.execute(command).then((session) async {
       final returnCode = await session.getReturnCode();
@@ -101,10 +81,24 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
       );
     }
   }
-
-  Future<void> _refreshPreview() async {
-    await _generatePreview();
+  void _onPropertyChanged(String property) {
+    setState(() {
+      _selectedProperty = property;
+    });
   }
+
+  void _onSliderChanged(double value) {
+    setState(() {
+      if (_selectedProperty == '밝기') {
+        _brightnessValue = value;
+      } else if (_selectedProperty == '대조') {
+        _contrastValue = value;
+      } else {
+        _saturationValue = value;
+      }
+    });
+  }
+
 
   void _togglePlayPause() {
     if (_controller != null) {
@@ -120,13 +114,19 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Video Editing', style: TextStyle(color: Colors.white)),
+        title: Text(
+          'Video Editing',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: fontSizePercentage(context, MQSize.fontSize6),
+          ),
+        ),
         backgroundColor: Colors.black,
       ),
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // 원래대로 돌아간 동영상 플레이어 크기
+          // 비디오 플레이어 위치 설정
           Positioned.fill(
             child: _controller != null && _controller!.value.isInitialized
                 ? GestureDetector(
@@ -136,25 +136,31 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
                 child: VideoPlayer(_controller!),
               ),
             )
-                : const Center(child: CircularProgressIndicator()),
+                : Center(
+              child: SizedBox(
+                width: widthPercentage(context, 10),
+                height: widthPercentage(context, 10),
+                child: const CircularProgressIndicator(),
+              ),
+            ),
           ),
 
-          // Animated Drawer from the left
+          // 슬라이딩 서랍을 위한 AnimatedPositioned 위젯
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
-            left: _isDrawerOpen ? 0 : -300, // 서랍의 위치, 열리면 0, 닫히면 왼쪽 밖으로 나감
+            left: _isDrawerOpen ? 0 : -widthPercentage(context, 80),
             top: 0,
             bottom: 0,
-            width: 300, // 서랍의 너비
+            width: widthPercentage(context, 80),
             child: GestureDetector(
               onHorizontalDragUpdate: (details) {
                 if (details.delta.dx > 0 && !_isDrawerOpen) {
                   setState(() {
-                    _isDrawerOpen = true; // 드래그해서 열기
+                    _isDrawerOpen = true;
                   });
                 } else if (details.delta.dx < 0 && _isDrawerOpen) {
                   setState(() {
-                    _isDrawerOpen = false; // 드래그해서 닫기
+                    _isDrawerOpen = false;
                   });
                 }
               },
@@ -163,52 +169,67 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.close, color: Colors.white),
-                      onPressed: () {
-                        setState(() {
-                          _isDrawerOpen = false; // 닫기 버튼
-                        });
-                      },
+                    // 트림 및 속도 컨트롤
+                    _buildTrimAndSpeedControls(context),
+                    // 밝기/대비/채도 컨트롤
+                    BrightnessContrastSaturationControl(
+                        selectedProperty: _selectedProperty,
+                        brightnessValue: _brightnessValue,
+                        contrastValue: _contrastValue,
+                        saturationValue: _saturationValue,
+                        onPropertyChanged: _onPropertyChanged,
+                        onSliderChanged: _onSliderChanged,
                     ),
-                    _buildTrimAndSpeedControls(),
-                    _buildBrightnessContrastSaturationControls(),
-                    _buildSaveButton(),
+                    // 저장 버튼
+                    _buildSaveButton(context),
                   ],
                 ),
               ),
             ),
           ),
 
-          // Toggle button to open drawer
+          // 드로어 토글 버튼
           Positioned(
-            left: _isDrawerOpen ? 280 : 0,
-            top: 50,
-            child: IconButton(
-              icon: Icon(
-                _isDrawerOpen ? Icons.arrow_back_ios : Icons.arrow_forward_ios,
-                color: Colors.white,
-              ),
-              onPressed: () {
+            left: _isDrawerOpen ? widthPercentage(context, 80) : widthPercentage(context, 2),
+            top: heightPercentage(context, 5),
+            child: GestureDetector(
+              onTap: () {
                 setState(() {
                   _isDrawerOpen = !_isDrawerOpen;
                 });
               },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: _isDrawerOpen
+                      ? Colors.transparent // 화살표 아이콘일 때 투명색 배경
+                      : Colors.deepPurpleAccent.withOpacity(0.4), // 편집 아이콘일 때 배경색 적용
+                  shape: BoxShape.circle, // 원형 배경
+                ),
+                padding: EdgeInsets.all(widthPercentage(context, 2)), // 아이콘 주위에 패딩 추가
+                child: Icon(
+                  _isDrawerOpen ? Icons.arrow_back_ios : Icons.cut, // 서랍이 닫혀 있을 때 '편집' 아이콘 표시
+                  color: Colors.white,
+                  size: widthPercentage(context, 8), // 적응형 크기
+                ),
+              ),
             ),
           ),
+
         ],
       ),
     );
   }
 
-  Widget _buildTrimAndSpeedControls() {
+
+  Widget _buildTrimAndSpeedControls(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
+      padding: EdgeInsets.all(widthPercentage(context, 2)),
+      child: Column(
         children: [
-          Expanded(
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: _buildControlRow(
-              'Trim',
+              '자르기',
               '${formatDuration(_startValue)} - ${formatDuration(_endValue)}',
               RangeSlider(
                 values: RangeValues(_startValue, _endValue),
@@ -219,14 +240,14 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
                     _startValue = values.start;
                     _endValue = values.end;
                   });
-                  _refreshPreview();
                 },
               ),
             ),
           ),
-          Expanded(
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: _buildControlRow(
-              'Speed',
+              '속도',
               '${_speedValue.toStringAsFixed(1)}x',
               Slider(
                 value: _speedValue,
@@ -250,109 +271,27 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     );
   }
 
-  Widget _buildBrightnessContrastSaturationControls() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: _buildControlRow(
-              'Brightness',
-              _brightnessValue.toStringAsFixed(2),
-              Slider(
-                value: _brightnessValue,
-                min: -1.0,
-                max: 1.0,
-                divisions: 20,
-                label: "${_brightnessValue.toStringAsFixed(2)}",
-                onChanged: (value) {
-                  setState(() {
-                    _brightnessValue = value;
-                  });
-                  _refreshPreview();
-                },
-              ),
-            ),
-          ),
-          Expanded(
-            child: _buildControlRow(
-              'Contrast',
-              _contrastValue.toStringAsFixed(1),
-              Slider(
-                value: _contrastValue,
-                min: 0.0,
-                max: 1.0,
-                divisions: 25,
-                label: "${_contrastValue.toStringAsFixed(1)}",
-                onChanged: (value) {
-                  setState(() {
-                    _contrastValue = value;
-                  });
-                  _refreshPreview();
-                },
-              ),
-            ),
-          ),
-          Expanded(
-            child: _buildControlRow(
-              'Saturation',
-              _saturationValue.toStringAsFixed(1),
-              Slider(
-                value: _saturationValue,
-                min: 0.0,
-                max: 2.0,
-                divisions: 20,
-                label: "${_saturationValue.toStringAsFixed(1)}",
-                onChanged: (value) {
-                  setState(() {
-                    _saturationValue = value;
-                  });
-                  _refreshPreview();
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildControlRow(String label, String value, Widget controlWidget) {
-    return Card(
-      color: Colors.grey[900],
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: const TextStyle(color: Colors.white),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              value,
-              style: const TextStyle(color: Colors.white, fontSize: 12),
-            ),
-            const SizedBox(height: 2),
-            controlWidget,
-          ],
-        ),
-      ),
-    );
-  }
 
-  Widget _buildSaveButton() {
+
+
+
+  Widget _buildSaveButton(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(widthPercentage(context, 5)),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: EdgeInsets.all(heightPercentage(context, 1)),
           backgroundColor: Colors.deepPurpleAccent,
         ),
         onPressed: _applyChangesAndSaveVideo,
-        child: const Text('Apply & Save', style: TextStyle(fontSize: 18, color: Colors.white)),
+        child: Text(
+          '편집 & 저장',
+          style: TextStyle(
+            fontSize: fontSizePercentage(context, MQSize.fontSize6),
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }
@@ -370,6 +309,35 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     final minutes = twoDigits(duration.inMinutes.remainder(60));
     final secs = twoDigits(duration.inSeconds.remainder(60));
     return "$hours:$minutes:$secs";
+  }
+
+  Widget _buildControlRow(String label, String value, Widget controlWidget) {
+    return Card(
+      color: Colors.grey[900],
+      margin: EdgeInsets.symmetric(vertical: heightPercentage(context, 0.5)),
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          vertical: heightPercentage(context, 0.5),
+          horizontal: widthPercentage(context, 2),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: TextStyle(color: Colors.white, fontSize: fontSizePercentage(context, MQSize.fontSize5)),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              value,
+              style: TextStyle(color: Colors.white, fontSize: fontSizePercentage(context, MQSize.fontSize4)),
+            ),
+            const SizedBox(height: 2),
+            controlWidget,
+          ],
+        ),
+      ),
+    );
   }
 }
 
