@@ -127,13 +127,17 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
       body: Stack(
         children: [
           // 비디오 플레이어 위치 설정
-          Positioned.fill(
+          Center(
             child: _controller != null && _controller!.value.isInitialized
                 ? GestureDetector(
               onTap: _togglePlayPause,
-              child: AspectRatio(
-                aspectRatio: _controller!.value.aspectRatio,
-                child: VideoPlayer(_controller!),
+              child: Container(
+                width: widthPercentage(context, 100),  // 원하는 크기로 설정
+                height: heightPercentage(context, 80), // 원하는 크기로 설정
+                child: AspectRatio(
+                  aspectRatio: _controller!.value.aspectRatio,
+                  child: VideoPlayer(_controller!),
+                ),
               ),
             )
                 : Center(
