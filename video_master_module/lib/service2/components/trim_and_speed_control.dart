@@ -37,10 +37,10 @@ class _TrimAndSpeedControlsState extends State<TrimAndSpeedControls> {
     widget.controller?.addListener(() {
       if (widget.controller!.value.isInitialized) {
         setState(() {
-          // 값을 업데이트해 max 값을 안전하게 가져옴
-          double maxDuration = widget.controller?.value.duration.inSeconds.toDouble() ?? 1;
-          _startValue = _startValue.clamp(0, maxDuration);
-          _endValue = _endValue.clamp(0, maxDuration);
+          // 값을 업데이트해 max 값을 안전하게 가져옴 (밀리초 단위로 변환)
+          double maxDuration = widget.controller!.value.duration.inMilliseconds.toDouble() / 1000 ?? 1.0;
+          _startValue = _startValue.clamp(0.0, maxDuration);
+          _endValue = _endValue.clamp(0.0, maxDuration);
         });
       }
     });
@@ -48,10 +48,10 @@ class _TrimAndSpeedControlsState extends State<TrimAndSpeedControls> {
 
   @override
   Widget build(BuildContext context) {
-    // VideoPlayerController가 초기화된 후 duration 값을 사용
+    // VideoPlayerController가 초기화된 후 duration 값을 사용 (밀리초 단위로 초로 변환)
     double maxDuration = widget.controller?.value.isInitialized == true
-        ? widget.controller!.value.duration.inSeconds.toDouble()
-        : 1;
+        ? widget.controller!.value.duration.inMilliseconds.toDouble() / 1000
+        : 1.0;
 
     return Padding(
       padding: EdgeInsets.all(widthPercentage(context, 2)),
@@ -64,13 +64,17 @@ class _TrimAndSpeedControlsState extends State<TrimAndSpeedControls> {
               '자르기',
               '${formatDuration(_startValue)} - ${formatDuration(_endValue)}',
               RangeSlider(
-                values: RangeValues(_startValue, _endValue),
-                min: 0,
-                max: maxDuration, // 안전한 max 값 설정
+                values: RangeValues(
+                  _startValue.clamp(0.0, maxDuration), // _startValue를 0과 maxDuration 사이로 제한
+                  _endValue.clamp(0.0, maxDuration),   // _endValue를 0과 maxDuration 사이로 제한
+                ),
+                min: 0.0,
+                max: maxDuration, // maxDuration은 동영상의 총 길이
                 onChanged: (RangeValues values) {
                   setState(() {
-                    _startValue = values.start;
-                    _endValue = values.end;
+                    // 클램핑을 통해 항상 min과 max 범위 내에 있도록 조정
+                    _startValue = values.start.clamp(0.0, maxDuration);
+                    _endValue = values.end.clamp(0.0, maxDuration);
                   });
                 },
               ),
@@ -104,9 +108,9 @@ class _TrimAndSpeedControlsState extends State<TrimAndSpeedControls> {
     );
   }
 
-  // formatDuration 함수는 그대로 사용
+  // 시간 표시 포맷 (밀리초 단위를 사용하더라도 포맷은 초 단위로 표시)
   String formatDuration(double seconds) {
-    final duration = Duration(seconds: seconds.toInt());
+    final duration = Duration(milliseconds: (seconds * 1000).toInt()); // 밀리초 단위로 변환
     String twoDigits(int n) => n.toString().padLeft(2, "0");
     final hours = twoDigits(duration.inHours);
     final minutes = twoDigits(duration.inMinutes.remainder(60));

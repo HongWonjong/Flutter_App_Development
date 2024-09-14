@@ -21,74 +21,60 @@ class MediaService {
     return ['jpg', 'jpeg', 'png', 'bmp', 'gif'].contains(extension);
   }
 
-  Future<String?> mergeMedia(List<File> mediaFiles) async {
+  // 이미지 파일을 비디오로 변환
+  Future<String?> _processImagesToVideo(List<File> imageFiles) async {
     final tempDir = await getTemporaryDirectory();
-    final videoPath = '${tempDir.path}/output_${DateTime.now().millisecondsSinceEpoch}.mp4';
+    final videoPath = '${tempDir.path}/image_to_video_${DateTime.now().millisecondsSinceEpoch}.mp4';
 
-    List<File> imageFiles = [];
-    List<File> videoFiles = [];
+    await FlutterQuickVideoEncoder.setup(
+      width: 1080,
+      height: 1920,
+      fps: 30,
+      videoBitrate: 5000000,
+      audioChannels: 2,
+      audioBitrate: 128000,
+      sampleRate: 44100,
+      profileLevel: ProfileLevel.highAutoLevel,
+      filepath: videoPath,
+    );
 
-    // Separate image and video files based on their extensions
-    for (File mediaFile in mediaFiles) {
-      if (_isImageFile(mediaFile)) {
-        imageFiles.add(mediaFile);
-      } else {
-        videoFiles.add(mediaFile);
-      }
+    for (File imageFile in imageFiles) {
+      await _imageProcessingService.processImage(imageFile);
     }
 
-    // Process images and convert them to video
-    if (imageFiles.isNotEmpty) {
-      await FlutterQuickVideoEncoder.setup(
-        width: 1080,
-        height: 1920,
-        fps: 30,
-        videoBitrate: 5000000,
-        audioChannels: 2,
-        audioBitrate: 128000,
-        sampleRate: 44100,
-        profileLevel: ProfileLevel.highAutoLevel,
-        filepath: videoPath,
-      );
-
-      for (File imageFile in imageFiles) {
-        await _imageProcessingService.processImage(imageFile);
-      }
-
-      await FlutterQuickVideoEncoder.finish();
-    }
-
+    await FlutterQuickVideoEncoder.finish();
     return videoPath;
   }
 
-  Future<String?> mergeAllVideos(List<File> mediaFiles) async {
-    // Separate image files and video files
-    List<File> imageFiles = [];
-    List<File> videoFiles = [];
+  // 이미지와 비디오를 순서대로 병합
+  Future<String?> mergeAllMedia(List<File> mediaFiles) async {
+    List<File> resultFiles = [];
+    final tempDir = await getTemporaryDirectory();
 
+    // 미디어 파일을 변환하면서 처리한 파일을 순서대로 resultFiles에 추가
     for (File mediaFile in mediaFiles) {
       if (_isImageFile(mediaFile)) {
-        imageFiles.add(mediaFile);
+        // 이미지일 경우 비디오로 변환 후 임시로 파일로 저장
+        String? imageVideoPath = await _processImagesToVideo([mediaFile]);
+        if (imageVideoPath != null) {
+          resultFiles.add(File(imageVideoPath));  // 변환된 비디오를 순서에 맞게 추가
+        }
       } else {
-        videoFiles.add(mediaFile);
+        // 비디오일 경우 그대로 추가
+        resultFiles.add(mediaFile);
       }
     }
 
-    // If there are images, merge them into a video
-    String? imageVideoPath;
-    if (imageFiles.isNotEmpty) {
-      imageVideoPath = await mergeMedia(imageFiles);
+    // 최종적으로 모든 비디오 파일을 병합
+    if (resultFiles.isNotEmpty) {
+      String mergedVideoPath = '${tempDir.path}/merged_video_${DateTime.now().millisecondsSinceEpoch}.mp4';
+      return await _videoMergingService.mergeAllVideos(resultFiles);
     }
 
-    // Add the resulting image video to the list of video files if it exists
-    if (imageVideoPath != null) {
-      videoFiles.add(File(imageVideoPath));
-    }
-
-    // Now merge all the video files together
-    return await _videoMergingService.mergeAllVideos(videoFiles);
+    return null;  // 병합할 파일이 없을 경우 null 반환
   }
 }
+
 
 
 

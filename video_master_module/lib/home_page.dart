@@ -26,7 +26,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // 미디어 병합 및 비디오 재생
   Future<void> _mergeMedia() async {
-    String? outputFilePath = await _mediaService.mergeMedia(_mediaFiles); // File을 mergeMedia에 전달
+    String? outputFilePath = await _mediaService.mergeAllMedia(_mediaFiles); // File을 mergeMedia에 전달
     if (outputFilePath != null) {
       _videoController = VideoPlayerController.file(File(outputFilePath))
         ..initialize().then((_) {
@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
 
     // 이미지 -> 동영상 변환
-    String? outputFilePath = await _mediaService.mergeMedia(_mediaFiles); // 이미지를 동영상으로 변환
+    String? outputFilePath = await _mediaService.mergeAllMedia(_mediaFiles); // 이미지를 동영상으로 변환
     Navigator.pop(context); // 변환이 완료되면 로딩 알림창 닫기
 
     if (outputFilePath != null) {
