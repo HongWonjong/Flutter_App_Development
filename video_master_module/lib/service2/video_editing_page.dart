@@ -27,7 +27,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
   double _endValue = 10;
   double _speedValue = 1.0;
   double _brightnessValue = 0.0;
-  double _contrastValue = 1.0;
+  double _contrastValue = 0.5; // 대비의 기본값은 0.5
   double _saturationValue = 1.0;
   String? _outputPath;
 

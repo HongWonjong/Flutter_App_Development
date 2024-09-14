@@ -46,17 +46,17 @@ class BrightnessContrastSaturationControl extends StatelessWidget {
                 ),
               ),
               TextButton(
-                onPressed: () => onPropertyChanged('대조'),
+                onPressed: () => onPropertyChanged('대비'),
                 style: TextButton.styleFrom(
-                  backgroundColor: selectedProperty == '대조'
+                  backgroundColor: selectedProperty == '대비'
                       ? Colors.deepPurpleAccent
                       : Colors.grey[800],
                 ),
                 child: Text(
-                  '대조',
+                  '대비',
                   style: TextStyle(
                     color: Colors.white,
-                    fontWeight: selectedProperty == '대조'
+                    fontWeight: selectedProperty == '대비'
                         ? FontWeight.bold
                         : FontWeight.normal,
                   ),
@@ -102,7 +102,7 @@ class BrightnessContrastSaturationControl extends StatelessWidget {
   double _getSliderValue() {
     if (selectedProperty == '밝기') {
       return brightnessValue;
-    } else if (selectedProperty == '대조') {
+    } else if (selectedProperty == '대비') {
       return contrastValue;
     } else {
       return saturationValue;
@@ -111,8 +111,8 @@ class BrightnessContrastSaturationControl extends StatelessWidget {
 
   // 각 속성에 따른 슬라이더의 최소값 설정
   double _getSliderMin() {
-    if (selectedProperty == '대조') {
-      return -1.0; // FFmpeg 대조 최소값 설정
+    if (selectedProperty == '대비') {
+      return -1.0; // FFmpeg 대비 최소값 설정
     } else if (selectedProperty == '채도') {
       return 0.0;
     } else {
@@ -124,8 +124,8 @@ class BrightnessContrastSaturationControl extends StatelessWidget {
   double _getSliderMax() {
     if (selectedProperty == '밝기') {
       return 1.0; // 밝기의 최대값은 1.0으로 제한
-    } else if (selectedProperty == '대조') {
-      return 1.0; // FFmpeg 대조 최대값 설정
+    } else if (selectedProperty == '대비') {
+      return 1.0; // FFmpeg 대비 최대값 설정
     } else {
       return 2.0; // 채도의 최대값은 2.0
     }
@@ -135,8 +135,8 @@ class BrightnessContrastSaturationControl extends StatelessWidget {
   int _getSliderDivisions() {
     if (selectedProperty == '밝기') {
       return 40; // 밝기 슬라이더는 소수점 두 자리까지
-    } else if (selectedProperty == '대조') {
-      return 20; // 대조 슬라이더는 소수점 첫째 자리까지
+    } else if (selectedProperty == '대비') {
+      return 20; // 대비 슬라이더는 소수점 첫째 자리까지
     } else {
       return 30; // 채도는 기본값
     }
@@ -144,8 +144,8 @@ class BrightnessContrastSaturationControl extends StatelessWidget {
 
   // 슬라이더 레이블 형식을 속성별로 다르게 설정
   String _getSliderLabel(double value) {
-    if (selectedProperty == '대조') {
-      return value.toStringAsFixed(1); // 대조는 소수점 첫째 자리
+    if (selectedProperty == '대비') {
+      return value.toStringAsFixed(1); // 대비는 소수점 첫째 자리
     } else {
       return value.toStringAsFixed(2); // 밝기와 채도는 소수점 두 자리
     }
