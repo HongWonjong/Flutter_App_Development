@@ -7,6 +7,8 @@ import 'package:video_player/video_player.dart';
 import '../edited_video_screen.dart';
 import 'package:video_master_module/mq_size.dart';
 import 'components/brightness_contrast_saturation_control.dart';
+import 'components/edit_button.dart';
+import 'components/trim_and_speed_control.dart';
 
 class VideoEditingPage extends StatefulWidget {
   final String videoPath;
@@ -183,7 +185,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _buildSaveButton(context),
+                      EditButton(applyChangesAndSaveVideo: _applyChangesAndSaveVideo),
                     ],
                   ),
                 ],
@@ -225,7 +227,12 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // 트림 및 속도 컨트롤
-                    _buildTrimAndSpeedControls(context),
+                    TrimAndSpeedControls(
+                        speedValue: _speedValue,
+                        buildControlRow: _buildControlRow,
+                        controller: _controller,
+                        startValue: _startValue,
+                        endValue: _endValue),
                     // 밝기/대비/채도 컨트롤
                     BrightnessContrastSaturationControl(
                       selectedProperty: _selectedProperty,
@@ -338,89 +345,11 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     );
   }
 
-  Widget _buildTrimAndSpeedControls(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(widthPercentage(context, 2)),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: _buildControlRow(
-              '자르기',
-              '${formatDuration(_startValue)} - ${formatDuration(_endValue)}',
-              RangeSlider(
-                values: RangeValues(_startValue, _endValue),
-                min: 0,
-                max: _controller?.value.duration.inSeconds.toDouble() ?? 1,
-                onChanged: (RangeValues values) {
-                  setState(() {
-                    _startValue = values.start;
-                    _endValue = values.end;
-                  });
-                },
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: _buildControlRow(
-              '속도',
-              '${_speedValue.toStringAsFixed(1)}x',
-              Slider(
-                value: _speedValue,
-                min: 0.5,
-                max: 2.0,
-                divisions: 15,
-                label: "${_speedValue.toStringAsFixed(1)}x",
-                onChanged: (value) {
-                  setState(() {
-                    _speedValue = value;
-                  });
-                  if (_controller != null && _controller!.value.isInitialized) {
-                    _controller!.setPlaybackSpeed(_speedValue);
-                  }
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSaveButton(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(widthPercentage(context, 5)),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.all(heightPercentage(context, 1)),
-          backgroundColor: Colors.deepPurpleAccent.withOpacity(0.4),
-        ),
-        onPressed: _applyChangesAndSaveVideo,
-        child: Text(
-          '편집 & 저장',
-          style: TextStyle(
-            fontSize: fontSizePercentage(context, MQSize.fontSize6),
-            color: Colors.white,
-          ),
-        ),
-      ),
-    );
-  }
 
   @override
   void dispose() {
     _controller?.dispose();
     super.dispose();
-  }
-
-  String formatDuration(double seconds) {
-    final duration = Duration(seconds: seconds.toInt());
-    String twoDigits(int n) => n.toString().padLeft(2, "0");
-    final hours = twoDigits(duration.inHours);
-    final minutes = twoDigits(duration.inMinutes.remainder(60));
-    final secs = twoDigits(duration.inSeconds.remainder(60));
-    return "$hours:$minutes:$secs";
   }
 
   Widget _buildControlRow(String label, String value, Widget controlWidget) {
