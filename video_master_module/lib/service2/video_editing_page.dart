@@ -57,15 +57,36 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
       ..initialize().then((_) {
         setState(() {
           _endValue = _controller!.value.duration.inSeconds.toDouble();
-          _trimmedEndValue = _endValue; // 트리밍된 엔드값도 초기화
+
+          // 비디오가 로드된 후 trimmed_startValue로 이동
+          _controller!.seekTo(Duration(seconds: _trimmedStartValue.toInt()));
+
+          // 비디오 플레이어가 매 프레임 업데이트 될 때마다 실행
+          _controller!.addListener(() {
+            final position = _controller!.value.position;
+            final endDuration = Duration(seconds: _trimmedEndValue.toInt());
+
+            // 비디오가 trimmed_endValue에 도달하면 멈춤
+            if (position >= endDuration) {
+              _controller!.pause();
+            }
+          });
         });
       });
   }
-  // 트리밍 값이 변경될 때마다 업데이트
+
+
+
+  // 트리밍된 값 콜백 처리
   void _onTrimChanged(double start, double end) {
     setState(() {
       _trimmedStartValue = start;
       _trimmedEndValue = end;
+
+      // 트리밍된 시작 값으로 비디오 이동
+      if (_controller != null && _controller!.value.isInitialized) {
+        _controller!.seekTo(Duration(seconds: _trimmedStartValue.toInt()));
+      }
     });
   }
   // 속도 변경된 값 콜백 처리
