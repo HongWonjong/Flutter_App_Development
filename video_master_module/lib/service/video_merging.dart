@@ -51,13 +51,13 @@ class VideoMergingService {
     }
   }
 
-// Add silent audio track to a video file if it doesn't have an audio stream
+  // Add silent audio track to a video file if it doesn't have an audio stream
   Future<String?> _addSilentAudio(File videoFile) async {
     final outputDir = await getTemporaryDirectory();
     final outputFilePath = '${outputDir.path}/silent_${videoFile.path.split('/').last}';
 
     // FFmpeg command to add silent audio to a video
-    String command = '-i ${videoFile.path} -f lavfi -t 1 -i anullsrc=r=44100:cl=stereo '
+    String command = '-i ${videoFile.path} -f lavfi -t 3 -i anullsrc=r=44100:cl=stereo '
         '-shortest -c:v copy -c:a aac -strict experimental $outputFilePath';
 
     print('Running FFmpeg command to add silent audio: $command');
@@ -82,7 +82,6 @@ class VideoMergingService {
     }
   }
 
-// Merge all videos into a single (H.264) encoded file
   Future<String?> mergeAllVideos(List<File> videoFiles) async {
     List<String> h264VideoPaths = [];
 
@@ -90,13 +89,14 @@ class VideoMergingService {
     for (File videoFile in videoFiles) {
       String? h264VideoPath = await _convertToH264(videoFile);
 
-      // If the video has no audio, add silent audio track
+      // If the video already has audio, skip adding silent audio
       bool hasAudio = await _checkIfVideoHasAudio(h264VideoPath);
       if (!hasAudio) {
         h264VideoPath = await _addSilentAudio(File(h264VideoPath!));
       }
 
       if (h264VideoPath != null) {
+        // Add converted video only if it's not already processed
         h264VideoPaths.add(h264VideoPath);
       }
     }
@@ -107,7 +107,7 @@ class VideoMergingService {
 
       // FFmpeg command to concatenate all (H.264) videos
       String inputs = h264VideoPaths.map((path) => '-i $path').join(' ');
-      String command = '$inputs -filter_complex "concat=n=${h264VideoPaths.length}:v=1:a=1" -c:v h264_videotoolbox -y $outputPath';
+      String command = '$inputs -filter_complex "concat=n=${h264VideoPaths.length}:v=1:a=1" -c:v ${getCodec()} -y $outputPath';
 
       print('Running FFmpeg command for merging H.264 videos: $command');
 
@@ -133,7 +133,8 @@ class VideoMergingService {
     return null;
   }
 
-// Function to check if video has audio
+
+  // Function to check if video has audio
   Future<bool> _checkIfVideoHasAudio(String? videoPath) async {
     if (videoPath == null) return false;
 
@@ -146,9 +147,8 @@ class VideoMergingService {
     }
     return false; // No audio stream found
   }
-
-
 }
+
 
 
 

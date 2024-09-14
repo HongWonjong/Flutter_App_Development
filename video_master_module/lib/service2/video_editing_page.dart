@@ -31,6 +31,10 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
   double _saturationValue = 1.0;
   String? _outputPath;
 
+  // 트리밍된 값
+  double _trimmedStartValue = 0.0;
+  double _trimmedEndValue = 10.0;
+
   // 드로어와 아이콘 상태를 한꺼번에 관리하는 Map
   Map<String, bool> drawerState = {
     'isFirstDrawerOpen': false,
@@ -53,15 +57,22 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
       ..initialize().then((_) {
         setState(() {
           _endValue = _controller!.value.duration.inSeconds.toDouble();
+          _trimmedEndValue = _endValue; // 트리밍된 엔드값도 초기화
         });
       });
   }
+  // 트리밍 값이 변경될 때마다 업데이트
+  void _onTrimChanged(double start, double end) {
+    setState(() {
+      _trimmedStartValue = start;
+      _trimmedEndValue = end;
+    });
+  }
 
   Future<void> _applyChangesAndSaveVideo() async {
-    // "인코딩 중..." 알림창 띄우기
     showDialog(
       context: context,
-      barrierDismissible: false, // 변환 중엔 창을 닫지 못하도록 설정
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return const AlertDialog(
           content: Row(
@@ -78,17 +89,21 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     final tempDir = await getTemporaryDirectory();
     final outputPath = '${tempDir.path}/output_${DateTime.now().millisecondsSinceEpoch}.mp4';
 
-    String command = '-ss $_startValue -to $_endValue ' // 트림 적용
+    // 트리밍 값 사용
+    String command = '-ss $_trimmedStartValue '
         '-i ${widget.videoPath} '
+        '-to $_trimmedEndValue '
         '-vf "curves=all=\'0/0 0.5/${_contrastValue.toStringAsFixed(2)} 1/1\','
         'colorbalance=rs=${_brightnessValue.toStringAsFixed(2)}:gs=${_brightnessValue.toStringAsFixed(2)}:bs=${_brightnessValue.toStringAsFixed(2)},'
         'hue=s=${_saturationValue.toStringAsFixed(2)},'
-        'setpts=${1 / _speedValue}*PTS" ' // 배속 적용
+        'setpts=${1 / _speedValue}*PTS" '
         '"$outputPath"';
+
+    print('Running FFmpeg command: $command');
 
     await FFmpegKit.execute(command).then((session) async {
       final returnCode = await session.getReturnCode();
-      Navigator.of(context).pop(); // 로딩창 닫기
+      Navigator.of(context).pop();
 
       if (ReturnCode.isSuccess(returnCode)) {
         setState(() {
@@ -96,13 +111,14 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
         });
         _playEditedVideo();
       } else {
-        // 인코딩 실패 시 에러 처리
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('인코딩 실패. 다시 시도해주세요.')),
         );
       }
     });
   }
+
+
 
   void _playEditedVideo() {
     if (_outputPath != null) {
@@ -245,6 +261,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
                       controller: _controller,
                       startValue: _startValue,
                       endValue: _endValue,
+                      onTrimChanged: _onTrimChanged,
                     ),
                     BrightnessContrastSaturationControl(
                       selectedProperty: _selectedProperty,

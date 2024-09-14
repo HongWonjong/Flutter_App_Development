@@ -67,7 +67,6 @@ class MediaService {
 
     // 최종적으로 모든 비디오 파일을 병합
     if (resultFiles.isNotEmpty) {
-      String mergedVideoPath = '${tempDir.path}/merged_video_${DateTime.now().millisecondsSinceEpoch}.mp4';
       return await _videoMergingService.mergeAllVideos(resultFiles);
     }
 

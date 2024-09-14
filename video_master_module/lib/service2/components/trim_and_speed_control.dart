@@ -9,12 +9,16 @@ class TrimAndSpeedControls extends StatefulWidget {
   final Widget Function(String, String, Widget) buildControlRow;
   final VideoPlayerController? controller;
 
+  // 부모로 트리밍된 값을 전달하는 콜백 함수
+  final Function(double, double) onTrimChanged;
+
   const TrimAndSpeedControls({
     required this.speedValue,
     required this.buildControlRow,
     required this.controller,
     required this.startValue,
     required this.endValue,
+    required this.onTrimChanged,  // 콜백 추가
   });
 
   @override
@@ -23,36 +27,43 @@ class TrimAndSpeedControls extends StatefulWidget {
 
 class _TrimAndSpeedControlsState extends State<TrimAndSpeedControls> {
   late double _speedValue;
-  late double _startValue;
-  late double _endValue;
+  late double _trimmedStartValue; // 트리밍된 시작값
+  late double _trimmedEndValue;   // 트리밍된 끝값
+  double maxTrimDuration = 10.0;
+  bool _isTrimInitialized = false;
 
   @override
   void initState() {
     super.initState();
     _speedValue = widget.speedValue;
-    _startValue = widget.startValue;
-    _endValue = widget.endValue;
+    _trimmedStartValue = widget.startValue;
+    _trimmedEndValue = widget.endValue;
 
-    // VideoPlayerController가 초기화된 후 setState를 통해 duration을 가져옴
-    widget.controller?.addListener(() {
-      if (widget.controller!.value.isInitialized) {
-        setState(() {
-          // 값을 업데이트해 max 값을 안전하게 가져옴 (밀리초 단위로 변환)
-          double maxDuration = widget.controller!.value.duration.inMilliseconds.toDouble() / 1000 ?? 1.0;
-          _startValue = _startValue.clamp(0.0, maxDuration);
-          _endValue = _endValue.clamp(0.0, maxDuration);
-        });
-      }
-    });
+    if (widget.controller != null && widget.controller!.value.isInitialized) {
+      double videoDuration = widget.controller!.value.duration.inMilliseconds.toDouble() / 1000;
+      maxTrimDuration = videoDuration > 0 ? videoDuration : 10.0;
+      _trimmedEndValue = maxTrimDuration;
+      _isTrimInitialized = true;
+    } else {
+      maxTrimDuration = widget.endValue;
+    }
+  }
+
+  @override
+  void didUpdateWidget(TrimAndSpeedControls oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (!_isTrimInitialized && widget.controller != null && widget.controller!.value.isInitialized) {
+      setState(() {
+        maxTrimDuration = widget.controller!.value.duration.inMilliseconds.toDouble() / 1000;
+        _trimmedEndValue = maxTrimDuration;
+        _isTrimInitialized = true;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // VideoPlayerController가 초기화된 후 duration 값을 사용 (밀리초 단위로 초로 변환)
-    double maxDuration = widget.controller?.value.isInitialized == true
-        ? widget.controller!.value.duration.inMilliseconds.toDouble() / 1000
-        : 1.0;
-
     return Padding(
       padding: EdgeInsets.all(widthPercentage(context, 2)),
       child: Column(
@@ -62,20 +73,21 @@ class _TrimAndSpeedControlsState extends State<TrimAndSpeedControls> {
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: widget.buildControlRow(
               '자르기',
-              '${formatDuration(_startValue)} - ${formatDuration(_endValue)}',
+              '${formatDuration(_trimmedStartValue)} - ${formatDuration(_trimmedEndValue)}',
               RangeSlider(
                 values: RangeValues(
-                  _startValue.clamp(0.0, maxDuration), // _startValue를 0과 maxDuration 사이로 제한
-                  _endValue.clamp(0.0, maxDuration),   // _endValue를 0과 maxDuration 사이로 제한
+                  _trimmedStartValue.clamp(0.0, maxTrimDuration),
+                  _trimmedEndValue.clamp(0.0, maxTrimDuration),
                 ),
                 min: 0.0,
-                max: maxDuration, // maxDuration은 동영상의 총 길이
+                max: maxTrimDuration,
                 onChanged: (RangeValues values) {
                   setState(() {
-                    // 클램핑을 통해 항상 min과 max 범위 내에 있도록 조정
-                    _startValue = values.start.clamp(0.0, maxDuration);
-                    _endValue = values.end.clamp(0.0, maxDuration);
+                    _trimmedStartValue = values.start.clamp(0.0, maxTrimDuration);
+                    _trimmedEndValue = values.end.clamp(0.0, maxTrimDuration);
                   });
+                  // 변경된 값을 부모로 전달
+                  widget.onTrimChanged(_trimmedStartValue, _trimmedEndValue);
                 },
               ),
             ),
@@ -108,9 +120,9 @@ class _TrimAndSpeedControlsState extends State<TrimAndSpeedControls> {
     );
   }
 
-  // 시간 표시 포맷 (밀리초 단위를 사용하더라도 포맷은 초 단위로 표시)
+  // 시간 표시 포맷
   String formatDuration(double seconds) {
-    final duration = Duration(milliseconds: (seconds * 1000).toInt()); // 밀리초 단위로 변환
+    final duration = Duration(milliseconds: (seconds * 1000).toInt());
     String twoDigits(int n) => n.toString().padLeft(2, "0");
     final hours = twoDigits(duration.inHours);
     final minutes = twoDigits(duration.inMinutes.remainder(60));
@@ -118,5 +130,10 @@ class _TrimAndSpeedControlsState extends State<TrimAndSpeedControls> {
     return "$hours:$minutes:$secs";
   }
 }
+
+
+
+
+
 
 
