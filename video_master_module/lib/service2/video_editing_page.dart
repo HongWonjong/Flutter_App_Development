@@ -9,7 +9,7 @@ import 'package:video_master_module/mq_size.dart';
 import 'components/brightness_contrast_saturation_control.dart';
 import 'components/edit_button.dart';
 import 'components/trim_and_speed_control.dart';
-import 'components/drawer_with_toggle.dart';
+
 
 
 class VideoEditingPage extends StatefulWidget {
@@ -27,17 +27,17 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
   double _endValue = 10;
   double _speedValue = 1.0;
   double _brightnessValue = 0.0;
-  double _contrastValue = 0.5; // 대비의 기본값은 0.5
+  double _contrastValue = 0.5;
   double _saturationValue = 1.0;
   String? _outputPath;
 
-  // 드로어 열기/닫기 상태 (각 드로어가 화면 전체를 차지하도록 설정)
-  bool _isFirstDrawerOpen = false; // 첫 번째 드로어 상태
-  bool _isSecondDrawerOpen = false; // 두 번째 드로어 상태
-
-  // 아이콘 표시 여부 상태
-  bool _isFirstIconVisible = true;
-  bool _isSecondIconVisible = true;
+  // 드로어와 아이콘 상태를 한꺼번에 관리하는 Map
+  Map<String, bool> drawerState = {
+    'isFirstDrawerOpen': false,
+    'isSecondDrawerOpen': false,
+    'isFirstIconVisible': true,
+    'isSecondIconVisible': true,
+  };
 
   String _selectedProperty = '밝기'; // Default selected property
 
@@ -143,6 +143,26 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     }
   }
 
+  void _toggleFirstDrawer() {
+    setState(() {
+      drawerState['isFirstDrawerOpen'] = !(drawerState['isFirstDrawerOpen']!);
+      drawerState['isSecondIconVisible'] = !drawerState['isFirstDrawerOpen']!;
+      if (drawerState['isFirstDrawerOpen']!) {
+        drawerState['isSecondDrawerOpen'] = false;
+      }
+    });
+  }
+
+  void _toggleSecondDrawer() {
+    setState(() {
+      drawerState['isSecondDrawerOpen'] = !(drawerState['isSecondDrawerOpen']!);
+      drawerState['isFirstIconVisible'] = !drawerState['isSecondDrawerOpen']!;
+      if (drawerState['isSecondDrawerOpen']!) {
+        drawerState['isFirstDrawerOpen'] = false;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -159,7 +179,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // 비디오 플레이어 위치 설정
+          // 비디오 플레이어 영역
           Center(
             child: _controller != null && _controller!.value.isInitialized
                 ? GestureDetector(
@@ -170,17 +190,17 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(
-                        width: widthPercentage(context, 100),  // 원하는 가로 크기
-                        height: heightPercentage(context, 75), // 원하는 세로 크기
+                        width: widthPercentage(context, 100),
+                        height: heightPercentage(context, 75),
                         child: Container(
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: Colors.white.withOpacity(0.4), // 흰색 경계선
-                              width: 2.0, // 경계선 두께
+                              color: Colors.white.withOpacity(0.4),
+                              width: 2.0,
                             ),
                           ),
                           child: AspectRatio(
-                            aspectRatio: _controller!.value.aspectRatio,  // 원본 비율 유지
+                            aspectRatio: _controller!.value.aspectRatio,
                             child: VideoPlayer(_controller!),
                           ),
                         ),
@@ -196,34 +216,22 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
                 ],
               ),
             )
-                : Center(
-              child: SizedBox(
-                width: widthPercentage(context, 10),
-                height: widthPercentage(context, 10),
-                child: const CircularProgressIndicator(),
-              ),
-            ),
+                : const CircularProgressIndicator(),
           ),
 
           // 첫 번째 드로어
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
-            left: _isFirstDrawerOpen ? 0 : -widthPercentage(context, 80), // 왼쪽에서 열리도록 설정
+            left: drawerState['isFirstDrawerOpen']! ? 0 : -widthPercentage(context, 80),
             top: 0,
-            height: MediaQuery.of(context).size.height, // 전체 화면 차지
-            width: widthPercentage(context, 80),  // 드로어 너비
+            height: MediaQuery.of(context).size.height,
+            width: widthPercentage(context, 80),
             child: GestureDetector(
               onHorizontalDragUpdate: (details) {
-                if (details.delta.dx > 0 && !_isFirstDrawerOpen) {
-                  setState(() {
-                    _isFirstDrawerOpen = true;
-                    _isSecondIconVisible = false; // 첫 번째 드로어가 열리면 두 번째 아이콘 숨김
-                  });
-                } else if (details.delta.dx < 0 && _isFirstDrawerOpen) {
-                  setState(() {
-                    _isFirstDrawerOpen = false;
-                    _isSecondIconVisible = true; // 첫 번째 드로어가 닫히면 두 번째 아이콘 표시
-                  });
+                if (details.delta.dx > 0 && !drawerState['isFirstDrawerOpen']!) {
+                  _toggleFirstDrawer();
+                } else if (details.delta.dx < 0 && drawerState['isFirstDrawerOpen']!) {
+                  _toggleFirstDrawer();
                 }
               },
               child: Container(
@@ -231,14 +239,13 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // 트림 및 속도 컨트롤
                     TrimAndSpeedControls(
-                        speedValue: _speedValue,
-                        buildControlRow: _buildControlRow,
-                        controller: _controller,
-                        startValue: _startValue,
-                        endValue: _endValue),
-                    // 밝기/대비/채도 컨트롤
+                      speedValue: _speedValue,
+                      buildControlRow: _buildControlRow,
+                      controller: _controller,
+                      startValue: _startValue,
+                      endValue: _endValue,
+                    ),
                     BrightnessContrastSaturationControl(
                       selectedProperty: _selectedProperty,
                       brightnessValue: _brightnessValue,
@@ -253,30 +260,24 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
             ),
           ),
 
-          // 두 번째 드로어 (세로로 배치됨)
+          // 두 번째 드로어
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
-            left: _isSecondDrawerOpen ? 0 : -widthPercentage(context, 80), // 첫 번째 드로어와 같은 왼쪽에서 열림
-            top: 0, // 화면 상단부터 시작
-            height: MediaQuery.of(context).size.height, // 전체 화면 차지
-            width: widthPercentage(context, 80),  // 드로어 너비
+            left: drawerState['isSecondDrawerOpen']! ? 0 : -widthPercentage(context, 80),
+            top: 0,
+            height: MediaQuery.of(context).size.height,
+            width: widthPercentage(context, 80),
             child: GestureDetector(
               onHorizontalDragUpdate: (details) {
-                if (details.delta.dx > 0 && !_isSecondDrawerOpen) {
-                  setState(() {
-                    _isSecondDrawerOpen = true;
-                    _isFirstIconVisible = false; // 두 번째 드로어가 열리면 첫 번째 아이콘 숨김
-                  });
-                } else if (details.delta.dx < 0 && _isSecondDrawerOpen) {
-                  setState(() {
-                    _isSecondDrawerOpen = false;
-                    _isFirstIconVisible = true; // 두 번째 드로어가 닫히면 첫 번째 아이콘 표시
-                  });
+                if (details.delta.dx > 0 && !drawerState['isSecondDrawerOpen']!) {
+                  _toggleSecondDrawer();
+                } else if (details.delta.dx < 0 && drawerState['isSecondDrawerOpen']!) {
+                  _toggleSecondDrawer();
                 }
               },
               child: Container(
                 color: Colors.black.withOpacity(0.8),
-                child: Center(
+                child: const Center(
                   child: Text(
                     '추가 기능',
                     style: TextStyle(color: Colors.white, fontSize: 20),
@@ -287,27 +288,22 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
           ),
 
           // 첫 번째 드로어 토글 버튼
-          if (_isFirstIconVisible) // 첫 번째 드로어가 닫혀있을 때만 표시
+          if (drawerState['isFirstIconVisible']!)
             Positioned(
-              left: _isFirstDrawerOpen ? widthPercentage(context, 80) : widthPercentage(context, 2),
+              left: drawerState['isFirstDrawerOpen']! ? widthPercentage(context, 80) : widthPercentage(context, 2),
               top: heightPercentage(context, 5),
               child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _isFirstDrawerOpen = !_isFirstDrawerOpen;
-                    _isSecondIconVisible = !_isFirstDrawerOpen; // 첫 번째 드로어가 열리면 두 번째 아이콘 숨김
-                  });
-                },
+                onTap: _toggleFirstDrawer,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: _isFirstDrawerOpen
+                    color: drawerState['isFirstDrawerOpen']!
                         ? Colors.transparent
                         : Colors.deepPurpleAccent.withOpacity(0.4),
                     shape: BoxShape.circle,
                   ),
                   padding: EdgeInsets.all(widthPercentage(context, 2)),
                   child: Icon(
-                    _isFirstDrawerOpen ? Icons.arrow_back_ios : Icons.cut,
+                    drawerState['isFirstDrawerOpen']! ? Icons.arrow_back_ios : Icons.cut,
                     color: Colors.white,
                     size: widthPercentage(context, 8),
                   ),
@@ -316,29 +312,22 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
             ),
 
           // 두 번째 드로어 토글 버튼
-          if (_isSecondIconVisible) // 두 번째 드로어가 닫혀있을 때만 표시
+          if (drawerState['isSecondIconVisible']!)
             Positioned(
-              left: _isSecondDrawerOpen
-                  ? widthPercentage(context, 80)
-                  : widthPercentage(context, 2), // 첫 번째 드로어와 같은 위치
-              top: heightPercentage(context, 15), // 두 번째 드로어는 아래쪽에 배치
+              left: drawerState['isSecondDrawerOpen']! ? widthPercentage(context, 80) : widthPercentage(context, 2),
+              top: heightPercentage(context, 15),
               child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _isSecondDrawerOpen = !_isSecondDrawerOpen;
-                    _isFirstIconVisible = !_isSecondDrawerOpen; // 두 번째 드로어가 열리면 첫 번째 아이콘 숨김
-                  });
-                },
+                onTap: _toggleSecondDrawer,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: _isSecondDrawerOpen
+                    color: drawerState['isSecondDrawerOpen']!
                         ? Colors.transparent
                         : Colors.deepPurpleAccent.withOpacity(0.4),
                     shape: BoxShape.circle,
                   ),
                   padding: EdgeInsets.all(widthPercentage(context, 2)),
                   child: Icon(
-                    _isSecondDrawerOpen ? Icons.arrow_back_ios : Icons.text_fields,
+                    drawerState['isSecondDrawerOpen']! ? Icons.arrow_back_ios : Icons.text_fields,
                     color: Colors.white,
                     size: widthPercentage(context, 8),
                   ),
@@ -349,7 +338,6 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
       ),
     );
   }
-
 
   @override
   void dispose() {
@@ -386,6 +374,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     );
   }
 }
+
 
 
 
