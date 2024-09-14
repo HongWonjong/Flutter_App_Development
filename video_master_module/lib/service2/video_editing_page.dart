@@ -9,6 +9,8 @@ import 'package:video_master_module/mq_size.dart';
 import 'components/brightness_contrast_saturation_control.dart';
 import 'components/edit_button.dart';
 import 'components/trim_and_speed_control.dart';
+import 'components/drawer_with_toggle.dart';
+
 
 class VideoEditingPage extends StatefulWidget {
   final String videoPath;
@@ -169,17 +171,20 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
                     children: [
                       SizedBox(
                         width: widthPercentage(context, 100),  // 원하는 가로 크기
-                        height: heightPercentage(context, 70), // 원하는 세로 크기
-                        child: FittedBox(
-                          fit: BoxFit.cover,  // 화면에 맞게 충분히 확대 (원본 비율 유지)
-                          child: SizedBox(
-                            width: _controller!.value.size.width,
-                            height: _controller!.value.size.height,
+                        height: heightPercentage(context, 75), // 원하는 세로 크기
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.4), // 흰색 경계선
+                              width: 2.0, // 경계선 두께
+                            ),
+                          ),
+                          child: AspectRatio(
+                            aspectRatio: _controller!.value.aspectRatio,  // 원본 비율 유지
                             child: VideoPlayer(_controller!),
                           ),
                         ),
                       ),
-
                     ],
                   ),
                   Row(
