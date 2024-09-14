@@ -26,9 +26,15 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
   double _contrastValue = 1.0;
   double _saturationValue = 1.0;
   String? _outputPath;
-  bool _isDrawerOpen = false;
 
-  // Add this
+  // 드로어 열기/닫기 상태 (각 드로어가 화면 전체를 차지하도록 설정)
+  bool _isFirstDrawerOpen = false; // 첫 번째 드로어 상태
+  bool _isSecondDrawerOpen = false; // 두 번째 드로어 상태
+
+  // 아이콘 표시 여부 상태
+  bool _isFirstIconVisible = true;
+  bool _isSecondIconVisible = true;
+
   String _selectedProperty = '밝기'; // Default selected property
 
   @override
@@ -47,8 +53,24 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
       });
   }
 
-
   Future<void> _applyChangesAndSaveVideo() async {
+    // "인코딩 중..." 알림창 띄우기
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 변환 중엔 창을 닫지 못하도록 설정
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text("인코딩 중..."),
+            ],
+          ),
+        );
+      },
+    );
+
     final tempDir = await getTemporaryDirectory();
     final outputPath = '${tempDir.path}/output_${DateTime.now().millisecondsSinceEpoch}.mp4';
 
@@ -62,11 +84,18 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
 
     await FFmpegKit.execute(command).then((session) async {
       final returnCode = await session.getReturnCode();
+      Navigator.of(context).pop(); // 로딩창 닫기
+
       if (ReturnCode.isSuccess(returnCode)) {
         setState(() {
           _outputPath = outputPath;
         });
         _playEditedVideo();
+      } else {
+        // 인코딩 실패 시 에러 처리
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('인코딩 실패. 다시 시도해주세요.')),
+        );
       }
     });
   }
@@ -81,6 +110,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
       );
     }
   }
+
   void _onPropertyChanged(String property) {
     setState(() {
       _selectedProperty = property;
@@ -98,7 +128,6 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
       }
     });
   }
-
 
   void _togglePlayPause() {
     if (_controller != null) {
@@ -131,13 +160,33 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
             child: _controller != null && _controller!.value.isInitialized
                 ? GestureDetector(
               onTap: _togglePlayPause,
-              child: Container(
-                width: widthPercentage(context, 100),  // 원하는 크기로 설정
-                height: heightPercentage(context, 80), // 원하는 크기로 설정
-                child: AspectRatio(
-                  aspectRatio: _controller!.value.aspectRatio,
-                  child: VideoPlayer(_controller!),
-                ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: widthPercentage(context, 100),  // 원하는 가로 크기
+                        height: heightPercentage(context, 70), // 원하는 세로 크기
+                        child: FittedBox(
+                          fit: BoxFit.cover,  // 화면에 맞게 충분히 확대 (원본 비율 유지)
+                          child: SizedBox(
+                            width: _controller!.value.size.width,
+                            height: _controller!.value.size.height,
+                            child: VideoPlayer(_controller!),
+                          ),
+                        ),
+                      ),
+
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildSaveButton(context),
+                    ],
+                  ),
+                ],
               ),
             )
                 : Center(
@@ -149,22 +198,24 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
             ),
           ),
 
-          // 슬라이딩 서랍을 위한 AnimatedPositioned 위젯
+          // 첫 번째 드로어
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
-            left: _isDrawerOpen ? 0 : -widthPercentage(context, 80),
+            left: _isFirstDrawerOpen ? 0 : -widthPercentage(context, 80), // 왼쪽에서 열리도록 설정
             top: 0,
-            bottom: 0,
-            width: widthPercentage(context, 80),
+            height: MediaQuery.of(context).size.height, // 전체 화면 차지
+            width: widthPercentage(context, 80),  // 드로어 너비
             child: GestureDetector(
               onHorizontalDragUpdate: (details) {
-                if (details.delta.dx > 0 && !_isDrawerOpen) {
+                if (details.delta.dx > 0 && !_isFirstDrawerOpen) {
                   setState(() {
-                    _isDrawerOpen = true;
+                    _isFirstDrawerOpen = true;
+                    _isSecondIconVisible = false; // 첫 번째 드로어가 열리면 두 번째 아이콘 숨김
                   });
-                } else if (details.delta.dx < 0 && _isDrawerOpen) {
+                } else if (details.delta.dx < 0 && _isFirstDrawerOpen) {
                   setState(() {
-                    _isDrawerOpen = false;
+                    _isFirstDrawerOpen = false;
+                    _isSecondIconVisible = true; // 첫 번째 드로어가 닫히면 두 번째 아이콘 표시
                   });
                 }
               },
@@ -177,53 +228,115 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
                     _buildTrimAndSpeedControls(context),
                     // 밝기/대비/채도 컨트롤
                     BrightnessContrastSaturationControl(
-                        selectedProperty: _selectedProperty,
-                        brightnessValue: _brightnessValue,
-                        contrastValue: _contrastValue,
-                        saturationValue: _saturationValue,
-                        onPropertyChanged: _onPropertyChanged,
-                        onSliderChanged: _onSliderChanged,
+                      selectedProperty: _selectedProperty,
+                      brightnessValue: _brightnessValue,
+                      contrastValue: _contrastValue,
+                      saturationValue: _saturationValue,
+                      onPropertyChanged: _onPropertyChanged,
+                      onSliderChanged: _onSliderChanged,
                     ),
-                    // 저장 버튼
-                    _buildSaveButton(context),
                   ],
                 ),
               ),
             ),
           ),
 
-          // 드로어 토글 버튼
-          Positioned(
-            left: _isDrawerOpen ? widthPercentage(context, 80) : widthPercentage(context, 2),
-            top: heightPercentage(context, 5),
+          // 두 번째 드로어 (세로로 배치됨)
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 300),
+            left: _isSecondDrawerOpen ? 0 : -widthPercentage(context, 80), // 첫 번째 드로어와 같은 왼쪽에서 열림
+            top: 0, // 화면 상단부터 시작
+            height: MediaQuery.of(context).size.height, // 전체 화면 차지
+            width: widthPercentage(context, 80),  // 드로어 너비
             child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  _isDrawerOpen = !_isDrawerOpen;
-                });
+              onHorizontalDragUpdate: (details) {
+                if (details.delta.dx > 0 && !_isSecondDrawerOpen) {
+                  setState(() {
+                    _isSecondDrawerOpen = true;
+                    _isFirstIconVisible = false; // 두 번째 드로어가 열리면 첫 번째 아이콘 숨김
+                  });
+                } else if (details.delta.dx < 0 && _isSecondDrawerOpen) {
+                  setState(() {
+                    _isSecondDrawerOpen = false;
+                    _isFirstIconVisible = true; // 두 번째 드로어가 닫히면 첫 번째 아이콘 표시
+                  });
+                }
               },
               child: Container(
-                decoration: BoxDecoration(
-                  color: _isDrawerOpen
-                      ? Colors.transparent // 화살표 아이콘일 때 투명색 배경
-                      : Colors.deepPurpleAccent.withOpacity(0.4), // 편집 아이콘일 때 배경색 적용
-                  shape: BoxShape.circle, // 원형 배경
-                ),
-                padding: EdgeInsets.all(widthPercentage(context, 2)), // 아이콘 주위에 패딩 추가
-                child: Icon(
-                  _isDrawerOpen ? Icons.arrow_back_ios : Icons.cut, // 서랍이 닫혀 있을 때 '편집' 아이콘 표시
-                  color: Colors.white,
-                  size: widthPercentage(context, 8), // 적응형 크기
+                color: Colors.black.withOpacity(0.8),
+                child: Center(
+                  child: Text(
+                    '추가 기능',
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
                 ),
               ),
             ),
           ),
 
+          // 첫 번째 드로어 토글 버튼
+          if (_isFirstIconVisible) // 첫 번째 드로어가 닫혀있을 때만 표시
+            Positioned(
+              left: _isFirstDrawerOpen ? widthPercentage(context, 80) : widthPercentage(context, 2),
+              top: heightPercentage(context, 5),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _isFirstDrawerOpen = !_isFirstDrawerOpen;
+                    _isSecondIconVisible = !_isFirstDrawerOpen; // 첫 번째 드로어가 열리면 두 번째 아이콘 숨김
+                  });
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: _isFirstDrawerOpen
+                        ? Colors.transparent
+                        : Colors.deepPurpleAccent.withOpacity(0.4),
+                    shape: BoxShape.circle,
+                  ),
+                  padding: EdgeInsets.all(widthPercentage(context, 2)),
+                  child: Icon(
+                    _isFirstDrawerOpen ? Icons.arrow_back_ios : Icons.cut,
+                    color: Colors.white,
+                    size: widthPercentage(context, 8),
+                  ),
+                ),
+              ),
+            ),
+
+          // 두 번째 드로어 토글 버튼
+          if (_isSecondIconVisible) // 두 번째 드로어가 닫혀있을 때만 표시
+            Positioned(
+              left: _isSecondDrawerOpen
+                  ? widthPercentage(context, 80)
+                  : widthPercentage(context, 2), // 첫 번째 드로어와 같은 위치
+              top: heightPercentage(context, 15), // 두 번째 드로어는 아래쪽에 배치
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _isSecondDrawerOpen = !_isSecondDrawerOpen;
+                    _isFirstIconVisible = !_isSecondDrawerOpen; // 두 번째 드로어가 열리면 첫 번째 아이콘 숨김
+                  });
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: _isSecondDrawerOpen
+                        ? Colors.transparent
+                        : Colors.deepPurpleAccent.withOpacity(0.4),
+                    shape: BoxShape.circle,
+                  ),
+                  padding: EdgeInsets.all(widthPercentage(context, 2)),
+                  child: Icon(
+                    _isSecondDrawerOpen ? Icons.arrow_back_ios : Icons.text_fields,
+                    color: Colors.white,
+                    size: widthPercentage(context, 8),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
   }
-
 
   Widget _buildTrimAndSpeedControls(BuildContext context) {
     return Padding(
@@ -275,18 +388,13 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     );
   }
 
-
-
-
-
-
   Widget _buildSaveButton(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(widthPercentage(context, 5)),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.all(heightPercentage(context, 1)),
-          backgroundColor: Colors.deepPurpleAccent,
+          backgroundColor: Colors.deepPurpleAccent.withOpacity(0.4),
         ),
         onPressed: _applyChangesAndSaveVideo,
         child: Text(
@@ -344,6 +452,9 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     );
   }
 }
+
+
+
 
 
 

@@ -11,12 +11,12 @@ class VideoMergingService {
   final String targetCodec = 'libx264'; // (H.264) codec로 통일
   final int targetFps = 30;
 
-  // Re-encode video to HEVC (H.265) codec with standard resolution and fps
+  // Re-encode video to (H.264) codec with standard resolution and fps
   Future<String?> _convertToHevc(File videoFile) async {
     final outputDir = await getTemporaryDirectory();
     final outputFilePath = '${outputDir.path}/converted_${videoFile.path.split('/').last}';
 
-    // FFmpeg command to convert any video codec to HEVC (H.265)
+    // FFmpeg command to convert any video codec to(H.264)
     String command =
         '-i ${videoFile.path} -vf "scale=$targetResolution,fps=$targetFps" -c:v $targetCodec -preset fast -y $outputFilePath';
 
@@ -41,11 +41,11 @@ class VideoMergingService {
     }
   }
 
-  // Merge all videos into a single HEVC (H.265) encoded file
+  // Merge all videos into a single(H.264) encoded file
   Future<String?> mergeAllVideos(List<File> videoFiles) async {
     List<String> hevcVideoPaths = [];
 
-    // Convert all videos to HEVC (H.265) format
+    // Convert all videos to(H.264) format
     for (File videoFile in videoFiles) {
       String? hevcVideoPath = await _convertToHevc(videoFile);
       if (hevcVideoPath != null) {
@@ -57,7 +57,7 @@ class VideoMergingService {
       final outputDir = await getTemporaryDirectory();
       final outputPath = '${outputDir.path}/merged_hevc_video_${DateTime.now().millisecondsSinceEpoch}.mp4';
 
-      // FFmpeg command to concatenate all HEVC videos
+      // FFmpeg command to concatenate all (H.264) videos
       String inputs = hevcVideoPaths.map((path) => '-i $path').join(' ');
       String command = '$inputs -filter_complex "concat=n=${hevcVideoPaths.length}:v=1:a=1" -c:v $targetCodec -preset fast -y $outputPath';
 
