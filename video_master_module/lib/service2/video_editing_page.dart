@@ -68,6 +68,12 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
       _trimmedEndValue = end;
     });
   }
+  // 속도 변경된 값 콜백 처리
+  void _onSpeedChanged(double speed) {
+    setState(() {
+      _speedValue = speed;
+    });
+  }
 
   Future<void> _applyChangesAndSaveVideo() async {
     showDialog(
@@ -262,6 +268,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
                       startValue: _startValue,
                       endValue: _endValue,
                       onTrimChanged: _onTrimChanged,
+                      onSpeedChanged: _onSpeedChanged,  // 속도 값 전달 콜백
                     ),
                     BrightnessContrastSaturationControl(
                       selectedProperty: _selectedProperty,

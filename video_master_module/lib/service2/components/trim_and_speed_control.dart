@@ -11,6 +11,8 @@ class TrimAndSpeedControls extends StatefulWidget {
 
   // 부모로 트리밍된 값을 전달하는 콜백 함수
   final Function(double, double) onTrimChanged;
+  // 부모로 속도 변경된 값을 전달하는 콜백 함수
+  final Function(double) onSpeedChanged;
 
   const TrimAndSpeedControls({
     required this.speedValue,
@@ -18,7 +20,8 @@ class TrimAndSpeedControls extends StatefulWidget {
     required this.controller,
     required this.startValue,
     required this.endValue,
-    required this.onTrimChanged,  // 콜백 추가
+    required this.onTrimChanged,
+    required this.onSpeedChanged, // 속도 콜백 추가
   });
 
   @override
@@ -108,6 +111,8 @@ class _TrimAndSpeedControlsState extends State<TrimAndSpeedControls> {
                   setState(() {
                     _speedValue = value;
                   });
+                  // 부모로 속도 값 전달
+                  widget.onSpeedChanged(_speedValue);
                   if (widget.controller != null && widget.controller!.value.isInitialized) {
                     widget.controller!.setPlaybackSpeed(_speedValue);
                   }
@@ -130,6 +135,7 @@ class _TrimAndSpeedControlsState extends State<TrimAndSpeedControls> {
     return "$hours:$minutes:$secs";
   }
 }
+
 
 
 
