@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'save_emoji_as_image.dart'; // 이모티콘 이미지 변환 함수
+import 'dart:math';
 
 Future<Map<String, String>> generateTextEmojiOverlayFilters(
     List<Map<String, dynamic>> elements,
@@ -22,7 +23,10 @@ Future<Map<String, String>> generateTextEmojiOverlayFilters(
     int xPosition = ((position.dx / videoWidth) * 1080).round(); // 좌표 보정
     int yPosition = ((position.dy / videoHeight) * 1920).round();
 
-      String emojiPath = await saveEmojiAsImage(content, pixelSize, 3);
+    // 영상 크기 기반으로 크기 조정
+    double scaleFactor = sqrt((1080 * 1920) / (videoWidth * videoHeight));
+
+      String emojiPath = await saveEmojiAsImage(content, pixelSize, scaleFactor);
 
       // 이모티콘 이미지 파일을 입력으로 추가
       inputs.add('-i "$emojiPath"');
