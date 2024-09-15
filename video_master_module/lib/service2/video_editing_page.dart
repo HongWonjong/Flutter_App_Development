@@ -12,7 +12,7 @@ import 'components/trim_and_speed_control.dart';
 import 'components/video_filter.dart';
 import 'function/calculate_color_matrix.dart';
 import 'components/icon_layer.dart';
-import 'components/emoji_text_tool.dart';
+import 'components/drawer_2/emoji_text_tool.dart';
 
 
 
