@@ -6,7 +6,7 @@ class BrightnessContrastSaturationControl extends StatelessWidget {
   final double contrastValue;
   final double saturationValue;
   final ValueChanged<String> onPropertyChanged;
-  final ValueChanged<double> onSliderChanged;
+  final ValueChanged<double> onSliderChanged; // 현재 슬라이더의 변화 값을 상위 위젯에 콜백
 
   const BrightnessContrastSaturationControl({
     Key? key,
@@ -114,7 +114,7 @@ class BrightnessContrastSaturationControl extends StatelessWidget {
     if (selectedProperty == '대비') {
       return -1.0; // FFmpeg 대비 최소값 설정
     } else if (selectedProperty == '채도') {
-      return 0.0;
+      return -1.0;
     } else {
       return -1.0; // 밝기의 최소값은 -1.0
     }
@@ -123,11 +123,11 @@ class BrightnessContrastSaturationControl extends StatelessWidget {
   // 각 속성에 따른 슬라이더의 최대값 설정
   double _getSliderMax() {
     if (selectedProperty == '밝기') {
-      return 1.0; // 밝기의 최대값은 1.0으로 제한
+      return 1.0; //
     } else if (selectedProperty == '대비') {
-      return 1.0; // FFmpeg 대비 최대값 설정
+      return 1.0; //
     } else {
-      return 2.0; // 채도의 최대값은 2.0
+      return 1.0; //
     }
   }
 
@@ -136,16 +136,16 @@ class BrightnessContrastSaturationControl extends StatelessWidget {
     if (selectedProperty == '밝기') {
       return 40; // 밝기 슬라이더는 소수점 두 자리까지
     } else if (selectedProperty == '대비') {
-      return 20; // 대비 슬라이더는 소수점 첫째 자리까지
+      return 40; // 대비 슬라이더는 소수점 첫째 자리까지
     } else {
-      return 30; // 채도는 기본값
+      return 40; // 채도는 기본값
     }
   }
 
   // 슬라이더 레이블 형식을 속성별로 다르게 설정
   String _getSliderLabel(double value) {
     if (selectedProperty == '대비') {
-      return value.toStringAsFixed(1); // 대비는 소수점 첫째 자리
+      return value.toStringAsFixed(2); // 대비는 소수점 첫째 자리
     } else {
       return value.toStringAsFixed(2); // 밝기와 채도는 소수점 두 자리
     }

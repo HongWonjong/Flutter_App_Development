@@ -9,6 +9,10 @@ import 'package:video_master_module/mq_size.dart';
 import 'components/brightness_contrast_saturation_control.dart';
 import 'components/edit_button.dart';
 import 'components/trim_and_speed_control.dart';
+import 'components/video_filter.dart';
+import 'function/calculate_color_matrix.dart';
+import 'components/icon_layer.dart';
+import 'components/emoji_text_tool.dart';
 
 
 
@@ -27,13 +31,14 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
   double _endValue = 10;
   double _speedValue = 1.0;
   double _brightnessValue = 0.0;
-  double _contrastValue = 0.5;
-  double _saturationValue = 1.0;
+  double _contrastValue = 0.0;
+  double _saturationValue = 0.0;
   String? _outputPath;
-
+  String _selectedProperty = '밝기'; // Default selected property
   // 트리밍된 값
   double _trimmedStartValue = 0.0;
   double _trimmedEndValue = 10.0;
+  final List<Map<String, dynamic>> _elements = [];  // 이모티콘과 텍스트 저장 리스트
 
   // 드로어와 아이콘 상태를 한꺼번에 관리하는 Map
   Map<String, bool> drawerState = {
@@ -43,13 +48,13 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     'isSecondIconVisible': true,
   };
 
-  String _selectedProperty = '밝기'; // Default selected property
 
   @override
   void initState() {
     super.initState();
     _initializeController(widget.videoPath);
   }
+
 
   Future<void> _initializeController(String videoPath) async {
     _controller?.dispose();
@@ -58,19 +63,6 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
         setState(() {
           _endValue = _controller!.value.duration.inSeconds.toDouble();
 
-          // 비디오가 로드된 후 trimmed_startValue로 이동
-          _controller!.seekTo(Duration(seconds: _trimmedStartValue.toInt()));
-
-          // 비디오 플레이어가 매 프레임 업데이트 될 때마다 실행
-          _controller!.addListener(() {
-            final position = _controller!.value.position;
-            final endDuration = Duration(seconds: _trimmedEndValue.toInt());
-
-            // 비디오가 trimmed_endValue에 도달하면 멈춤
-            if (position >= endDuration) {
-              _controller!.pause();
-            }
-          });
         });
       });
   }
@@ -82,11 +74,6 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     setState(() {
       _trimmedStartValue = start;
       _trimmedEndValue = end;
-
-      // 트리밍된 시작 값으로 비디오 이동
-      if (_controller != null && _controller!.value.isInitialized) {
-        _controller!.seekTo(Duration(seconds: _trimmedStartValue.toInt()));
-      }
     });
   }
   // 속도 변경된 값 콜백 처리
@@ -116,15 +103,19 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     final tempDir = await getTemporaryDirectory();
     final outputPath = '${tempDir.path}/output_${DateTime.now().millisecondsSinceEpoch}.mp4';
 
+    // 컬러 매트릭스 계산
+    List<double> colorMatrix = calculateColorMatrix(_brightnessValue, _contrastValue, _saturationValue);
+
+    // FFmpeg에서 사용할 수 있는 필터로 변환
+    String colorMatrixFilter = convertMatrixToFFmpegFilter(colorMatrix);
+
     // 트리밍 값 사용
     String command = '-ss $_trimmedStartValue '
         '-i ${widget.videoPath} '
         '-to $_trimmedEndValue '
-        '-vf "curves=all=\'0/0 0.5/${_contrastValue.toStringAsFixed(2)} 1/1\','
-        'colorbalance=rs=${_brightnessValue.toStringAsFixed(2)}:gs=${_brightnessValue.toStringAsFixed(2)}:bs=${_brightnessValue.toStringAsFixed(2)},'
-        'hue=s=${_saturationValue.toStringAsFixed(2)},'
-        'setpts=${1 / _speedValue}*PTS" '
-        '"$outputPath"';
+        '-vf "$colorMatrixFilter, setpts=${1 / _speedValue}*PTS" '
+        '-c:a copy "$outputPath"';
+
 
     print('Running FFmpeg command: $command');
 
@@ -168,7 +159,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     setState(() {
       if (_selectedProperty == '밝기') {
         _brightnessValue = value;
-      } else if (_selectedProperty == '대조') {
+      } else if (_selectedProperty == '대비') {
         _contrastValue = value;
       } else {
         _saturationValue = value;
@@ -205,6 +196,16 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
       }
     });
   }
+  void _addEmojiOrText(String content, bool isEmoji, double size) {
+    setState(() {
+      // 기본 위치는 화면 중앙, 나중에 사용자에게 위치 지정 가능
+      _elements.add({
+        'content': content,
+        'position': Offset(100, 100),  // 기본 위치
+        'size': size,  // 크기 정보 추가
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -227,39 +228,52 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
             child: _controller != null && _controller!.value.isInitialized
                 ? GestureDetector(
               onTap: _togglePlayPause,
-              child: Column(
+              child: Stack(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: widthPercentage(context, 100),
-                        height: heightPercentage(context, 75),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.white.withOpacity(0.4),
-                              width: 2.0,
-                            ),
-                          ),
-                          child: AspectRatio(
-                            aspectRatio: _controller!.value.aspectRatio,
-                            child: VideoPlayer(_controller!),
-                          ),
+                  SizedBox(
+                    width: widthPercentage(context, 100),
+                    height: heightPercentage(context, 80),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.4),
+                          width: 2.0,
                         ),
                       ),
-                    ],
+                      child: AspectRatio(
+                        aspectRatio: _controller!.value.aspectRatio,
+                        child: VideoPlayer(_controller!),
+                      ),
+                    ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      EditButton(applyChangesAndSaveVideo: _applyChangesAndSaveVideo),
-                    ],
+                  // 필터 적용
+                  VideoFilter(
+                    brightness: _brightnessValue,
+                    contrast: _contrastValue,
+                    saturation: _saturationValue,
+                    controller: _controller!,
+                  ),
+                  Positioned.fill(
+                    child: IconLayer(
+                      maxHeight: heightPercentage(context, 80),
+                      maxWidth: widthPercentage(context, 100),
+                      elements: _elements,
+                    ),
                   ),
                 ],
               ),
             )
                 : const CircularProgressIndicator(),
+          ),
+
+          // 버튼 영역 (비디오 플레이어 위에 Stack으로 추가)
+          Positioned(
+            bottom: heightPercentage(context, 5),  // 하단에서 5% 위에 위치
+            left: 0,
+            right: 0,
+            child: Center(
+              child: EditButton(applyChangesAndSaveVideo: _applyChangesAndSaveVideo),
+            ),
           ),
 
           // 첫 번째 드로어
@@ -289,7 +303,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
                       startValue: _startValue,
                       endValue: _endValue,
                       onTrimChanged: _onTrimChanged,
-                      onSpeedChanged: _onSpeedChanged,  // 속도 값 전달 콜백
+                      onSpeedChanged: _onSpeedChanged, // 속도 값 전달 콜백
                     ),
                     BrightnessContrastSaturationControl(
                       selectedProperty: _selectedProperty,
@@ -322,11 +336,8 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
               },
               child: Container(
                 color: Colors.black.withOpacity(0.8),
-                child: const Center(
-                  child: Text(
-                    '추가 기능',
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  ),
+                child:  Center(
+                  child: EmojiTextDrawer(onAdd: _addEmojiOrText),
                 ),
               ),
             ),
