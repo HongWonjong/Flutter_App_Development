@@ -24,6 +24,15 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
           _controller.play(); // 자동 재생
           _isPlaying = true;  // 초기 상태를 재생 중으로 설정
         });
+        _controller!.addListener(() {
+          // 비디오가 끝났을 때 자동으로 처음으로 돌아가기
+          if (_controller!.value.position >= _controller!.value.duration) {
+            setState(() {
+              _isPlaying = false;  // 재생 상태 업데이트
+            });
+            _controller!.seekTo(Duration.zero);  // 처음으로 되돌리기
+          }
+        });
       });
   }
 

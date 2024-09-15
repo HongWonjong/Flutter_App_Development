@@ -14,6 +14,7 @@ import 'function/calculate_color_matrix.dart';
 import 'components/icon_layer.dart';
 import 'components/drawer_2/emoji_text_tool.dart';
 import 'function/generate_text_emoji_overlay.dart';
+import 'package:ffmpeg_kit_flutter/ffmpeg_kit_config.dart';
 
 
 
@@ -104,6 +105,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     });
   }
 
+// 최종적으로 변경 사항을 적용하고 비디오를 저장하는 함수
   Future<void> _applyChangesAndSaveVideo() async {
     showDialog(
       context: context,
@@ -121,6 +123,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
       },
     );
 
+    // 임시 디렉토리에서 출력 경로 설정
     final tempDir = await getTemporaryDirectory();
     final outputPath = '${tempDir.path}/output_${DateTime.now().millisecondsSinceEpoch}.mp4';
 
@@ -131,36 +134,55 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     String colorMatrixFilter = convertMatrixToFFmpegFilter(colorMatrix);
 
     // 이모티콘 및 텍스트 필터 추가 (함수 호출)
-    String overlayFilters = await generateTextEmojiOverlayFilters(_elements, _calculatedVideoWidth!, _calculatedVideoHeight!);
+    var result = await generateTextEmojiOverlayFilters(_elements, _calculatedVideoWidth!, _calculatedVideoHeight!);
+    String overlayInputs = result['inputs'] ?? '';  // 이모티콘 또는 이미지 경로
+    String overlayFilters = result['filters'] ?? '';  // 필터 체인
 
     // 최종 FFmpeg 명령어
     String command = '-ss $_trimmedStartValue '
-        '-i "${widget.videoPath}" '  // 경로를 따옴표로 묶음
+        '-i "${widget.videoPath}" '  // 비디오 경로
         '-to $_trimmedEndValue ';
 
     if (overlayFilters.isNotEmpty) {
+      FFmpegKitConfig.enableLogCallback((log) {
+        print(log.getMessage());
+      });
+
       // 이모티콘이나 텍스트가 있을 때만 필터 적용
-      command += '-vf "$colorMatrixFilter, $overlayFilters, setpts=${1 / _speedValue}*PTS" ';
+      print("Overlay Inputs: $overlayInputs");
+      print("Overlay Filters: $overlayFilters");
+
+      // 이모티콘 이미지 입력 추가
+      command += '$overlayInputs ';
+
+      // 필터 적용 -filter_complex 사용 (여러 이모티콘이 있을 경우)
+      command += '-filter_complex "[0:v]$colorMatrixFilter[v0]; $overlayFilters; [v${_elements.length}]setpts=${1 / _speedValue}*PTS" ';
     } else {
-      // 필터가 없을 경우, 컬러 필터만 적용
-      command += '-vf "$colorMatrixFilter, setpts=${1 / _speedValue}*PTS" ';
+      // 필터가 없을 경우 기본 비디오 인코딩 설정만 적용
+      command += '-vf "$colorMatrixFilter,setpts=${1 / _speedValue}*PTS" ';
     }
+    //**,**는 같은 입력 스트림에서 연속적인 필터 적용.
+    // **;**는 새로운 입력 스트림 또는 독립적인 필터 체인을 구분할 때.
 
+    //앞 필터의 출력을 입력으로 참조하여 받는 것이 체인 필터이지, 동일한 필터가 체인필터는 아님.
+    // 체인필터만 넘길 때 숫자가 증가한다. 그리고 출력을 넘겨준다면 동일한 기호 예: [v0]=> [v0]으로 이동한다. 체인 필터라면 반대.
 
-    command += '-c:a copy "$outputPath" ';
-    command += '-loglevel verbose ';  // 추가 로그를 출력
+    // 오디오 복사 및 출력 파일 설정
+    command += '-c:v h264_videotoolbox -c:a copy "$outputPath" ';
+    command += '-loglevel verbose ';  // 추가 로그 출력
 
     print('Running FFmpeg command: $command');
 
+    // FFmpeg 명령어 실행
     await FFmpegKit.execute(command).then((session) async {
       final returnCode = await session.getReturnCode();
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(); // Progress dialog 닫기
 
       if (ReturnCode.isSuccess(returnCode)) {
         setState(() {
           _outputPath = outputPath;
         });
-        _playEditedVideo();
+        _playEditedVideo();  // 편집된 비디오 재생
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('인코딩 실패. 다시 시도해주세요.')),
@@ -168,6 +190,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
       }
     });
   }
+
 
 
 
@@ -374,7 +397,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
 
           // 버튼 영역 (비디오 플레이어 위에 Stack으로 추가)
           Positioned(
-            bottom: heightPercentage(context, 5),  // 하단에서 5% 위에 위치
+            bottom: heightPercentage(context, 1),  // 하단에서 5% 위에 위치
             left: 0,
             right: 0,
             child: Center(
