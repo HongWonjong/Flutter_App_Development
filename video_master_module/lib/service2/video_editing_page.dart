@@ -13,6 +13,7 @@ import 'components/video_filter.dart';
 import 'function/calculate_color_matrix.dart';
 import 'components/icon_layer.dart';
 import 'components/drawer_2/emoji_text_tool.dart';
+import 'function/generate_text_emoji_overlay.dart';
 
 
 
@@ -109,12 +110,33 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     // FFmpeg에서 사용할 수 있는 필터로 변환
     String colorMatrixFilter = convertMatrixToFFmpegFilter(colorMatrix);
 
-    // 트리밍 값 사용
+    // 이모티콘 및 텍스트 필터 추가 (함수 호출)
+    String overlayFilters = await generateTextEmojiOverlayFilters(_elements);
+    print('Generated overlayFilters: $overlayFilters');  // 생성된 필터 확인
+    // 이모지 크기를 직접 로그로 출력 (필터 문자열에서 추출하거나 별도로 계산)
+    for (var element in _elements) {
+      if (element['isEmoji'] == true) {
+        double size = element['size'] * 1920;  // 이모티콘 크기 계산 (기본 화면 높이 기준)
+        print('Emoji size in pixels: $size');  // 이모티콘 크기 출력
+      }
+    }
+
+    // 최종 FFmpeg 명령어
     String command = '-ss $_trimmedStartValue '
         '-i ${widget.videoPath} '
-        '-to $_trimmedEndValue '
-        '-vf "$colorMatrixFilter, setpts=${1 / _speedValue}*PTS" '
-        '-c:a copy "$outputPath"';
+        '-to $_trimmedEndValue ';
+
+    if (overlayFilters.isNotEmpty) {
+      // 이모티콘이나 텍스트가 있을 때만 필터 적용
+      command += '-vf "$colorMatrixFilter, $overlayFilters, setpts=${1 / _speedValue}*PTS" ';
+    } else {
+      // 필터가 없을 경우, 컬러 필터만 적용
+      command += '-vf "$colorMatrixFilter, setpts=${1 / _speedValue}*PTS" ';
+    }
+
+    command += '-c:a copy "$outputPath"';
+
+
 
 
     print('Running FFmpeg command: $command');
@@ -198,14 +220,26 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
   }
   void _addEmojiOrText(String content, bool isEmoji, double size) {
     setState(() {
-      // 기본 위치는 화면 중앙, 나중에 사용자에게 위치 지정 가능
-      _elements.add({
-        'content': content,
-        'position': Offset(100, 100),  // 기본 위치
-        'size': size,  // 크기 정보 추가
-      });
+      // null 체크 후 안전하게 저장
+      if (content.isNotEmpty && size != null) {
+        _elements.add({
+          'content': content,            // 텍스트나 이모티콘 내용
+          'size': size,                  // 크기
+          'isEmoji': isEmoji ?? false,   // 이모티콘 여부를 null 체크 후 기본값 false 설정
+          'position': const Offset(100, 100),  // 처음 지정되는 기본 위치
+        });
+      } else {
+        print("Invalid content or size. Element not added.");
+      }
     });
   }
+  // 이모티콘 또는 텍스트의 위치가 변경되었을 때 호출되는 함수 (새로 추가된 콜백 함수)
+  void _updateElementPosition(int index, Offset newPosition) {
+    setState(() {
+      _elements[index]['position'] = newPosition;  // 새로운 위치로 업데이트
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -230,38 +264,69 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
               onTap: _togglePlayPause,
               child: Stack(
                 children: [
-                  SizedBox(
-                    width: widthPercentage(context, 100),
-                    height: heightPercentage(context, 80),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.4),
-                          width: 2.0,
-                        ),
-                      ),
-                      child: AspectRatio(
-                        aspectRatio: _controller!.value.aspectRatio,
-                        child: VideoPlayer(_controller!),
-                      ),
-                    ),
-                  ),
-                  // 필터 적용
-                  VideoFilter(
-                    brightness: _brightnessValue,
-                    contrast: _contrastValue,
-                    saturation: _saturationValue,
-                    controller: _controller!,
-                  ),
-                  Positioned.fill(
-                    child: IconLayer(
-                      maxHeight: heightPercentage(context, 80),
-                      maxWidth: widthPercentage(context, 100),
-                      elements: _elements,
-                    ),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      // 비디오 플레이어의 실제 크기 계산
+                      double videoAspectRatio = _controller!.value.aspectRatio;
+                      double videoWidth = constraints.maxWidth;
+                      double videoHeight = videoWidth / videoAspectRatio;
+
+                      // 만약 높이가 최대 크기를 넘는다면, 다시 너비를 계산
+                      if (videoHeight > constraints.maxHeight) {
+                        videoHeight = constraints.maxHeight;
+                        videoWidth = videoHeight * videoAspectRatio;
+                      }
+
+                      return Stack(
+                        children: [
+                          // 비디오 플레이어 영역
+                          SizedBox(
+                            width: videoWidth,
+                            height: videoHeight,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.4),
+                                  width: 2.0,
+                                ),
+                              ),
+                              child: AspectRatio(
+                                aspectRatio: videoAspectRatio,
+                                child: VideoPlayer(_controller!),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            left: 0,
+                            top: 0,
+                            width: videoWidth,
+                            height: videoHeight,
+                            child: VideoFilter(
+                              brightness: _brightnessValue,
+                              contrast: _contrastValue,
+                              saturation: _saturationValue,
+                              controller: _controller!,
+                            ),
+                          ),
+                          // IconLayer에 비디오 플레이어의 크기 전달
+                          Positioned(
+                            left: 0,
+                            top: 0,
+                            width: videoWidth,
+                            height: videoHeight,
+                            child: IconLayer(
+                              maxHeight: videoHeight,  // 비디오 플레이어의 실제 높이
+                              maxWidth: videoWidth,    // 비디오 플레이어의 실제 너비
+                              elements: _elements,
+                              onPositionChanged: _updateElementPosition,  // 위치 변경 콜백 전달
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ],
-              ),
+              )
             )
                 : const CircularProgressIndicator(),
           ),

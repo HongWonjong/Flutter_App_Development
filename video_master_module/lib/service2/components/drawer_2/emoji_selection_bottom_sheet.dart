@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class EmojiSelectionBottomSheet extends StatefulWidget {
-  final Function(String, double) onEmojiAdd;
+  final Function(String, double, bool) onEmojiAdd;  // isEmoji를 추가
 
   const EmojiSelectionBottomSheet({Key? key, required this.onEmojiAdd}) : super(key: key);
 
@@ -79,8 +79,8 @@ class _EmojiSelectionBottomSheetState extends State<EmojiSelectionBottomSheet> {
           ElevatedButton(
             onPressed: selectedEmoji != null
                 ? () {
-              // 이모티콘과 크기를 전달
-              widget.onEmojiAdd(selectedEmoji!, selectedSize);
+              // 이모티콘과 크기, isEmoji = true 전달
+              widget.onEmojiAdd(selectedEmoji!, selectedSize, true);
               Navigator.of(context).pop(); // 바텀 시트 닫기
             }
                 : null, // 이모티콘 선택하지 않았으면 비활성화
@@ -91,6 +91,7 @@ class _EmojiSelectionBottomSheetState extends State<EmojiSelectionBottomSheet> {
     );
   }
 }
+
 
 
 

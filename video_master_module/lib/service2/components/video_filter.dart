@@ -22,7 +22,7 @@ class VideoFilter extends StatelessWidget {
     return IgnorePointer(
       child: Container(
         width: widthPercentage(context, 100),
-        height: heightPercentage(context, 70),
+        height: heightPercentage(context, 80),
         child: ColorFiltered(
           colorFilter: ColorFilter.matrix(
             calculateColorMatrix(brightness, contrast, saturation),  // 밝기, 대비, 채도 값 적용

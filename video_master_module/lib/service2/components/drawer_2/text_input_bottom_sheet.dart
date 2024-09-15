@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TextInputBottomSheet extends StatefulWidget {
-  final Function(String, double) onTextAdd;
+  final Function(String, double, bool) onTextAdd; // isEmoji를 추가
 
   const TextInputBottomSheet({Key? key, required this.onTextAdd}) : super(key: key);
 
@@ -53,7 +53,8 @@ class _TextInputBottomSheetState extends State<TextInputBottomSheet> {
             onPressed: () {
               String input = _controller.text.trim();
               if (input.isNotEmpty) {
-                widget.onTextAdd(input, selectedSize); // 텍스트와 크기를 전달
+                // 텍스트와 크기, isEmoji = false 전달
+                widget.onTextAdd(input, selectedSize, false);
                 Navigator.of(context).pop(); // 바텀 시트 닫기
               }
             },
@@ -64,5 +65,6 @@ class _TextInputBottomSheetState extends State<TextInputBottomSheet> {
     );
   }
 }
+
 
 

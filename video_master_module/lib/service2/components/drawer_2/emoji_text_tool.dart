@@ -20,8 +20,8 @@ class EmojiTextDrawer extends StatelessWidget {
             showModalBottomSheet(
               context: context,
               builder: (context) => TextInputBottomSheet(
-                onTextAdd: (text, size) {
-                  onAdd(text, false, size); // 텍스트 추가
+                onTextAdd: (text, size, bool) {
+                  onAdd(text, false, size); // 텍스트 추가 (isEmoji = false)
                 },
               ),
             );
@@ -35,8 +35,8 @@ class EmojiTextDrawer extends StatelessWidget {
             showModalBottomSheet(
               context: context,
               builder: (context) => EmojiSelectionBottomSheet(
-                onEmojiAdd: (emoji, size) {
-                  onAdd(emoji, true, size); // 이모티콘 추가
+                onEmojiAdd: (emoji, size, bool) {
+                  onAdd(emoji, true, size); // 이모티콘 추가 (isEmoji = true)
                 },
               ),
             );
@@ -47,6 +47,7 @@ class EmojiTextDrawer extends StatelessWidget {
     );
   }
 }
+
 
 
 
