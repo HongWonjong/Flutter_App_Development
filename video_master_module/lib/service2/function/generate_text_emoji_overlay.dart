@@ -10,7 +10,6 @@ Future<Map<String, String>> generateTextEmojiOverlayFilters(
   List<String> inputs = []; // 추가적인 입력 파일들을 위한 리스트
   int emojiIndex = 1; // 첫 번째 입력 파일은 비디오이므로, 이미지 입력은 두 번째부터
   String previousOutput = "[v0]"; // 첫 번째 필터의 출력은 컬러 매트릭스 필터로 처리된 비디오 스트림 [v0]
-  bool isFirstOverlay = true; // 첫 번째 오버레이인지 확인하는 플래그
 
   for (int i = 0; i < elements.length; i++) {
     var element = elements[i];
@@ -31,15 +30,14 @@ Future<Map<String, String>> generateTextEmojiOverlayFilters(
       // 이모티콘 이미지 파일을 입력으로 추가
       inputs.add('-i "$emojiPath"');
 
-      if (isFirstOverlay) {
-        // 첫 번째 오버레이에서는 컬러 매트릭스 필터를 적용한 스트림과 오버레이
-        filters.add('[v0][${emojiIndex}:v]overlay=x=$xPosition:y=$yPosition[v1]');
-        previousOutput = '[v1]';
-        isFirstOverlay = false; // 첫 번째 오버레이 이후로는 더 이상 이 조건을 실행하지 않음
+      if (i == 0) {
+        // 첫 번째 오버레이 처리
+        filters.add('[v0][1:v]overlay=x=$xPosition:y=$yPosition[v1]');
+        previousOutput = '[v1]';  // 첫 오버레이가 끝난 후에 previousOutput 업데이트
       } else {
-        // 이후의 오버레이 처리
-        filters.add('${previousOutput}[${emojiIndex}:v]overlay=x=$xPosition:y=$yPosition[v${emojiIndex + 1}]');
-        previousOutput = "[v${emojiIndex + 1}]";
+        // 그 이후의 오버레이는 previousOutput을 참조하여 연결
+        filters.add('$previousOutput[$emojiIndex:v]overlay=x=$xPosition:y=$yPosition[v${emojiIndex + 1}]');
+        previousOutput = "[v${emojiIndex + 1}]";  // 새로운 출력 스트림을 참조하도록 업데이트
       }
       emojiIndex++; // 다음 입력 스트림 번호로 증가
 
@@ -67,6 +65,7 @@ Future<Map<String, String>> generateTextEmojiOverlayFilters(
     return {'inputs': '', 'filters': ''}; // 필터가 없으면 빈 문자열 반환
   }
 }
+
 
 
 
