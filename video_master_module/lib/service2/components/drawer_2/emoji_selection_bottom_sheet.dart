@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:video_master_module/service2/utils/emoji_list.dart';
 
 class EmojiSelectionBottomSheet extends StatefulWidget {
-  final Function(String, double, bool) onEmojiAdd;
+  final Function(String, double) onEmojiAdd;
 
   const EmojiSelectionBottomSheet({Key? key, required this.onEmojiAdd}) : super(key: key);
 
@@ -83,7 +83,7 @@ class _EmojiSelectionBottomSheetState extends State<EmojiSelectionBottomSheet> {
           ElevatedButton(
             onPressed: selectedEmoji != null
                 ? () {
-              widget.onEmojiAdd(selectedEmoji!, selectedSize, true);
+              widget.onEmojiAdd(selectedEmoji!, selectedSize);
               Navigator.of(context).pop(); // 바텀 시트 닫기
             }
                 : null, // 선택되지 않으면 비활성화

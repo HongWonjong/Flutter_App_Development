@@ -14,7 +14,6 @@ Future<Map<String, String>> generateTextEmojiOverlayFilters(
   for (int i = 0; i < elements.length; i++) {
     var element = elements[i];
     String content = element['content'];
-    bool isEmoji = element['isEmoji'] ?? false;
     double size = element['size'] ?? 0.05;
     Offset position = element['position'] ?? const Offset(0, 0);
 
@@ -23,8 +22,6 @@ Future<Map<String, String>> generateTextEmojiOverlayFilters(
     int xPosition = ((position.dx / videoWidth) * 1080).round(); // 좌표 보정
     int yPosition = ((position.dy / videoHeight) * 1920).round();
 
-    // 이모티콘의 경우
-    if (isEmoji) {
       String emojiPath = await saveEmojiAsImage(content, pixelSize, 3);
 
       // 이모티콘 이미지 파일을 입력으로 추가
@@ -40,15 +37,6 @@ Future<Map<String, String>> generateTextEmojiOverlayFilters(
         previousOutput = "[v$emojiIndex]";  // 새로운 출력 스트림을 참조하도록 업데이트
       }
       emojiIndex++; // 다음 입력 스트림 번호로 증가
-
-    } else {
-      // 텍스트의 경우 drawtext 필터 추가, 텍스트 특수문자 이스케이프
-      filters.add('$previousOutput drawtext=text=\'${content.replaceAll("'", r"\'")}\':fontcolor=white:fontsize=$pixelSize:x=$xPosition:y=$yPosition[v${emojiIndex + 1}]');
-
-      // 다음 오버레이를 위해 현재 출력 스트림을 업데이트
-      previousOutput = "[v${emojiIndex + 1}]";
-      emojiIndex++;
-    }
   }
 
   // 필터가 있을 때만 입력 파일과 필터 체인을 반환

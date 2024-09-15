@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'text_input_bottom_sheet.dart';
 import 'emoji_selection_bottom_sheet.dart';
 
-typedef AddEmojiTextCallback = void Function(String content, bool isEmoji, double size);
+typedef AddEmojiTextCallback = void Function(String content, double size);
 
 class EmojiTextDrawer extends StatelessWidget {
   final AddEmojiTextCallback onAdd;
@@ -20,8 +20,8 @@ class EmojiTextDrawer extends StatelessWidget {
             showModalBottomSheet(
               context: context,
               builder: (context) => TextInputBottomSheet(
-                onTextAdd: (text, size, bool) {
-                  onAdd(text, false, size); // 텍스트 추가 (isEmoji = false)
+                onTextAdd: (text, size) {
+                  onAdd(text, size); // 텍스트 추가 (isEmoji = false)
                 },
               ),
             );
@@ -35,8 +35,8 @@ class EmojiTextDrawer extends StatelessWidget {
             showModalBottomSheet(
               context: context,
               builder: (context) => EmojiSelectionBottomSheet(
-                onEmojiAdd: (emoji, size, bool) {
-                  onAdd(emoji, true, size); // 이모티콘 추가 (isEmoji = true)
+                onEmojiAdd: (emoji, size) {
+                  onAdd(emoji, size); // 이모티콘 추가 (isEmoji = true)
                 },
               ),
             );

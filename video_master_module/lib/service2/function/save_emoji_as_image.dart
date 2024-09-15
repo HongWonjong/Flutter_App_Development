@@ -7,10 +7,7 @@ import 'package:path_provider/path_provider.dart';
 Future<String> saveEmojiAsImage(String emoji, double size, double scaleFactor) async {
   final recorder = ui.PictureRecorder();
 
-  // 캔버스 크기를 scaleFactor로 확장
-  final canvas = Canvas(recorder, Rect.fromPoints(Offset(0, 0), Offset(size * scaleFactor, size * scaleFactor)));
-
-  // 이모티콘을 텍스트로 그림 (scaleFactor 크기)
+  // 텍스트 크기 설정
   final textPainter = TextPainter(
     text: TextSpan(
       text: emoji,
@@ -22,17 +19,22 @@ Future<String> saveEmojiAsImage(String emoji, double size, double scaleFactor) a
     textDirection: TextDirection.ltr,
   );
 
-  // 레이아웃을 계산하여 이모티콘을 중앙에 배치
+  // 텍스트 레이아웃 계산
   textPainter.layout();
-  final offsetX = (size * scaleFactor - textPainter.width) / 2;  // 가로 중앙 정렬
-  final offsetY = (size * scaleFactor - textPainter.height) / 2; // 세로 중앙 정렬
 
-  // 이모티콘을 캔버스 중앙에 그리기
-  textPainter.paint(canvas, Offset(offsetX, offsetY));
+  // 텍스트의 실제 크기를 기반으로 캔버스 크기 설정 (텍스트 크기만큼만 캔버스 생성)
+  final paletteWidth = textPainter.width;
+  final paletteHeight = textPainter.height;
+
+  // 정확한 텍스트 크기로 캔버스 생성
+  final canvas = Canvas(recorder, Rect.fromPoints(Offset(0, 0), Offset(paletteWidth, paletteHeight)));
+
+  // 이모티콘을 캔버스에 그리기
+  textPainter.paint(canvas, Offset(0, 0));
 
   // 이미지로 변환
   final picture = recorder.endRecording();
-  final img = await picture.toImage((size * scaleFactor).toInt(), (size * scaleFactor).toInt());  // 이미지 크기 scaleFactor로 설정
+  final img = await picture.toImage(paletteWidth.toInt(), paletteHeight.toInt());  // 텍스트 크기에 맞춰 이미지 생성
 
   try {
     // 이미지 데이터를 PNG로 변환
@@ -55,4 +57,5 @@ Future<String> saveEmojiAsImage(String emoji, double size, double scaleFactor) a
     return ''; // 에러 발생 시 빈 문자열 반환
   }
 }
+
 

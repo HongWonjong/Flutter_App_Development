@@ -259,14 +259,13 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
       }
     });
   }
-  void _addEmojiOrText(String content, bool isEmoji, double size) {
+  void _addEmojiOrText(String content, double size) {
     setState(() {
       // null 체크 후 안전하게 저장
       if (content.isNotEmpty) {
         _elements.add({
           'content': content,            // 텍스트나 이모티콘 내용
-          'size': size,                  // 크기
-          'isEmoji': isEmoji ?? false,   // 이모티콘 여부를 null 체크 후 기본값 false 설정
+          'size': size,                  // 크기//
           'position': const Offset(100, 100),  // 처음 지정되는 기본 위치
         });
       } else {
