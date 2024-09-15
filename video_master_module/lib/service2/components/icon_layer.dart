@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class IconLayer extends StatefulWidget {
-  final List<Map<String, dynamic>> elements; // 전달받은 이모티콘/텍스트 리스트
-  final double maxWidth;  // 비디오 에디터의 최대 너비
-  final double maxHeight; // 비디오 에디터의 최대 높이
+  final List<Map<String, dynamic>> elements; // 이모티콘/텍스트 정보 리스트
+  final double maxWidth;
+  final double maxHeight;
 
   const IconLayer({
     Key? key,
@@ -17,49 +17,88 @@ class IconLayer extends StatefulWidget {
 }
 
 class _IconLayerState extends State<IconLayer> {
+  int? _selectedIndex; // 선택한 이모티콘의 인덱스 저장
+
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: widget.elements.map((element) {
-        return Positioned(
-          left: element['position'].dx,  // 요소의 위치
-          top: element['position'].dy,   // 요소의 위치
-          child: GestureDetector(
-            onPanUpdate: (details) {
-              setState(() {
-                // 요소의 크기를 기반으로 경계값 설정
-                double fontSize = widget.maxHeight * element['size']; // 이모티콘/텍스트 크기 계산
-                double newX = element['position'].dx + details.delta.dx;
-                double newY = element['position'].dy + details.delta.dy;
+    return GestureDetector(
+      onTap: () {
+        // 아무 곳이나 터치했을 때 X 버튼을 사라지게 함
+        setState(() {
+          _selectedIndex = null;
+        });
+      },
+      child: Stack(
+        children: widget.elements.asMap().entries.map((entry) {
+          int index = entry.key;
+          Map<String, dynamic> element = entry.value;
 
-                // 경계값에 맞게 위치 제한 (왼쪽, 오른쪽, 위, 아래 경계 설정)
-                if (newX < 0) {
-                  newX = 0;
-                } else if (newX + fontSize > widget.maxWidth) {
-                  newX = widget.maxWidth - fontSize;
-                }
-
-                if (newY < 0) {
-                  newY = 0;
-                } else if (newY + fontSize > widget.maxHeight) {
-                  newY = widget.maxHeight - fontSize;
-                }
-
-                // 위치 업데이트
-                element['position'] = Offset(newX, newY);
-              });
-            },
-            child: Text(
-              element['content'],
-              style: TextStyle(
-                fontSize: widget.maxHeight * element['size'],  // 화면 높이에 비례한 크기
+          return Positioned(
+            left: element['position'].dx,
+            top: element['position'].dy,
+            child: GestureDetector(
+              onPanUpdate: (details) {
+                // 이모티콘을 드래그해서 위치 이동
+                setState(() {
+                  element['position'] = Offset(
+                    element['position'].dx + details.delta.dx,
+                    element['position'].dy + details.delta.dy,
+                  );
+                });
+              },
+              onLongPress: () {
+                // 길게 누르면 X 버튼이 나타나도록 설정
+                setState(() {
+                  _selectedIndex = index; // 선택한 이모티콘의 인덱스 저장
+                });
+              },
+              child: Stack(
+                clipBehavior: Clip.none, // X 버튼이 밖으로 나와도 잘리지 않도록 설정
+                children: [
+                  Text(
+                    element['content'],
+                    style: TextStyle(
+                      fontSize: widget.maxHeight * element['size'], // 텍스트 또는 이모티콘 크기
+                    ),
+                  ),
+                  // 선택된 이모티콘일 때만 X 버튼을 표시
+                  if (_selectedIndex == index)
+                    Positioned(
+                      right: -10,
+                      top: -10,
+                      child: GestureDetector(
+                        onTap: () {
+                          // X 버튼을 눌러 삭제
+                          setState(() {
+                            widget.elements.removeAt(index);
+                            _selectedIndex = null; // X 버튼이 사라지도록 초기화
+                          });
+                        },
+                        child: Container(
+                          width: 24,  // X 버튼의 고정된 너비
+                          height: 24, // X 버튼의 고정된 높이
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.red.withOpacity(0.8),
+                          ),
+                          child: const Icon(
+                            Icons.close,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        }).toList(),
+      ),
     );
   }
 }
+
+
 
 
