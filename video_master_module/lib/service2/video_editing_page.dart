@@ -32,7 +32,6 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
   final GlobalKey _filterKey = GlobalKey();
   
   bool _isPlaying = false;
-  Offset? _videoEditorTopLeft;
   double? _calculatedVideoWidth;
   double? _calculatedVideoHeight;
   double _startValue = 0;
@@ -65,6 +64,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
     });
   }
+
 
 
   Future<void> _initializeController(String videoPath) async {
@@ -121,7 +121,6 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
       },
     );
 
-
     final tempDir = await getTemporaryDirectory();
     final outputPath = '${tempDir.path}/output_${DateTime.now().millisecondsSinceEpoch}.mp4';
 
@@ -132,12 +131,11 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     String colorMatrixFilter = convertMatrixToFFmpegFilter(colorMatrix);
 
     // 이모티콘 및 텍스트 필터 추가 (함수 호출)
-    String overlayFilters = await generateTextEmojiOverlayFilters(_elements, _videoEditorTopLeft!, _calculatedVideoWidth!, _calculatedVideoHeight!);
-
+    String overlayFilters = await generateTextEmojiOverlayFilters(_elements, _calculatedVideoWidth!, _calculatedVideoHeight!);
 
     // 최종 FFmpeg 명령어
     String command = '-ss $_trimmedStartValue '
-        '-i ${widget.videoPath} '
+        '-i "${widget.videoPath}" '  // 경로를 따옴표로 묶음
         '-to $_trimmedEndValue ';
 
     if (overlayFilters.isNotEmpty) {
@@ -148,10 +146,9 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
       command += '-vf "$colorMatrixFilter, setpts=${1 / _speedValue}*PTS" ';
     }
 
-    command += '-c:a copy "$outputPath"';
 
-
-
+    command += '-c:a copy "$outputPath" ';
+    command += '-loglevel verbose ';  // 추가 로그를 출력
 
     print('Running FFmpeg command: $command');
 
@@ -171,6 +168,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
       }
     });
   }
+
 
 
 
@@ -256,7 +254,8 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
   // 이모티콘 또는 텍스트의 위치가 변경되었을 때 호출되는 함수 (새로 추가된 콜백 함수)
   void _updateElementPosition(int index, Offset newPosition) {
     setState(() {
-      _elements[index]['position'] = newPosition;  // 새로운 위치로 업데이트
+      _elements[index]['position'] = newPosition;
+      print("$index 번 이모티콘의 새로운 위치 $newPosition");// 새로운 위치로 업데이트
     });
   }
 

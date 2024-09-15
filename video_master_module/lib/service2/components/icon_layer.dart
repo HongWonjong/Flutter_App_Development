@@ -76,7 +76,7 @@ class _IconLayerState extends State<IconLayer> {
                   // 선택된 이모티콘일 때만 X 버튼을 표시
                   if (_selectedIndex == index)
                     Positioned(
-                      right: -10,
+                      right: widget.maxHeight * element['size'] * 0.7,
                       top: -10,
                       child: GestureDetector(
                         onTap: () {
