@@ -13,14 +13,14 @@ Future<String> generateTextEmojiOverlayFilters(
     String content = element['content'];
     bool isEmoji = element['isEmoji'] ?? false;
     double size = element['size'] ?? 0.05;
-    Offset position = element['position'] ?? Offset(0, 0);
+    Offset position = element['position'] ?? const Offset(0, 0);
 
     // 이모티콘 또는 텍스트의 크기 계산
     double pixelSize = size * videoHeight;
 
     // 위치를 계산하고 근사치를 정수로 변환
-    double xPosition = ((position.dx / videoWidth) * videoWidth).roundToDouble();  // x 좌표 반올림, 픽셀은 정수다 픽셀은 정수다 픽셀은 정수다
-    double yPosition = ((position.dy / videoHeight) * videoHeight).roundToDouble(); // y 좌표 반올림
+    int xPosition = ((position.dx / videoWidth) * videoWidth).round(); //
+    int yPosition = ((position.dy / videoHeight) * videoHeight).round(); // y 좌표 반올림
 
     if (isEmoji) {
       String emojiPath = await saveEmojiAsImage(content, pixelSize);

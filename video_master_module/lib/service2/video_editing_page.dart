@@ -29,12 +29,12 @@ class VideoEditingPage extends StatefulWidget {
 
 class _VideoEditingPageState extends State<VideoEditingPage> {
   VideoPlayerController? _controller;
-  final GlobalKey _videoPlayerKey = GlobalKey();
+  final GlobalKey _filterKey = GlobalKey();
   
   bool _isPlaying = false;
   Offset? _videoEditorTopLeft;
-  double _videoWidth = 0;
-  double _videoHeight = 0;
+  double? _calculatedVideoWidth;
+  double? _calculatedVideoHeight;
   double _startValue = 0;
   double _endValue = 10;
   double _speedValue = 1.0;
@@ -61,22 +61,9 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
   void initState() {
     super.initState();
     _initializeController(widget.videoPath);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _calculateVideoEditorOffset(); // 오프셋 계산
-    });
-  }
 
-  // 비디오 플레이어의 오프셋을 계산하는 함수
-  void _calculateVideoEditorOffset() {
-    RenderBox? videoBox = _videoPlayerKey.currentContext?.findRenderObject() as RenderBox?;
-    if (videoBox != null) {
-      setState(() {
-        _videoEditorTopLeft = videoBox.localToGlobal(Offset.zero);
-        _videoWidth = videoBox.size.width;
-        _videoHeight = videoBox.size.height;
-      });
-      print('Video editor top left: $_videoEditorTopLeft, Width: $_videoWidth, Height: $_videoHeight');
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+    });
   }
 
 
@@ -134,6 +121,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
       },
     );
 
+
     final tempDir = await getTemporaryDirectory();
     final outputPath = '${tempDir.path}/output_${DateTime.now().millisecondsSinceEpoch}.mp4';
 
@@ -144,7 +132,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     String colorMatrixFilter = convertMatrixToFFmpegFilter(colorMatrix);
 
     // 이모티콘 및 텍스트 필터 추가 (함수 호출)
-    String overlayFilters = await generateTextEmojiOverlayFilters(_elements, _videoEditorTopLeft!, _videoWidth, _videoHeight);
+    String overlayFilters = await generateTextEmojiOverlayFilters(_elements, _videoEditorTopLeft!, _calculatedVideoWidth!, _calculatedVideoHeight!);
 
 
     // 최종 FFmpeg 명령어
@@ -298,62 +286,83 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
                 children: [
                   LayoutBuilder(
                     builder: (context, constraints) {
-                      // 비디오 플레이어의 실제 크기 계산
-                      double videoAspectRatio = _controller!.value.aspectRatio;
-                      double videoWidth = constraints.maxWidth;
-                      double videoHeight = videoWidth / videoAspectRatio;
+                      // 비디오 크기가 아직 계산되지 않은 경우에만 계산
+                      if (_calculatedVideoWidth == null || _calculatedVideoHeight == null) {
+                        double videoAspectRatio = _controller!.value.aspectRatio;
 
-                      // 만약 높이가 최대 크기를 넘는다면, 다시 너비를 계산
-                      if (videoHeight > constraints.maxHeight) {
-                        videoHeight = constraints.maxHeight;
-                        videoWidth = videoHeight * videoAspectRatio;
+                        double maxWidth = constraints.maxWidth;
+                        double maxHeight = constraints.maxHeight;
+
+                        double videoWidth = maxWidth;
+                        double videoHeight = videoWidth / videoAspectRatio;
+
+                        // 높이가 최대 크기를 넘는다면 다시 너비 계산
+                        if (videoHeight > maxHeight) {
+                          videoHeight = maxHeight;
+                          videoWidth = videoHeight * videoAspectRatio;
+                        }
+
+                        // 계산된 크기를 빌드 완료 후에 저장
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          setState(() {
+                            _calculatedVideoWidth = videoWidth;
+                            _calculatedVideoHeight = videoHeight;
+                          });
+                        });
+
+                        // 계산된 크기 로그로 출력
+                        print("Video Size: Width = $videoWidth, Height = $videoHeight");
                       }
 
                       return Stack(
                         children: [
-                          // 비디오 플레이어 영역
-                          SizedBox(
-                            key: _videoPlayerKey,
-                            width: videoWidth,
-                            height: videoHeight,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.white.withOpacity(0.4),
-                                  width: 2.0,
+                          // 비디오 플레이어
+                          if (_calculatedVideoWidth != null && _calculatedVideoHeight != null)
+                            Align(
+                              alignment: Alignment.center,
+                              child: SizedBox(
+                                width: _calculatedVideoWidth,
+                                height: _calculatedVideoHeight,
+                                child: AspectRatio(
+                                  aspectRatio: _controller!.value.aspectRatio,
+                                  child: VideoPlayer(_controller!),
                                 ),
                               ),
-                              child: AspectRatio(
-                                aspectRatio: videoAspectRatio,
-                                child: VideoPlayer(_controller!),
+                            ),
+                          // 비디오 필터
+                          if (_calculatedVideoWidth != null && _calculatedVideoHeight != null)
+                            Align(
+                              alignment: Alignment.center,
+                              child: SizedBox(
+                                width: _calculatedVideoWidth,
+                                height: _calculatedVideoHeight,
+                                child: Container(
+                                  key: _filterKey,
+                                  color: Colors.transparent,
+                                  child: VideoFilter(
+                                    brightness: _brightnessValue,
+                                    contrast: _contrastValue,
+                                    saturation: _saturationValue,
+                                    controller: _controller!,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                          Positioned(
-                            left: 0,
-                            top: 0,
-                            width: videoWidth,
-                            height: videoHeight,
-                            child: VideoFilter(
-                              brightness: _brightnessValue,
-                              contrast: _contrastValue,
-                              saturation: _saturationValue,
-                              controller: _controller!,
+                          // 아이콘 레이어
+                          if (_calculatedVideoWidth != null && _calculatedVideoHeight != null)
+                            Align(
+                              alignment: Alignment.center,
+                              child: SizedBox(
+                                width: _calculatedVideoWidth,
+                                height: _calculatedVideoHeight,
+                                child: IconLayer(
+                                  maxHeight: _calculatedVideoHeight!,
+                                  maxWidth: _calculatedVideoWidth!,
+                                  elements: _elements,
+                                  onPositionChanged: _updateElementPosition,
+                                ),
+                              ),
                             ),
-                          ),
-                          // IconLayer에 비디오 플레이어의 크기 전달
-                          Positioned(
-                            left: 0,
-                            top: 0,
-                            width: videoWidth,
-                            height: videoHeight,
-                            child: IconLayer(
-                              maxHeight: videoHeight,  // 비디오 플레이어의 실제 높이
-                              maxWidth: videoWidth,    // 비디오 플레이어의 실제 너비
-                              elements: _elements,
-                              onPositionChanged: _updateElementPosition,  // 위치 변경 콜백 전달
-                            ),
-                          ),
                         ],
                       );
                     },
