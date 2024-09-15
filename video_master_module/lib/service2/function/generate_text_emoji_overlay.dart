@@ -17,8 +17,8 @@ Future<String> generateTextEmojiOverlayFilters(
     Offset position = element['position'] ?? const Offset(0, 0);
 
     double pixelSize = size * videoHeight;
-    int xPosition = ((position.dx / videoWidth) * videoWidth).round(); // 레이아웃 빌더 좌측 상단의 오프셋은 늘 (0,0)이고, 우리는 너비와 높이를 안다. 보정이 가능하다.
-    int yPosition = ((position.dy / videoHeight) * videoHeight).round();
+    int xPosition = ((position.dx / videoWidth) * 1080).round(); // 레이아웃 빌더 좌측 상단의 오프셋은 늘 (0,0)이고, 우리는 너비와 높이를 안다. 보정이 가능하다.
+    int yPosition = ((position.dy / videoHeight) * 1920).round();
 
 
     if (isEmoji) {
@@ -33,7 +33,7 @@ Future<String> generateTextEmojiOverlayFilters(
 
   // 필터가 없을 때는 빈 필터를 반환하지 않음
   if (filters.isNotEmpty) {
-    return filters.join('; ') + ' [out]';
+    return '${filters.join('; ')} [out]';
   } else {
     return ''; // 필터가 없으면 빈 문자열 반환
   }
