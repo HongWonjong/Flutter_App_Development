@@ -36,14 +36,14 @@ Future<Map<String, String>> generateTextEmojiOverlayFilters(
         previousOutput = '[v1]';  // 첫 오버레이가 끝난 후에 previousOutput 업데이트
       } else {
         // 그 이후의 오버레이는 previousOutput을 참조하여 연결
-        filters.add('$previousOutput[$emojiIndex:v]overlay=x=$xPosition:y=$yPosition[v${emojiIndex + 1}]');
-        previousOutput = "[v${emojiIndex + 1}]";  // 새로운 출력 스트림을 참조하도록 업데이트
+        filters.add('$previousOutput[$emojiIndex:v]overlay=x=$xPosition:y=$yPosition[v$emojiIndex]');
+        previousOutput = "[v$emojiIndex]";  // 새로운 출력 스트림을 참조하도록 업데이트
       }
       emojiIndex++; // 다음 입력 스트림 번호로 증가
 
     } else {
       // 텍스트의 경우 drawtext 필터 추가, 텍스트 특수문자 이스케이프
-      filters.add('$previousOutput drawtext=text=\'${content.replaceAll("'", r"\'")}\':fontcolor=white:fontsize=${pixelSize}:x=$xPosition:y=$yPosition[v${emojiIndex + 1}]');
+      filters.add('$previousOutput drawtext=text=\'${content.replaceAll("'", r"\'")}\':fontcolor=white:fontsize=$pixelSize:x=$xPosition:y=$yPosition[v${emojiIndex + 1}]');
 
       // 다음 오버레이를 위해 현재 출력 스트림을 업데이트
       previousOutput = "[v${emojiIndex + 1}]";
