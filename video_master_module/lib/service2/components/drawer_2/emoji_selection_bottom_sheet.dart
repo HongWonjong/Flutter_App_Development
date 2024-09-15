@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:video_master_module/service2/utils/emoji_list.dart';
 
 class EmojiSelectionBottomSheet extends StatefulWidget {
-  final Function(String, double, bool) onEmojiAdd;  // isEmoji를 추가
+  final Function(String, double, bool) onEmojiAdd;
 
   const EmojiSelectionBottomSheet({Key? key, required this.onEmojiAdd}) : super(key: key);
 
@@ -10,48 +11,51 @@ class EmojiSelectionBottomSheet extends StatefulWidget {
 }
 
 class _EmojiSelectionBottomSheetState extends State<EmojiSelectionBottomSheet> {
-  List<String> emojis = ["😀", "😎", "😂", "😍", "😢", "😡", "🐶", "🐱", "🌟", "🍕"];
-  String? selectedEmoji; // 선택된 이모티콘
-  double selectedSize = 0.05; // 기본 사이즈
+  List<String> availableEmojis = emojisList; // emoji_list.dart에서 가져온 emojis 리스트 사용
+  String? selectedEmoji;
+  double selectedSize = 0.05;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.min, // 화면 크기에 맞게 최소 크기로 맞춤
         children: [
           const Text("이모티콘 선택", style: TextStyle(fontSize: 18)),
           const SizedBox(height: 10),
-          GridView.builder(
-            shrinkWrap: true,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 5, // 이모티콘 5개씩 한 줄에 표시
-            ),
-            itemCount: emojis.length,
-            itemBuilder: (context, index) {
-              bool isSelected = selectedEmoji == emojis[index];
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    selectedEmoji = emojis[index]; // 선택한 이모티콘 업데이트
-                  });
-                },
-                child: Container(
-                  margin: const EdgeInsets.all(4.0),
-                  decoration: BoxDecoration(
-                    color: isSelected ? Colors.purple.withOpacity(0.3) : Colors.transparent, // 선택된 경우 투명 보라색 배경
-                    borderRadius: BorderRadius.circular(8.0), // 약간의 테두리 둥글기
-                  ),
-                  child: Center(
-                    child: Text(
-                      emojis[index],
-                      style: const TextStyle(fontSize: 30),
+          // Flexible을 사용하여 스크롤 가능하게 만듦
+          Flexible(
+            child: GridView.builder(
+              shrinkWrap: true, // GridView가 필요로 하는 높이만 차지하도록 설정
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 6, // 이모티콘 한 줄에 6개씩
+              ),
+              itemCount: availableEmojis.length,
+              itemBuilder: (context, index) {
+                bool isSelected = selectedEmoji == availableEmojis[index];
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedEmoji = availableEmojis[index];
+                    });
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.all(4.0),
+                    decoration: BoxDecoration(
+                      color: isSelected ? Colors.purple.withOpacity(0.3) : Colors.transparent,
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Center(
+                      child: Text(
+                        availableEmojis[index],
+                        style: const TextStyle(fontSize: 30),
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
           const SizedBox(height: 20),
           Row(
@@ -68,7 +72,7 @@ class _EmojiSelectionBottomSheetState extends State<EmojiSelectionBottomSheet> {
                 onChanged: (value) {
                   setState(() {
                     if (value != null) {
-                      selectedSize = value; // 선택된 크기 업데이트
+                      selectedSize = value;
                     }
                   });
                 },
@@ -79,11 +83,10 @@ class _EmojiSelectionBottomSheetState extends State<EmojiSelectionBottomSheet> {
           ElevatedButton(
             onPressed: selectedEmoji != null
                 ? () {
-              // 이모티콘과 크기, isEmoji = true 전달
               widget.onEmojiAdd(selectedEmoji!, selectedSize, true);
               Navigator.of(context).pop(); // 바텀 시트 닫기
             }
-                : null, // 이모티콘 선택하지 않았으면 비활성화
+                : null, // 선택되지 않으면 비활성화
             child: const Text("추가"),
           ),
         ],
@@ -91,6 +94,7 @@ class _EmojiSelectionBottomSheetState extends State<EmojiSelectionBottomSheet> {
     );
   }
 }
+
 
 
 
