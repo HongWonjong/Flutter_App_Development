@@ -15,10 +15,12 @@ Future<String> generateTextEmojiOverlayFilters(
     double size = element['size'] ?? 0.05;
     Offset position = element['position'] ?? Offset(0, 0);
 
-    // 비율로 이모티콘 또는 텍스트의 크기 및 위치 계산
+    // 이모티콘 또는 텍스트의 크기 계산
     double pixelSize = size * videoHeight;
-    double xPosition = (position.dx / videoWidth) * videoWidth;
-    double yPosition = (position.dy / videoHeight) * videoHeight;
+
+    // 위치를 계산하고 근사치를 정수로 변환
+    double xPosition = ((position.dx / videoWidth) * videoWidth).roundToDouble();  // x 좌표 반올림, 픽셀은 정수다 픽셀은 정수다 픽셀은 정수다
+    double yPosition = ((position.dy / videoHeight) * videoHeight).roundToDouble(); // y 좌표 반올림
 
     if (isEmoji) {
       String emojiPath = await saveEmojiAsImage(content, pixelSize);
@@ -30,6 +32,7 @@ Future<String> generateTextEmojiOverlayFilters(
 
   return filters.join(', ');
 }
+
 
 
 

@@ -25,11 +25,16 @@ class EditButton extends StatelessWidget {
           backgroundColor: Colors.deepPurpleAccent.withOpacity(0.4),
         ),
         onPressed: applyChangesAndSaveVideo,
-        child: Text(
-          '편집 & 저장',
-          style: TextStyle(
-            fontSize: fontSizePercentage(context, MQSize.fontSize6),
-            color: Colors.white,
+        child: Container(
+          padding: const EdgeInsets.all(8.0),  // 아이콘 주위에 패딩 추가
+          decoration: BoxDecoration(
+            color: Colors.red.withOpacity(0.4),  // 투명한 빨간색 배경
+            shape: BoxShape.circle,  // 배경을 원형으로 설정
+          ),
+          child: Icon(
+            Icons.movie_filter,  // 클랩보드 아이콘
+            size: fontSizePercentage(context, MQSize.fontSize15),  // 아이콘 크기 설정
+            color: Colors.white,  // 아이콘 색상 설정
           ),
         ),
       ),

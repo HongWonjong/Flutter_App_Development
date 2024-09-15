@@ -145,14 +145,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
 
     // 이모티콘 및 텍스트 필터 추가 (함수 호출)
     String overlayFilters = await generateTextEmojiOverlayFilters(_elements, _videoEditorTopLeft!, _videoWidth, _videoHeight);
-    print('Generated overlayFilters: $overlayFilters');  // 생성된 필터 확인
-    // 이모지 크기를 직접 로그로 출력 (필터 문자열에서 추출하거나 별도로 계산)
-    for (var element in _elements) {
-      if (element['isEmoji'] == true) {
-        double size = element['size'] * 1920;  // 이모티콘 크기 계산 (기본 화면 높이 기준)
-        print('Emoji size in pixels: $size');  // 이모티콘 크기 출력
-      }
-    }
+
 
     // 최종 FFmpeg 명령어
     String command = '-ss $_trimmedStartValue '
