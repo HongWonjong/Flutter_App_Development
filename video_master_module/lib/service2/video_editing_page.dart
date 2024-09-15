@@ -17,6 +17,7 @@ import 'function/generate_text_emoji_overlay.dart';
 
 
 
+
 class VideoEditingPage extends StatefulWidget {
   final String videoPath;
 
@@ -28,6 +29,12 @@ class VideoEditingPage extends StatefulWidget {
 
 class _VideoEditingPageState extends State<VideoEditingPage> {
   VideoPlayerController? _controller;
+  final GlobalKey _videoPlayerKey = GlobalKey();
+  
+  bool _isPlaying = false;
+  Offset? _videoEditorTopLeft;
+  double _videoWidth = 0;
+  double _videoHeight = 0;
   double _startValue = 0;
   double _endValue = 10;
   double _speedValue = 1.0;
@@ -54,6 +61,22 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
   void initState() {
     super.initState();
     _initializeController(widget.videoPath);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _calculateVideoEditorOffset(); // 오프셋 계산
+    });
+  }
+
+  // 비디오 플레이어의 오프셋을 계산하는 함수
+  void _calculateVideoEditorOffset() {
+    RenderBox? videoBox = _videoPlayerKey.currentContext?.findRenderObject() as RenderBox?;
+    if (videoBox != null) {
+      setState(() {
+        _videoEditorTopLeft = videoBox.localToGlobal(Offset.zero);
+        _videoWidth = videoBox.size.width;
+        _videoHeight = videoBox.size.height;
+      });
+      print('Video editor top left: $_videoEditorTopLeft, Width: $_videoWidth, Height: $_videoHeight');
+    }
   }
 
 
@@ -63,7 +86,17 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
       ..initialize().then((_) {
         setState(() {
           _endValue = _controller!.value.duration.inSeconds.toDouble();
+        });
 
+        // 비디오 상태 모니터링
+        _controller!.addListener(() {
+          // 비디오가 끝났을 때 자동으로 처음으로 돌아가기
+          if (_controller!.value.position >= _controller!.value.duration) {
+            setState(() {
+              _isPlaying = false;  // 재생 상태 업데이트
+            });
+            _controller!.seekTo(Duration.zero);  // 처음으로 되돌리기
+          }
         });
       });
   }
@@ -111,7 +144,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     String colorMatrixFilter = convertMatrixToFFmpegFilter(colorMatrix);
 
     // 이모티콘 및 텍스트 필터 추가 (함수 호출)
-    String overlayFilters = await generateTextEmojiOverlayFilters(_elements);
+    String overlayFilters = await generateTextEmojiOverlayFilters(_elements, _videoEditorTopLeft!, _videoWidth, _videoHeight);
     print('Generated overlayFilters: $overlayFilters');  // 생성된 필터 확인
     // 이모지 크기를 직접 로그로 출력 (필터 문자열에서 추출하거나 별도로 계산)
     for (var element in _elements) {
@@ -193,8 +226,14 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
     if (_controller != null) {
       if (_controller!.value.isPlaying) {
         _controller!.pause();
+        setState(() {
+          _isPlaying = false;
+        });
       } else {
         _controller!.play();
+        setState(() {
+          _isPlaying = true;
+        });
       }
     }
   }
@@ -221,7 +260,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
   void _addEmojiOrText(String content, bool isEmoji, double size) {
     setState(() {
       // null 체크 후 안전하게 저장
-      if (content.isNotEmpty && size != null) {
+      if (content.isNotEmpty) {
         _elements.add({
           'content': content,            // 텍스트나 이모티콘 내용
           'size': size,                  // 크기
@@ -281,6 +320,7 @@ class _VideoEditingPageState extends State<VideoEditingPage> {
                         children: [
                           // 비디오 플레이어 영역
                           SizedBox(
+                            key: _videoPlayerKey,
                             width: videoWidth,
                             height: videoHeight,
                             child: Container(
