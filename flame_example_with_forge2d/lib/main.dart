@@ -165,14 +165,15 @@ class Mountain extends BodyComponent {
       ..type = BodyType.static
       ..position = Vector2(gameSize.x / 2, yBase); // 화면 중앙에 산을 배치
 
-    return world.createBody(bodyDef)..createFixture(fixtureDef);
+    return world.createBody(bodyDef)..createFixture(FixtureDef(shape)..friction = 0.8);
+
   }
 }
 
 class Player extends BodyComponent {
   @override
   final Paint paint = Paint()..color = const Color(0xFFFFA500); // 주황색
-  double rotationSpeed = 0.0; // 회전 속도
+  double rotationSpeed = 100.0; // 회전 속도
   late Pickaxe pickaxe; // 곡괭이 참조 추가
 
   @override
@@ -193,11 +194,10 @@ class Player extends BodyComponent {
     rotationSpeed = speed;
     body.angularVelocity = rotationSpeed; // 플레이어 회전 속도 설정
 
-    // 곡괭이의 모터 속도를 플레이어 회전 속도와 동기화
-    if (pickaxe.joint != null) {
-      pickaxe.joint!.motorSpeed = rotationSpeed;
-    }
+    // 곡괭이의 모터 속도와 동기화
+    pickaxe.rotatePickaxe(rotationSpeed);
   }
+
 }
 
 
@@ -213,10 +213,12 @@ class Pickaxe extends BodyComponent {
   double motorSpeed = 0.0; // 기본 회전 속도
   // 곡괭이 크기 및 위치 설정
   static const double handleWidth = 2.0; // 막대기 폭
-  static const double handleHeight = 20.0; // 막대기 높이
-  static const double bladeWidth = 12.0; // 날 폭
+  static const double handleHeight = 30.0; // 막대기 높이
+  static const double bladeWidth = 17.0; // 날 폭
   static const double bladeHeight = 3.0; // 날 높이
-  static const double bladeOffsetY = -20.0; // 날 위치(막대 기준)
+  static const double bladeOffsetY = -30.0; // 날 위치(막대 기준)
+
+
 
   @override
   void render(Canvas canvas) {
@@ -313,6 +315,7 @@ class Pickaxe extends BodyComponent {
 
     // RevoluteJoint 생성
     final revoluteJoint = RevoluteJoint(revoluteJointDef);
+    joint = revoluteJoint; // 조인트를 필드에 저장
 
     // World에 조인트 추가
     world.createJoint(revoluteJoint);
