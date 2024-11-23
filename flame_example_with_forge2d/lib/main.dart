@@ -5,26 +5,38 @@ import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 void main() {
   final game = MountainClimberGame();
+
   runApp(
-    Listener(
-      onPointerSignal: (PointerSignalEvent event) {
-        if (event is PointerScrollEvent) {
-          game.handleMouseScroll(event);
+    RawKeyboardListener(
+      focusNode: FocusNode(),
+      onKey: (RawKeyEvent event) {
+        // 키 이벤트 처리
+        if (event is RawKeyDownEvent && event.logicalKey == LogicalKeyboardKey.space) {
+          game.player.jump(); // 스페이스바를 누르면 점프
         }
       },
-      child: GestureDetector(
-        onPanUpdate: (details) {
-          game.handlePanUpdate(details);
+      child: Listener(
+        onPointerSignal: (PointerSignalEvent event) {
+          if (event is PointerScrollEvent) {
+            game.handleMouseScroll(event);
+          }
         },
-        child: GameWidget(game: game),
+        child: GestureDetector(
+          onPanUpdate: (details) {
+            game.handlePanUpdate(details);
+          },
+          child: GameWidget(game: game),
+        ),
       ),
     ),
   );
 }
+
 class MountainClimberGame extends Forge2DGame {
   MountainClimberGame() : super(gravity: Vector2(0, 200), zoom: 1.0) {
     debugMode = true;
@@ -58,6 +70,14 @@ class MountainClimberGame extends Forge2DGame {
     for (final boundary in boundaries) {
       add(boundary);
     }
+  }
+  @override
+  KeyEventResult onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.space) {
+      player.jump(); // 스페이스바를 누르면 점프
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
   }
 
 
@@ -121,22 +141,25 @@ class Ground extends BodyComponent {
   @override
   final Paint paint = Paint()..color = const Color(0xFFA0522D); // 갈색
 
-
-
   @override
   Body createBody() {
     final gameSize = game.size;
     final shape = PolygonShape()
-      ..setAsBoxXY(gameSize.x, gameSize.y * 0.05); // 가로 50, 세로 5 크기의 박스
+      ..setAsBoxXY(gameSize.x, gameSize.y * 0.05);
 
-    final fixtureDef = FixtureDef(shape)..friction = 0.8;
+    final fixtureDef = FixtureDef(shape)
+      ..friction = 0.9
+      ..restitution = 0.0 // 충돌 후 튀는 효과 제거
+      ..isSensor = false; // 센서가 아니도록 설정 (중요)
+
     final bodyDef = BodyDef()
       ..type = BodyType.static
-      ..position = Vector2(0, gameSize.y); // 위치 조정
+      ..position = Vector2(0, gameSize.y);
 
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
 }
+
 
 class Mountain extends BodyComponent {
   @override
@@ -164,7 +187,10 @@ class Mountain extends BodyComponent {
     ];
 
     final shape = PolygonShape()..set(vertices);
-    final fixtureDef = FixtureDef(shape)..friction = 0.9;
+    final fixtureDef = FixtureDef(shape)
+      ..friction = 0.9
+      ..restitution = 0.0 // 충돌 후 튀는 효과 제거
+      ..isSensor = false; // 센서가 아니도록 설정 (중요)
     final bodyDef = BodyDef()
       ..type = BodyType.static
       ..position = Vector2(gameSize.x / 2, yBase); // 화면 중앙에 산을 배치
@@ -174,16 +200,10 @@ class Mountain extends BodyComponent {
 }
 
 
-class Player extends BodyComponent {
+class Player extends BodyComponent with ContactCallbacks {
   @override
   final Paint paint = Paint()..color = const Color(0xFFFFA500); // 주황색
   double rotationSpeed = 200.0; // 회전 속도
-  late BallAndChain ballAndChain; // 곡괭이 참조 추가
-
-  Player() {
-    ballAndChain = BallAndChain(this); // 곡괭이 초기화
-  }
-
 
   @override
   Body createBody() {
@@ -191,7 +211,8 @@ class Player extends BodyComponent {
     final shape = CircleShape()..radius = 15;
     final fixtureDef = FixtureDef(shape)
       ..density = 4.0
-      ..friction = 0.9;
+      ..friction = 0.9
+      ..restitution = 0.0; // 튀는 효과 제거
     final bodyDef = BodyDef()
       ..type = BodyType.dynamic
       ..position = Vector2(gameSize.x / 4, gameSize.y / 2);
@@ -199,11 +220,39 @@ class Player extends BodyComponent {
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
 
-  void rotatePlayer(double speed) {
-    rotationSpeed = speed;
-    body.angularVelocity = rotationSpeed; // 플레이어 회전 속도 설정
+  void jump() {
+    final Vector2 currentVelocity = body.linearVelocity;
 
+    // 수직 속도 변화량 계산 (기존 속도 유지, 점프 힘 추가)
+    double jumpStrength = -2000000.0; // 원하는 점프 힘
+    double additionalForceY = jumpStrength - currentVelocity.y;
+
+    // 기존 수평 속도를 유지하고, 수직 방향으로만 힘 추가
+    body.applyLinearImpulse(Vector2(0, additionalForceY));
+
+    print('Applied jump force: $additionalForceY, Current velocity: $currentVelocity');
   }
+
+
+
+
+
+  void rotatePlayer(double targetSpeed) {
+    double currentSpeed = body.angularVelocity;
+
+    // 목표 속도와 현재 속도의 차이를 줄이도록 설정
+    double delta = targetSpeed - currentSpeed;
+
+    // 감속 또는 가속 비율 설정
+    double adjustment = delta.clamp(-500.0, 500.0); // 최대 변화량 제한
+
+    // 토크 크기 조정
+    double torque = adjustment * body.mass * 500.0; // 토크 증폭 (기본적으로 10배)
+    body.applyTorque(torque);
+
+    print('Applied torque: $torque, Current angular velocity: $currentSpeed');
+  }
+
 
 }
 
