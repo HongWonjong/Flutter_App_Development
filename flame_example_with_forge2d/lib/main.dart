@@ -228,7 +228,11 @@ class Player extends BodyComponent with ContactCallbacks {
     double additionalForceY = jumpStrength - currentVelocity.y;
 
     // 기존 수평 속도를 유지하고, 수직 방향으로만 힘 추가
-    body.applyLinearImpulse(Vector2(0, additionalForceY));
+    body.applyLinearImpulse(
+      Vector2(0, additionalForceY), // X축 속도 보존
+      point: body.worldCenter,
+      wake: true,
+    );
 
     print('Applied jump force: $additionalForceY, Current velocity: $currentVelocity');
   }
@@ -265,10 +269,10 @@ class BallAndChain extends BodyComponent {
 
   BallAndChain(this.player);
 
-  static const int chainSegments = 5; // 쇠사슬 구 개수
+  static const int chainSegments = 30; // 쇠사슬 구 개수
   static const double chainRadius = 2.0; // 쇠사슬 구 반지름
   static const double ballRadius = 10.0; // 철구 반지름
-  static const double chainSpacing = 5.0; // 구 사이 간격
+  static const double chainSpacing = 0.0; // 구 사이 간격
 
   @override
   Future<void> onLoad() async {
@@ -307,7 +311,7 @@ class BallAndChain extends BodyComponent {
           ..localAnchorA.setFrom(Vector2(0, 0))
           ..localAnchorB.setFrom(Vector2(0, 0))
           ..length = chainSpacing
-          ..frequencyHz = 5.0 // 스프링 효과
+          ..frequencyHz = 10.0 // 스프링 효과
           ..dampingRatio = 0.7; // 감쇠 효과
 
         final distanceJoint = DistanceJoint(distanceJointDef);
