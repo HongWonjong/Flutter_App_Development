@@ -31,6 +31,8 @@ class MountainClimberGame extends Forge2DGame {
   }
 
   late final Player player;
+  static const double rotateSpeed = 50;
+
 
   @override
   Future<void> onLoad() async {
@@ -46,8 +48,9 @@ class MountainClimberGame extends Forge2DGame {
     await player.loaded; // 플레이어가 완전히 로드될 때까지 대기
 
     // 곡괭이 추가
-    final pickaxe = Pickaxe(player);
-    add(pickaxe);
+    final ballAndChain = BallAndChain(player);
+    add(ballAndChain);
+
 
     camera.follow(player);
 
@@ -61,10 +64,10 @@ class MountainClimberGame extends Forge2DGame {
   List<Component> createBoundaries() {
     final screenSize = size;
 
-    final topLeft = Vector2(-screenSize.x, -screenSize.y);
-    final topRight = Vector2(screenSize.x, -screenSize.y);
+    final topLeft = Vector2(0, 0);
+    final topRight = Vector2(screenSize.x, 0);
     final bottomRight = Vector2(screenSize.x, screenSize.y);
-    final bottomLeft = Vector2(-screenSize.x, screenSize.y);
+    final bottomLeft = Vector2(0, screenSize.y);
 
     return [
       Wall(topLeft, topRight),
@@ -73,21 +76,22 @@ class MountainClimberGame extends Forge2DGame {
       Wall(topLeft, bottomLeft),
     ];
   }
+
   void handleMouseScroll(PointerScrollEvent event) {
     // 마우스 스크롤 방향에 따라 플레이어 회전 속도 조정
     if (event.scrollDelta.dy > 0) {
-      player.rotatePlayer(10.0); // 시계 방향 회전
+      player.rotatePlayer(rotateSpeed); // 시계 방향 회전
     } else if (event.scrollDelta.dy < 0) {
-      player.rotatePlayer(-10.0); // 반시계 방향 회전
+      player.rotatePlayer(-rotateSpeed); // 반시계 방향 회전
     }
   }
 
   void handlePanUpdate(DragUpdateDetails details) {
     // 드래그 방향에 따라 플레이어 회전 속도 조정
     if (details.delta.dx > 0) {
-      player.rotatePlayer(10.0); // 시계 방향 회전
+      player.rotatePlayer(rotateSpeed); // 시계 방향 회전
     } else if (details.delta.dx < 0) {
-      player.rotatePlayer(-10.0); // 반시계 방향 회전
+      player.rotatePlayer(-rotateSpeed); // 반시계 방향 회전
     }
   }
 
@@ -142,21 +146,21 @@ class Mountain extends BodyComponent {
   Body createBody() {
     final gameSize = game.size;
 
-    // 산의 너비와 높이를 게임 화면의 절반 크기로 설정
-    final mountainWidth = gameSize.x * 0.5;
-    final mountainHeight = gameSize.y * 0.5;
+    // 산의 너비와 높이를 더 완만하게 설정
+    final mountainWidth = gameSize.x * 0.6; // 약간 더 넓게 설정
+    final mountainHeight = gameSize.y * 0.3; // 더 낮게 설정
 
     // 땅의 높이를 고려하여 산의 위치 조정
-    final groundHeight = gameSize.y * 0.05; // 땅이 화면 높이의 10%를 차지한다고 가정
+    final groundHeight = gameSize.y * 0.05; // 땅이 화면 높이의 5%를 차지한다고 가정
     final yBase = gameSize.y - groundHeight; // 땅 위에 산의 베이스 위치 설정
 
-    // 산의 꼭지점 좌표를 바디의 위치를 기준으로 상대적으로 정의
+    // 산의 꼭지점 좌표를 더 완만하게 정의
     final vertices = [
-      Vector2(-mountainWidth / 2, 0),                      // 좌측 베이스
-      Vector2(-mountainWidth / 4, -mountainHeight / 2),    // 좌측 중간
-      Vector2(0, -mountainHeight),                         // 산의 꼭대기
-      Vector2(mountainWidth / 4, -mountainHeight / 2),     // 우측 중간
-      Vector2(mountainWidth / 2, 0),                       // 우측 베이스
+      Vector2(-mountainWidth / 2, 0),                       // 좌측 베이스
+      Vector2(-mountainWidth / 4, -mountainHeight / 4),     // 좌측 완만한 중간
+      Vector2(0, -mountainHeight),                          // 산의 꼭대기
+      Vector2(mountainWidth / 4, -mountainHeight / 4),      // 우측 완만한 중간
+      Vector2(mountainWidth / 2, 0),                        // 우측 베이스
     ];
 
     final shape = PolygonShape()..set(vertices);
@@ -166,23 +170,28 @@ class Mountain extends BodyComponent {
       ..position = Vector2(gameSize.x / 2, yBase); // 화면 중앙에 산을 배치
 
     return world.createBody(bodyDef)..createFixture(FixtureDef(shape)..friction = 0.8);
-
   }
 }
+
 
 class Player extends BodyComponent {
   @override
   final Paint paint = Paint()..color = const Color(0xFFFFA500); // 주황색
-  double rotationSpeed = 100.0; // 회전 속도
-  late Pickaxe pickaxe; // 곡괭이 참조 추가
+  double rotationSpeed = 200.0; // 회전 속도
+  late BallAndChain ballAndChain; // 곡괭이 참조 추가
+
+  Player() {
+    ballAndChain = BallAndChain(this); // 곡괭이 초기화
+  }
+
 
   @override
   Body createBody() {
     final gameSize = game.size;
-    final shape = CircleShape()..radius = 10;
+    final shape = CircleShape()..radius = 15;
     final fixtureDef = FixtureDef(shape)
-      ..density = 1.0
-      ..friction = 0.5;
+      ..density = 4.0
+      ..friction = 0.9;
     final bodyDef = BodyDef()
       ..type = BodyType.dynamic
       ..position = Vector2(gameSize.x / 4, gameSize.y / 2);
@@ -194,147 +203,135 @@ class Player extends BodyComponent {
     rotationSpeed = speed;
     body.angularVelocity = rotationSpeed; // 플레이어 회전 속도 설정
 
-    // 곡괭이의 모터 속도와 동기화
-    pickaxe.rotatePickaxe(rotationSpeed);
   }
 
 }
 
-
-class Pickaxe extends BodyComponent {
+class BallAndChain extends BodyComponent {
   final Player player;
-  late Body pickaxeBody;
-  final Paint handlePaint = Paint()..color = const Color(0xFF8B4513); // 진갈색
-  final Paint bladePaint = Paint()..color = const Color(0xFF808080); // 회색
-  RevoluteJoint? joint; // 조인트 참조
+  late Body ballBody; // 철구 Body
+  final List<Body> chainBodies = []; // 쇠사슬 구들
+  final Paint chainPaint = Paint()..color = const Color(0xFF8B4513); // 진갈색 (쇠사슬)
+  final Paint ballPaint = Paint()..color = const Color(0xFF808080); // 회색 (철구)
 
-  Pickaxe(this.player);
+  BallAndChain(this.player);
 
-  double motorSpeed = 0.0; // 기본 회전 속도
-  // 곡괭이 크기 및 위치 설정
-  static const double handleWidth = 2.0; // 막대기 폭
-  static const double handleHeight = 30.0; // 막대기 높이
-  static const double bladeWidth = 17.0; // 날 폭
-  static const double bladeHeight = 3.0; // 날 높이
-  static const double bladeOffsetY = -30.0; // 날 위치(막대 기준)
-
-
-
-  @override
-  void render(Canvas canvas) {
-    final position = pickaxeBody.position;
-    final angle = pickaxeBody.angle;
-
-    // 막대기 부분
-    canvas.save();
-    canvas.translate(position.x, position.y);
-    canvas.rotate(angle);
-    canvas.drawRect(
-      Rect.fromCenter(
-        center: const Offset(0, -handleHeight / 2 + 3),
-        width: handleWidth,
-        height: handleHeight,
-      ),
-      handlePaint,
-    );
-    canvas.restore();
-
-    // 날 부분
-    canvas.save();
-    final bladeOffset = _rotateOffset(const Offset(0, bladeOffsetY + 3), angle);
-    canvas.translate(position.x + bladeOffset.dx, position.y + bladeOffset.dy);
-    canvas.rotate(angle);
-    canvas.drawRect(
-      Rect.fromCenter(
-        center: Offset.zero,
-        width: bladeWidth,
-        height: bladeHeight,
-      ),
-      bladePaint,
-    );
-    canvas.restore();
-  }
-
-
-  Offset _rotateOffset(Offset localOffset, double angle) {
-    final rotatedX = localOffset.dx * cos(angle) - localOffset.dy * sin(angle);
-    final rotatedY = localOffset.dx * sin(angle) + localOffset.dy * cos(angle);
-    return Offset(rotatedX, rotatedY);
-  }
+  static const int chainSegments = 5; // 쇠사슬 구 개수
+  static const double chainRadius = 2.0; // 쇠사슬 구 반지름
+  static const double ballRadius = 10.0; // 철구 반지름
+  static const double chainSpacing = 5.0; // 구 사이 간격
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
     await Future.delayed(Duration.zero);
-    _createPickaxe();
+    _createBallAndChain();
   }
 
-  void _createPickaxe() {
-    // 막대 모양 정의
-    final handleShape = PolygonShape()
-      ..setAsBoxXY(handleWidth / 2, handleHeight / 2); // 폭, 높이 반으로 설정
+  void _createBallAndChain() {
+    // 플레이어 Body의 시작 위치
+    Vector2 currentPosition = player.body.position + Vector2(0, -chainRadius * 2);
 
-    // 날 모양 정의
-    final bladeShape = PolygonShape()
-      ..set([
-        Vector2(-bladeWidth / 2, bladeOffsetY), // 날 왼쪽
-        Vector2(bladeWidth / 2, bladeOffsetY),  // 날 오른쪽
-        Vector2(0, bladeOffsetY - bladeHeight), // 날 꼭대기
-      ]);
+    Body? previousBody; // 이전 Body 참조
 
-    final pickaxeBodyDef = BodyDef()
-      ..type = BodyType.dynamic
-      ..position = player.body.position + Vector2(0, -5);
+    // 쇠사슬 구 생성
+    for (int i = 0; i < chainSegments; i++) {
+      final chainBodyDef = BodyDef()
+        ..type = BodyType.dynamic
+        ..position = currentPosition;
 
-    pickaxeBody = world.createBody(pickaxeBodyDef);
+      final chainBody = world.createBody(chainBodyDef);
 
-    // 막대 부분
-    pickaxeBody.createFixture(
-        FixtureDef(handleShape)
+      final chainShape = CircleShape()..radius = chainRadius;
+      chainBody.createFixture(
+        FixtureDef(chainShape)
           ..density = 0.5
           ..friction = 0.8
-    );
+          ..restitution = 0.2,
+      );
 
-    // 날 부분
-    pickaxeBody.createFixture(
-      FixtureDef(bladeShape)
+      if (previousBody != null) {
+        // 이전 구와 현재 구를 DistanceJoint로 연결
+        final distanceJointDef = DistanceJointDef()
+          ..bodyA = previousBody
+          ..bodyB = chainBody
+          ..localAnchorA.setFrom(Vector2(0, 0))
+          ..localAnchorB.setFrom(Vector2(0, 0))
+          ..length = chainSpacing
+          ..frequencyHz = 5.0 // 스프링 효과
+          ..dampingRatio = 0.7; // 감쇠 효과
+
+        final distanceJoint = DistanceJoint(distanceJointDef);
+        world.createJoint(distanceJoint);
+      } else {
+        // 첫 번째 구는 플레이어 Body와 연결
+        final revoluteJointDef = RevoluteJointDef()
+          ..bodyA = player.body
+          ..bodyB = chainBody
+          ..localAnchorA.setFrom(Vector2(0, -2))
+          ..localAnchorB.setFrom(Vector2(0, 0));
+
+        final revoluteJoint = RevoluteJoint(revoluteJointDef);
+        world.createJoint(revoluteJoint);
+      }
+
+      chainBodies.add(chainBody);
+      previousBody = chainBody;
+      currentPosition += Vector2(0, chainSpacing); // 다음 구 위치로 이동
+    }
+
+    // 철구 생성
+    final ballBodyDef = BodyDef()
+      ..type = BodyType.dynamic
+      ..position = currentPosition;
+
+    ballBody = world.createBody(ballBodyDef);
+
+    final ballShape = CircleShape()..radius = ballRadius;
+    ballBody.createFixture(
+      FixtureDef(ballShape)
         ..density = 1.0
         ..friction = 0.8
         ..restitution = 0.2,
     );
 
-    final revoluteJointDef = RevoluteJointDef()
-      ..bodyA = player.body
-      ..bodyB = pickaxeBody
-      ..localAnchorA.setFrom(Vector2(0, -2))
-      ..localAnchorB.setFrom(Vector2(0, handleHeight / 2))
-      ..enableMotor = true
-      ..motorSpeed = motorSpeed
-      ..maxMotorTorque = 5000;
+    // 마지막 쇠사슬 구와 철구를 연결
+    if (previousBody != null) {
+      final distanceJointDef = DistanceJointDef()
+        ..bodyA = previousBody
+        ..bodyB = ballBody
+        ..localAnchorA.setFrom(Vector2(0, 0))
+        ..localAnchorB.setFrom(Vector2(0, 0))
+        ..length = chainSpacing
+        ..frequencyHz = 5.0
+        ..dampingRatio = 0.7;
 
-
-    // RevoluteJoint 생성
-    final revoluteJoint = RevoluteJoint(revoluteJointDef);
-    joint = revoluteJoint; // 조인트를 필드에 저장
-
-    // World에 조인트 추가
-    world.createJoint(revoluteJoint);
-  }
-  void rotatePickaxe(double speed) {
-    motorSpeed = speed;
-    if (joint != null) {
-      joint!.motorSpeed = motorSpeed;
-      joint!.enableMotor(true); // 모터 활성화
+      final distanceJoint = DistanceJoint(distanceJointDef);
+      world.createJoint(distanceJoint);
     }
   }
 
+  @override
+  void render(Canvas canvas) {
+    // 쇠사슬 구 렌더링
+    for (final chainBody in chainBodies) {
+      final position = chainBody.position;
+      canvas.drawCircle(Offset(position.x, position.y), chainRadius, chainPaint);
+    }
 
+    // 철구 렌더링
+    final ballPosition = ballBody.position;
+    canvas.drawCircle(Offset(ballPosition.x, ballPosition.y), ballRadius, ballPaint);
+  }
 
   @override
   Body createBody() {
     return world.createBody(BodyDef());
   }
 }
+
+
+
 
 class Wall extends BodyComponent {
   final Vector2 _start;
