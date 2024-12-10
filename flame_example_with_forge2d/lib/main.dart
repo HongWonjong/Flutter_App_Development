@@ -43,7 +43,9 @@ class _MyAppState extends State<MyApp> {
               child: RawKeyboardListener(
                 focusNode: FocusNode(),
                 onKey: (RawKeyEvent event) {
-                  game.onKeyEvent(event, {}); // 키 입력 이벤트를 게임으로 전달
+                  if (event is RawKeyDownEvent && event.logicalKey == LogicalKeyboardKey.space) {
+                    game.currentStage.player.jump();
+                  }
                 },
                 child: Listener(
                   onPointerSignal: (PointerSignalEvent event) {
@@ -383,7 +385,7 @@ class DestructibleBox extends BodyComponent with ContactCallbacks {
     if (otherBody.userData == "ball") {
       final maxImpulse = impulse.normalImpulses.reduce((a, b) => a > b ? a : b);
       if (maxImpulse > destructionImpulse) {
-        final damage = maxImpulse / 20000;
+        final damage = maxImpulse / 10000;
         currentHealth -= damage;
         print('Box damaged by ball: $damage, Current Health: $currentHealth');
         FlameAudio.play('pow.mp3');
@@ -424,7 +426,7 @@ class Player extends GravityBodyComponent with ContactCallbacks, HasGameRef<Forg
     final gameSize = game.size;
     final shape = CircleShape()..radius = 15; // 충돌 영역은 원형으로 유지
     final fixtureDef = FixtureDef(shape)
-      ..density = 4.0
+      ..density = 6.0
       ..friction = 0.9
       ..restitution = 0.0;
     final bodyDef = BodyDef()
@@ -500,7 +502,7 @@ class BallAndChain extends GravityBodyComponent {
 
   BallAndChain(this.player);
 
-  static const int chainSegments = 10;
+  static const int chainSegments = 15;
   static const double chainRadius = 2.0;
   static const double ballRadius = 10.0;
   static const double chainSpacing = 0.5;
