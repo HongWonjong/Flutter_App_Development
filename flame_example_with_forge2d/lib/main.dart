@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flame_audio/flame_audio.dart';
+import 'stage.dart';
 
 
 
@@ -42,9 +43,7 @@ class _MyAppState extends State<MyApp> {
               child: RawKeyboardListener(
                 focusNode: FocusNode(),
                 onKey: (RawKeyEvent event) {
-                  if (event is RawKeyDownEvent && event.logicalKey == LogicalKeyboardKey.space) {
-                    game.player.jump();
-                  }
+                  game.onKeyEvent(event, {}); // 키 입력 이벤트를 게임으로 전달
                 },
                 child: Listener(
                   onPointerSignal: (PointerSignalEvent event) {
@@ -111,91 +110,42 @@ class MountainClimberGame extends Forge2DGame {
     debugMode = false;
   }
 
-  late final Player player;
-  static const double rotateSpeed = 50;
+  late Stage currentStage;
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    add(Background());
-    add(Ground());
-    add(Mountain());
 
-    player = Player();
-    add(player);
-    await player.loaded;
-    camera.follow(player);
-
-
-    final ballAndChain = BallAndChain(player);
-    add(ballAndChain);
-
-    final platforms = [
-      Vector2(300, 100),
-      Vector2(500, 250),
-      Vector2(400, 300),
-      Vector2(200, 200),
-    ];
-    for (final position in platforms) {
-      add(FloatingPlatform(position, Vector2(100, 20)));
-    }
-
-    final destructibleBoxes = [
-      Vector2(600, 300),
-      Vector2(300, 200),
-      Vector2(200, 250),
-    ];
-
-    for (final position in destructibleBoxes) {
-      add(DestructibleBox(position: position, size: Vector2(50, 50)));
-    }
-
-    final boundaries = createBoundaries();
-    for (final boundary in boundaries) {
-      add(boundary);
-    }
+    currentStage = Stage1(size);
+    add(currentStage);
+    await currentStage.loaded; // Stage 로드 대기
   }
+
+  void loadStage(Stage newStage) {
+    // 기존 스테이지 제거
+    currentStage?.removeFromParent();
+    // 새로운 스테이지 추가
+    currentStage = newStage;
+    add(currentStage);
+  }
+
 
   @override
   KeyEventResult onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.space) {
-      player.jump();
-      return KeyEventResult.handled;
-    }
-    return KeyEventResult.ignored;
-  }
-
-  List<Component> createBoundaries() {
-    final screenSize = size;
-    final topLeft = Vector2(0, 0);
-    final topRight = Vector2(screenSize.x, 0);
-    final bottomRight = Vector2(screenSize.x, screenSize.y);
-    final bottomLeft = Vector2(0, screenSize.y);
-
-    return [
-      Wall(topLeft, topRight),
-      Wall(topRight, bottomRight),
-      Wall(bottomRight, bottomLeft),
-      Wall(topLeft, bottomLeft),
-    ];
+    return currentStage.handleKeyEvent(event, keysPressed);
   }
 
   void handleMouseScroll(PointerScrollEvent event) {
-    if (event.scrollDelta.dy > 0) {
-      player.rotatePlayer(rotateSpeed);
-    } else if (event.scrollDelta.dy < 0) {
-      player.rotatePlayer(-rotateSpeed);
-    }
+    currentStage.handleMouseScroll(event);
   }
 
+
+
   void handlePanUpdate(DragUpdateDetails details) {
-    if (details.delta.dx > 0) {
-      player.rotatePlayer(rotateSpeed);
-    } else if (details.delta.dx < 0) {
-      player.rotatePlayer(-rotateSpeed);
-    }
+    currentStage.handlePanUpdate(details);
   }
 }
+
 
 class FloatingPlatform extends BodyComponent {
   final Vector2 position;
@@ -253,23 +203,49 @@ class Background extends Component with HasGameRef {
 }
 
 class Ground extends BodyComponent {
+  final Vector2 size;
+
+  Ground(this.size);
+
   @override
   final Paint paint = Paint()..color = const Color(0xFFA0522D);
 
   @override
   Body createBody() {
-    final gameSize = game.size;
-    final shape = PolygonShape()..setAsBoxXY(gameSize.x, gameSize.y * 0.05);
+    final shape = PolygonShape()..setAsBoxXY(size.x, size.y * 0.05);
     final fixtureDef = FixtureDef(shape)
       ..friction = 0.9
       ..restitution = 0.0
       ..isSensor = false;
     final bodyDef = BodyDef()
       ..type = BodyType.static
-      ..position = Vector2(0, gameSize.y);
+      ..position = Vector2(0, size.y);
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
 }
+
+class Mountain extends BodyComponent {
+  final List<Vector2> vertices;
+
+  Mountain(this.vertices);
+
+  @override
+  final Paint paint = Paint()..color = const Color(0xFF228B22);
+
+  @override
+  Body createBody() {
+    final shape = PolygonShape()..set(vertices);
+    final fixtureDef = FixtureDef(shape)
+      ..friction = 0.9
+      ..restitution = 0.0
+      ..isSensor = false;
+    final bodyDef = BodyDef()
+      ..type = BodyType.static
+      ..position = Vector2.zero();
+    return world.createBody(bodyDef)..createFixture(fixtureDef);
+  }
+}
+
 
 class DestructibleBox extends BodyComponent with ContactCallbacks {
   final Vector2 position;
@@ -422,33 +398,7 @@ class DestructibleBox extends BodyComponent with ContactCallbacks {
 
 
 
-class Mountain extends BodyComponent {
-  @override
-  final Paint paint = Paint()..color = const Color(0xFF228B22);
 
-  @override
-  Body createBody() {
-    final gameSize = game.size;
-    final mountainVertices = [
-      Vector2(-gameSize.x * 0.5, 0),
-      Vector2(-gameSize.x * 0.3, -gameSize.y * 0.1),
-      Vector2(-gameSize.x * 0.2, -gameSize.y * 0.05),
-      Vector2(0, -gameSize.y * 0.1),
-      Vector2(gameSize.x * 0.2, -gameSize.y * 0.07),
-      Vector2(gameSize.x * 0.3, -gameSize.y * 0.12),
-      Vector2(gameSize.x * 0.5, 0.05),
-    ];
-    final shape = PolygonShape()..set(mountainVertices);
-    final fixtureDef = FixtureDef(shape)
-      ..friction = 0.9
-      ..restitution = 0.0
-      ..isSensor = false;
-    final bodyDef = BodyDef()
-      ..type = BodyType.static
-      ..position = Vector2(gameSize.x / 2, gameSize.y - (gameSize.y * 0.05));
-    return world.createBody(bodyDef)..createFixture(fixtureDef);
-  }
-}
 
 class Player extends GravityBodyComponent with ContactCallbacks, HasGameRef<Forge2DGame> {
   late final SpriteComponent spriteComponent; // 플레이어의 이미지 컴포넌트
@@ -558,7 +508,11 @@ class BallAndChain extends GravityBodyComponent {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    await Future.delayed(Duration.zero);
+
+    // 플레이어의 body가 초기화될 때까지 대기
+    await player.loaded;
+
+    // _createBallAndChain 호출
     _createBallAndChain();
   }
 
