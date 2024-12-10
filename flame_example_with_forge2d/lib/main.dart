@@ -5,8 +5,11 @@ import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+
+
 
 void main() {
   final game = MountainClimberGame();
@@ -15,9 +18,8 @@ void main() {
     RawKeyboardListener(
       focusNode: FocusNode(),
       onKey: (RawKeyEvent event) {
-        // 키 이벤트 처리
         if (event is RawKeyDownEvent && event.logicalKey == LogicalKeyboardKey.space) {
-          game.player.jump(); // 스페이스바를 누르면 점프
+          game.player.jump();
         }
       },
       child: Listener(
@@ -38,13 +40,12 @@ void main() {
 }
 
 class MountainClimberGame extends Forge2DGame {
-  MountainClimberGame() : super(gravity: Vector2(0, 200), zoom: 1.0) {
+  MountainClimberGame() : super(gravity: Vector2(0, 200), zoom: 10.0) {
     debugMode = true;
   }
 
   late final Player player;
   static const double rotateSpeed = 50;
-
 
   @override
   Future<void> onLoad() async {
@@ -53,37 +54,50 @@ class MountainClimberGame extends Forge2DGame {
     add(Ground());
     add(Mountain());
 
-    // 플레이어 추가
     player = Player();
     add(player);
+    await player.loaded;
 
-    await player.loaded; // 플레이어가 완전히 로드될 때까지 대기
-
-    // 곡괭이 추가
     final ballAndChain = BallAndChain(player);
     add(ballAndChain);
 
+    final platforms = [
+      Vector2(300, 100),
+      Vector2(500, 250),
+      Vector2(400, 300),
+      Vector2(200, 200),
+    ];
+    for (final position in platforms) {
+      add(FloatingPlatform(position, Vector2(100, 20)));
+    }
 
-    camera.follow(player);
+    final destructibleBoxes = [
+      Vector2(600, 300),
+      Vector2(700, 400),
+      Vector2(200, 100),
+    ];
+
+    for (final position in destructibleBoxes) {
+      add(DestructibleBox(position: position, size: Vector2(50, 50)));
+    }
 
     final boundaries = createBoundaries();
     for (final boundary in boundaries) {
       add(boundary);
     }
   }
+
   @override
   KeyEventResult onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.space) {
-      player.jump(); // 스페이스바를 누르면 점프
+      player.jump();
       return KeyEventResult.handled;
     }
     return KeyEventResult.ignored;
   }
 
-
   List<Component> createBoundaries() {
     final screenSize = size;
-
     final topLeft = Vector2(0, 0);
     final topRight = Vector2(screenSize.x, 0);
     final bottomRight = Vector2(screenSize.x, screenSize.y);
@@ -98,112 +112,253 @@ class MountainClimberGame extends Forge2DGame {
   }
 
   void handleMouseScroll(PointerScrollEvent event) {
-    // 마우스 스크롤 방향에 따라 플레이어 회전 속도 조정
     if (event.scrollDelta.dy > 0) {
-      player.rotatePlayer(rotateSpeed); // 시계 방향 회전
+      player.rotatePlayer(rotateSpeed);
     } else if (event.scrollDelta.dy < 0) {
-      player.rotatePlayer(-rotateSpeed); // 반시계 방향 회전
+      player.rotatePlayer(-rotateSpeed);
     }
   }
 
   void handlePanUpdate(DragUpdateDetails details) {
-    // 드래그 방향에 따라 플레이어 회전 속도 조정
     if (details.delta.dx > 0) {
-      player.rotatePlayer(rotateSpeed); // 시계 방향 회전
+      player.rotatePlayer(rotateSpeed);
     } else if (details.delta.dx < 0) {
-      player.rotatePlayer(-rotateSpeed); // 반시계 방향 회전
+      player.rotatePlayer(-rotateSpeed);
+    }
+  }
+}
+
+class FloatingPlatform extends BodyComponent {
+  final Vector2 position;
+  final Vector2 size;
+
+  FloatingPlatform(this.position, this.size);
+
+  @override
+  Body createBody() {
+    final shape = PolygonShape()
+      ..setAsBox(size.x / 2, size.y / 2, Vector2.zero(), 0.0);
+    final fixtureDef = FixtureDef(shape)
+      ..density = 1.0
+      ..friction = 0.5
+      ..restitution = 0.0
+      ..isSensor = false;
+
+    final bodyDef = BodyDef()
+      ..type = BodyType.static
+      ..position = position;
+
+    return world.createBody(bodyDef)..createFixture(fixtureDef);
+  }
+}
+
+abstract class GravityBodyComponent extends BodyComponent {
+  static const double gravityAcceleration = 100;
+  final double terminalVelocity = 50000.0;
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    final gravityForce = Vector2(0, gravityAcceleration * body.mass);
+    body.applyForce(gravityForce, point: body.worldCenter);
+    final velocity = body.linearVelocity;
+    if (velocity.y > terminalVelocity) {
+      body.linearVelocity = Vector2(velocity.x, terminalVelocity);
     }
   }
 
-
-
-
+  void resetPosition(Vector2 position) {
+    body.setTransform(position, body.angle);
+    body.linearVelocity = Vector2.zero();
+  }
 }
 
 class Background extends Component with HasGameRef {
   @override
   void render(Canvas canvas) {
     final gameSize = game.size;
-    final rect = Rect.fromLTWH(
-      0,
-      0,
-      gameSize.x,
-      gameSize.y,
-    );
-
-    final paint = Paint()..color = const Color(0xFF87CEEB); // 하늘색
+    final rect = Rect.fromLTWH(0, 0, gameSize.x, gameSize.y);
+    final paint = Paint()..color = const Color(0xFF87CEEB);
     canvas.drawRect(rect, paint);
   }
 }
 
-
 class Ground extends BodyComponent {
   @override
-  final Paint paint = Paint()..color = const Color(0xFFA0522D); // 갈색
+  final Paint paint = Paint()..color = const Color(0xFFA0522D);
 
   @override
   Body createBody() {
     final gameSize = game.size;
-    final shape = PolygonShape()
-      ..setAsBoxXY(gameSize.x, gameSize.y * 0.05);
-
+    final shape = PolygonShape()..setAsBoxXY(gameSize.x, gameSize.y * 0.05);
     final fixtureDef = FixtureDef(shape)
       ..friction = 0.9
-      ..restitution = 0.0 // 충돌 후 튀는 효과 제거
-      ..isSensor = false; // 센서가 아니도록 설정 (중요)
-
+      ..restitution = 0.0
+      ..isSensor = false;
     final bodyDef = BodyDef()
       ..type = BodyType.static
       ..position = Vector2(0, gameSize.y);
-
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
 }
 
+class DestructibleBox extends BodyComponent with ContactCallbacks {
+  final Vector2 position;
+  final Vector2 size;
+  final double maxHealth;
+  double currentHealth;
+  final double destructionImpulse;
+  final Paint paint = Paint()..color = const Color(0xFFA0522D);
+  final Paint crackPaint = Paint()..color = const Color(0xFF000000);
 
-class Mountain extends BodyComponent {
-  @override
-  final Paint paint = Paint()..color = const Color(0xFF228B22); // 초록색
+  bool _markedForDestruction = false;
+
+  // 텍스트 페인트
+  final TextPaint _textPaint = TextPaint(
+    style: const TextStyle(color: Colors.white, fontSize: 12),
+  );
+
+  DestructibleBox({
+    required this.position,
+    required this.size,
+    this.maxHealth = 100.0,
+    this.destructionImpulse = 80000.0,
+  }) : currentHealth = maxHealth;
 
   @override
   Body createBody() {
-    final gameSize = game.size;
+    final shape = PolygonShape()
+      ..setAsBox(size.x / 2, size.y / 2, Vector2.zero(), 0.0);
 
-    // 산의 너비와 높이를 더 완만하게 설정
-    final mountainWidth = gameSize.x * 0.6; // 약간 더 넓게 설정
-    final mountainHeight = gameSize.y * 0.3; // 더 낮게 설정
-
-    // 땅의 높이를 고려하여 산의 위치 조정
-    final groundHeight = gameSize.y * 0.05; // 땅이 화면 높이의 5%를 차지한다고 가정
-    final yBase = gameSize.y - groundHeight; // 땅 위에 산의 베이스 위치 설정
-
-    // 산의 꼭지점 좌표를 더 완만하게 정의
-    final vertices = [
-      Vector2(-mountainWidth / 2, 0),                       // 좌측 베이스
-      Vector2(-mountainWidth / 4, -mountainHeight / 4),     // 좌측 완만한 중간
-      Vector2(0, -mountainHeight),                          // 산의 꼭대기
-      Vector2(mountainWidth / 4, -mountainHeight / 4),      // 우측 완만한 중간
-      Vector2(mountainWidth / 2, 0),                        // 우측 베이스
-    ];
-
-    final shape = PolygonShape()..set(vertices);
     final fixtureDef = FixtureDef(shape)
-      ..friction = 0.9
-      ..restitution = 0.0 // 충돌 후 튀는 효과 제거
-      ..isSensor = false; // 센서가 아니도록 설정 (중요)
-    final bodyDef = BodyDef()
-      ..type = BodyType.static
-      ..position = Vector2(gameSize.x / 2, yBase); // 화면 중앙에 산을 배치
+      ..density = 1.0
+      ..friction = 0.6
+      ..restitution = 0.2
+      ..isSensor = false;
 
-    return world.createBody(bodyDef)..createFixture(FixtureDef(shape)..friction = 0.8);
+    fixtureDef.filter.categoryBits = 0x0002;
+    fixtureDef.filter.maskBits = 0xFFFF;
+
+    final bodyDef = BodyDef()
+      ..type = BodyType.dynamic
+      ..position = position;
+
+    final boxBody = world.createBody(bodyDef)..createFixture(fixtureDef);
+    boxBody.userData = this;
+    return boxBody;
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (_markedForDestruction) {
+      world.destroyBody(body);
+      removeFromParent();
+      _markedForDestruction = false;
+    }
+  }
+
+  @override
+  void render(Canvas canvas) {
+    // 기존의 박스 렌더링을 먼저 수행
+    super.render(canvas);
+
+    final pos = body.position;
+
+    // 체력바 그리기
+    canvas.save();
+    canvas.translate(size.x - 50, size.y / 2 - 25);
+
+    final barWidth = size.x;
+    final barHeight = 5.0;
+    final barOffsetY = -size.y/2 - 10;
+    final healthRatio = currentHealth / maxHealth;
+    final currentBarWidth = barWidth * healthRatio;
+
+    final healthBarPaint = Paint()..color = Colors.green;
+    canvas.drawRect(
+      Rect.fromLTWH(-barWidth/2, barOffsetY, currentBarWidth, barHeight),
+      healthBarPaint,
+    );
+
+    final healthText = "${currentHealth.round()}/${maxHealth.round()}";
+    final textPainter = _textPaint.toTextPainter(healthText);
+    textPainter.layout();
+    final textWidth = textPainter.width;
+    final textOffset = Vector2(-textWidth / 2, barOffsetY - 15);
+    _textPaint.render(canvas, healthText, textOffset);
+
+    // 크랙 렌더링
+    if (currentHealth <= maxHealth * 0.5) {
+      _renderCracks(canvas);
+    }
+
+    canvas.restore();
+  }
+
+  void _renderCracks(Canvas canvas) {
+    final crackPath = Path()
+      ..moveTo(-size.x / 4, -size.y / 4)
+      ..lineTo(size.x / 4, 0)
+      ..lineTo(-size.x / 4, size.y / 4);
+    canvas.drawPath(crackPath, crackPaint);
+  }
+
+  @override
+  void postSolve(Object other, Contact contact, ContactImpulse impulse) {
+    super.postSolve(other, contact, impulse);
+    final fixtureA = contact.fixtureA;
+    final fixtureB = contact.fixtureB;
+    final isSelfA = fixtureA.body == body;
+    final otherBody = isSelfA ? fixtureB.body : fixtureA.body;
+
+    if (otherBody.userData == "ball") {
+      final maxImpulse = impulse.normalImpulses.reduce((a, b) => a > b ? a : b);
+      if (maxImpulse > destructionImpulse) {
+        final damage = maxImpulse / 20000;
+        currentHealth -= damage;
+        print('Box damaged by ball: $damage, Current Health: $currentHealth');
+        if (currentHealth <= 0) {
+          _markedForDestruction = true;
+        }
+      }
+    }
   }
 }
 
 
-class Player extends BodyComponent with ContactCallbacks {
+
+class Mountain extends BodyComponent {
   @override
-  final Paint paint = Paint()..color = const Color(0xFFFFA500); // 주황색
-  double rotationSpeed = 200.0; // 회전 속도
+  final Paint paint = Paint()..color = const Color(0xFF228B22);
+
+  @override
+  Body createBody() {
+    final gameSize = game.size;
+    final mountainVertices = [
+      Vector2(-gameSize.x * 0.5, 0),
+      Vector2(-gameSize.x * 0.3, -gameSize.y * 0.2),
+      Vector2(-gameSize.x * 0.2, -gameSize.y * 0.1),
+      Vector2(0, -gameSize.y * 0.3),
+      Vector2(gameSize.x * 0.2, -gameSize.y * 0.15),
+      Vector2(gameSize.x * 0.3, -gameSize.y * 0.25),
+      Vector2(gameSize.x * 0.5, 0),
+    ];
+    final shape = PolygonShape()..set(mountainVertices);
+    final fixtureDef = FixtureDef(shape)
+      ..friction = 0.9
+      ..restitution = 0.0
+      ..isSensor = false;
+    final bodyDef = BodyDef()
+      ..type = BodyType.static
+      ..position = Vector2(gameSize.x / 2, gameSize.y - (gameSize.y * 0.05));
+    return world.createBody(bodyDef)..createFixture(fixtureDef);
+  }
+}
+
+class Player extends GravityBodyComponent with ContactCallbacks {
+  @override
+  final Paint paint = Paint()..color = const Color(0xFFFFA500);
 
   @override
   Body createBody() {
@@ -212,67 +367,64 @@ class Player extends BodyComponent with ContactCallbacks {
     final fixtureDef = FixtureDef(shape)
       ..density = 4.0
       ..friction = 0.9
-      ..restitution = 0.0; // 튀는 효과 제거
+      ..restitution = 0.0;
     final bodyDef = BodyDef()
       ..type = BodyType.dynamic
       ..position = Vector2(gameSize.x / 4, gameSize.y / 2);
-
-    return world.createBody(bodyDef)..createFixture(fixtureDef);
+    final playerBody = world.createBody(bodyDef)..createFixture(fixtureDef);
+    playerBody.userData = this;
+    return playerBody;
   }
 
   void jump() {
     final Vector2 currentVelocity = body.linearVelocity;
-
-    // 수직 속도 변화량 계산 (기존 속도 유지, 점프 힘 추가)
-    double jumpStrength = -2000000.0; // 원하는 점프 힘
+    double jumpStrength = -200000.0;
     double additionalForceY = jumpStrength - currentVelocity.y;
-
-    // 기존 수평 속도를 유지하고, 수직 방향으로만 힘 추가
-    body.applyLinearImpulse(
-      Vector2(0, additionalForceY), // X축 속도 보존
-      point: body.worldCenter,
-      wake: true,
-    );
-
-    print('Applied jump force: $additionalForceY, Current velocity: $currentVelocity');
+    body.applyLinearImpulse(Vector2(0, additionalForceY), point: body.worldCenter, wake: true);
   }
-
-
-
-
 
   void rotatePlayer(double targetSpeed) {
     double currentSpeed = body.angularVelocity;
-
-    // 목표 속도와 현재 속도의 차이를 줄이도록 설정
     double delta = targetSpeed - currentSpeed;
-
-    // 감속 또는 가속 비율 설정
-    double adjustment = delta.clamp(-500.0, 500.0); // 최대 변화량 제한
-
-    // 토크 크기 조정
-    double torque = adjustment * body.mass * 500.0; // 토크 증폭 (기본적으로 10배)
+    double adjustment = delta.clamp(-500.0, 500.0);
+    double torque = adjustment * body.mass * 500.0;
     body.applyTorque(torque);
-
-    print('Applied torque: $torque, Current angular velocity: $currentSpeed');
   }
 
+  @override
+  void beginContact(Object other, Contact contact) {
+    super.beginContact(other, contact);
+  }
 
+  @override
+  void endContact(Object other, Contact contact) {
+    super.endContact(other, contact);
+  }
+
+  @override
+  void preSolve(Object other, Contact contact, Manifold oldManifold) {
+    super.preSolve(other, contact, oldManifold);
+  }
+
+  @override
+  void postSolve(Object other, Contact contact, ContactImpulse impulse) {
+    super.postSolve(other, contact, impulse);
+  }
 }
 
-class BallAndChain extends BodyComponent {
+class BallAndChain extends GravityBodyComponent {
   final Player player;
-  late Body ballBody; // 철구 Body
-  final List<Body> chainBodies = []; // 쇠사슬 구들
-  final Paint chainPaint = Paint()..color = const Color(0xFF8B4513); // 진갈색 (쇠사슬)
-  final Paint ballPaint = Paint()..color = const Color(0xFF808080); // 회색 (철구)
+  late Body ballBody;
+  final List<Body> chainBodies = [];
+  final Paint chainPaint = Paint()..color = const Color(0xFF808080);
+  final Paint ballPaint = Paint()..color = const Color(0xFF808080);
 
   BallAndChain(this.player);
 
-  static const int chainSegments = 30; // 쇠사슬 구 개수
-  static const double chainRadius = 2.0; // 쇠사슬 구 반지름
-  static const double ballRadius = 10.0; // 철구 반지름
-  static const double chainSpacing = 0.0; // 구 사이 간격
+  static const int chainSegments = 15;
+  static const double chainRadius = 2.0;
+  static const double ballRadius = 10.0;
+  static const double chainSpacing = 0.5;
 
   @override
   Future<void> onLoad() async {
@@ -282,73 +434,63 @@ class BallAndChain extends BodyComponent {
   }
 
   void _createBallAndChain() {
-    // 플레이어 Body의 시작 위치
     Vector2 currentPosition = player.body.position + Vector2(0, -chainRadius * 2);
+    Body? previousBody;
 
-    Body? previousBody; // 이전 Body 참조
-
-    // 쇠사슬 구 생성
     for (int i = 0; i < chainSegments; i++) {
       final chainBodyDef = BodyDef()
         ..type = BodyType.dynamic
         ..position = currentPosition;
-
       final chainBody = world.createBody(chainBodyDef);
-
       final chainShape = CircleShape()..radius = chainRadius;
       chainBody.createFixture(
         FixtureDef(chainShape)
-          ..density = 0.5
+          ..density = 2.0
           ..friction = 0.8
           ..restitution = 0.2,
       );
 
       if (previousBody != null) {
-        // 이전 구와 현재 구를 DistanceJoint로 연결
         final distanceJointDef = DistanceJointDef()
           ..bodyA = previousBody
           ..bodyB = chainBody
           ..localAnchorA.setFrom(Vector2(0, 0))
           ..localAnchorB.setFrom(Vector2(0, 0))
           ..length = chainSpacing
-          ..frequencyHz = 10.0 // 스프링 효과
-          ..dampingRatio = 0.7; // 감쇠 효과
-
+          ..frequencyHz = 10.0
+          ..dampingRatio = 0.7;
         final distanceJoint = DistanceJoint(distanceJointDef);
         world.createJoint(distanceJoint);
       } else {
-        // 첫 번째 구는 플레이어 Body와 연결
         final revoluteJointDef = RevoluteJointDef()
           ..bodyA = player.body
           ..bodyB = chainBody
           ..localAnchorA.setFrom(Vector2(0, -2))
           ..localAnchorB.setFrom(Vector2(0, 0));
-
         final revoluteJoint = RevoluteJoint(revoluteJointDef);
         world.createJoint(revoluteJoint);
       }
 
       chainBodies.add(chainBody);
       previousBody = chainBody;
-      currentPosition += Vector2(0, chainSpacing); // 다음 구 위치로 이동
+      currentPosition += Vector2(0, chainSpacing);
     }
 
-    // 철구 생성
     final ballBodyDef = BodyDef()
       ..type = BodyType.dynamic
       ..position = currentPosition;
-
     ballBody = world.createBody(ballBodyDef);
-
     final ballShape = CircleShape()..radius = ballRadius;
     ballBody.createFixture(
       FixtureDef(ballShape)
-        ..density = 1.0
+        ..density = 2.0
         ..friction = 0.8
         ..restitution = 0.2,
     );
 
-    // 마지막 쇠사슬 구와 철구를 연결
+    // **변경사항: 철구를 식별하기 위해 userData 설정**
+    ballBody.userData = "ball";
+
     if (previousBody != null) {
       final distanceJointDef = DistanceJointDef()
         ..bodyA = previousBody
@@ -356,9 +498,8 @@ class BallAndChain extends BodyComponent {
         ..localAnchorA.setFrom(Vector2(0, 0))
         ..localAnchorB.setFrom(Vector2(0, 0))
         ..length = chainSpacing
-        ..frequencyHz = 5.0
-        ..dampingRatio = 0.7;
-
+        ..frequencyHz = 15.0
+        ..dampingRatio = 0.3;
       final distanceJoint = DistanceJoint(distanceJointDef);
       world.createJoint(distanceJoint);
     }
@@ -366,13 +507,11 @@ class BallAndChain extends BodyComponent {
 
   @override
   void render(Canvas canvas) {
-    // 쇠사슬 구 렌더링
     for (final chainBody in chainBodies) {
       final position = chainBody.position;
       canvas.drawCircle(Offset(position.x, position.y), chainRadius, chainPaint);
     }
 
-    // 철구 렌더링
     final ballPosition = ballBody.position;
     canvas.drawCircle(Offset(ballPosition.x, ballPosition.y), ballRadius, ballPaint);
   }
@@ -382,9 +521,6 @@ class BallAndChain extends BodyComponent {
     return world.createBody(BodyDef());
   }
 }
-
-
-
 
 class Wall extends BodyComponent {
   final Vector2 _start;
@@ -397,10 +533,10 @@ class Wall extends BodyComponent {
     final shape = EdgeShape()..set(_start, _end);
     final fixtureDef = FixtureDef(shape, friction: 0.3);
     final bodyDef = BodyDef(type: BodyType.static);
-
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
 }
+
 
 
 
