@@ -108,7 +108,7 @@ class _MyAppState extends State<MyApp> {
 
 class MountainClimberGame extends Forge2DGame {
   MountainClimberGame() : super(gravity: Vector2(0, 100), zoom: 10.0) {
-    debugMode = true;
+    debugMode = false;
   }
 
   late final Player player;
@@ -287,6 +287,9 @@ class DestructibleBox extends BodyComponent with ContactCallbacks {
     style: const TextStyle(color: Colors.white, fontSize: 12),
   );
 
+  // **변경사항: 크랙 데이터를 저장할 변수 추가**
+  Path? crackPath;
+
   DestructibleBox({
     required this.position,
     required this.size,
@@ -329,10 +332,7 @@ class DestructibleBox extends BodyComponent with ContactCallbacks {
 
   @override
   void render(Canvas canvas) {
-    // 기존의 박스 렌더링을 먼저 수행
     super.render(canvas);
-
-    final pos = body.position;
 
     // 체력바 그리기
     canvas.save();
@@ -340,13 +340,13 @@ class DestructibleBox extends BodyComponent with ContactCallbacks {
 
     final barWidth = size.x;
     final barHeight = 5.0;
-    final barOffsetY = -size.y/2 - 10;
+    final barOffsetY = -size.y / 2 - 10;
     final healthRatio = currentHealth / maxHealth;
     final currentBarWidth = barWidth * healthRatio;
 
     final healthBarPaint = Paint()..color = Colors.green;
     canvas.drawRect(
-      Rect.fromLTWH(-barWidth/2, barOffsetY, currentBarWidth, barHeight),
+      Rect.fromLTWH(-barWidth / 2, barOffsetY, currentBarWidth, barHeight),
       healthBarPaint,
     );
 
@@ -359,18 +359,41 @@ class DestructibleBox extends BodyComponent with ContactCallbacks {
 
     // 크랙 렌더링
     if (currentHealth <= maxHealth * 0.5) {
-      _renderCracks(canvas);
+      if (crackPath == null) {
+        _generateCracks(); // **변경사항: 크랙이 없을 때만 생성**
+      }
+      canvas.drawPath(crackPath!, crackPaint); // **변경사항: 기존 크랙을 렌더링**
     }
 
     canvas.restore();
   }
 
-  void _renderCracks(Canvas canvas) {
-    final crackPath = Path()
-      ..moveTo(-size.x / 4, -size.y / 4)
-      ..lineTo(size.x / 4, 0)
-      ..lineTo(-size.x / 4, size.y / 4);
-    canvas.drawPath(crackPath, crackPaint);
+  // **변경사항: 크랙 생성 메서드 추가**
+  void _generateCracks() {
+    final random = Random();
+    crackPath = Path()..moveTo(0, 0);
+
+    // 메인 크랙 생성
+    for (int i = 0; i < 5; i++) {
+      double dx = (random.nextDouble() - 0.5) * size.x;
+      double dy = (random.nextDouble() - 0.5) * size.y;
+      crackPath!.lineTo(dx, dy);
+    }
+
+    // 각 분기점에서 작은 크랙 추가
+    for (int i = 0; i < 10; i++) {
+      final branchPath = Path();
+      double startX = (random.nextDouble() - 0.5) * size.x;
+      double startY = (random.nextDouble() - 0.5) * size.y;
+      branchPath.moveTo(startX, startY);
+
+      for (int j = 0; j < 3; j++) {
+        double dx = startX + (random.nextDouble() - 0.5) * size.x * 0.2;
+        double dy = startY + (random.nextDouble() - 0.5) * size.y * 0.2;
+        branchPath.lineTo(dx, dy);
+      }
+      crackPath!.addPath(branchPath, Offset.zero); // **변경사항: 작은 크랙 병합**
+    }
   }
 
   @override
@@ -395,6 +418,7 @@ class DestructibleBox extends BodyComponent with ContactCallbacks {
     }
   }
 }
+
 
 
 
@@ -466,8 +490,7 @@ class Player extends GravityBodyComponent with ContactCallbacks, HasGameRef<Forg
     super.update(dt);
 
     // 스프라이트의 위치를 물리 엔진의 월드 좌표로 변환
-    final bodyPosition = body.position; // Body의 현재 위치
-    spriteComponent.position = Vector2(bodyPosition.x, bodyPosition.y);
+    spriteComponent.position = Vector2(0, 0);
 
     // 스프라이트의 회전을 Body의 각도와 동기화
     spriteComponent.angle = body.angle;
