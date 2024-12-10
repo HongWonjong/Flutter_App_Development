@@ -8,39 +8,106 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flame_audio/flame_audio.dart';
 
 
 
 void main() {
-  final game = MountainClimberGame();
-
-  runApp(
-    RawKeyboardListener(
-      focusNode: FocusNode(),
-      onKey: (RawKeyEvent event) {
-        if (event is RawKeyDownEvent && event.logicalKey == LogicalKeyboardKey.space) {
-          game.player.jump();
-        }
-      },
-      child: Listener(
-        onPointerSignal: (PointerSignalEvent event) {
-          if (event is PointerScrollEvent) {
-            game.handleMouseScroll(event);
-          }
-        },
-        child: GestureDetector(
-          onPanUpdate: (details) {
-            game.handlePanUpdate(details);
-          },
-          child: GameWidget(game: game),
-        ),
-      ),
-    ),
-  );
+  runApp(MyApp());
 }
 
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  MountainClimberGame game = MountainClimberGame();
+
+  void restartGame() {
+    setState(() {
+      // 기존 game을 버리고 새 게임 인스턴스 생성
+      game = MountainClimberGame();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: Row(
+          children: [
+            Expanded(
+              flex: 6,
+              child: RawKeyboardListener(
+                focusNode: FocusNode(),
+                onKey: (RawKeyEvent event) {
+                  if (event is RawKeyDownEvent && event.logicalKey == LogicalKeyboardKey.space) {
+                    game.player.jump();
+                  }
+                },
+                child: Listener(
+                  onPointerSignal: (PointerSignalEvent event) {
+                    if (event is PointerScrollEvent) {
+                      // event를 PointerScrollEvent로 안전하게 사용할 수 있음
+                      game.handleMouseScroll(event);
+                    }
+                  },
+                  child: GestureDetector(
+                    onPanUpdate: (details) {
+                      game.handlePanUpdate(details);
+                    },
+                    child: GameWidget(game: game),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Container(
+                color: Colors.blueGrey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.all(Colors.white70), // 버튼 배경색 설정
+                        foregroundColor: WidgetStateProperty.all(Colors.black), // 버튼 텍스트 색상 설정
+                      ),
+                      onPressed: () {
+                        restartGame(); // 여기서 새로운 game 인스턴스를 만들어 교체
+                      },
+                      child: Text(
+                        '재시작',
+                      ),
+                    ),
+
+                    SizedBox(height: 20),
+
+                    ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.all(Colors.white70), // 버튼 배경색 설정
+                        foregroundColor: WidgetStateProperty.all(Colors.black), // 버튼 텍스트 색상 설정
+                      ),
+                      onPressed: () {
+                        // 설정 버튼 동작
+                      },
+                      child: Text('설정'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
 class MountainClimberGame extends Forge2DGame {
-  MountainClimberGame() : super(gravity: Vector2(0, 200), zoom: 10.0) {
+  MountainClimberGame() : super(gravity: Vector2(0, 100), zoom: 10.0) {
     debugMode = true;
   }
 
@@ -57,6 +124,8 @@ class MountainClimberGame extends Forge2DGame {
     player = Player();
     add(player);
     await player.loaded;
+    camera.follow(player);
+
 
     final ballAndChain = BallAndChain(player);
     add(ballAndChain);
@@ -73,8 +142,8 @@ class MountainClimberGame extends Forge2DGame {
 
     final destructibleBoxes = [
       Vector2(600, 300),
-      Vector2(700, 400),
-      Vector2(200, 100),
+      Vector2(300, 200),
+      Vector2(200, 250),
     ];
 
     for (final position in destructibleBoxes) {
@@ -231,8 +300,8 @@ class DestructibleBox extends BodyComponent with ContactCallbacks {
       ..setAsBox(size.x / 2, size.y / 2, Vector2.zero(), 0.0);
 
     final fixtureDef = FixtureDef(shape)
-      ..density = 1.0
-      ..friction = 0.6
+      ..density = 5.0
+      ..friction = 0.8
       ..restitution = 0.2
       ..isSensor = false;
 
@@ -318,6 +387,7 @@ class DestructibleBox extends BodyComponent with ContactCallbacks {
         final damage = maxImpulse / 20000;
         currentHealth -= damage;
         print('Box damaged by ball: $damage, Current Health: $currentHealth');
+        FlameAudio.play('pow.mp3');
         if (currentHealth <= 0) {
           _markedForDestruction = true;
         }
@@ -337,12 +407,12 @@ class Mountain extends BodyComponent {
     final gameSize = game.size;
     final mountainVertices = [
       Vector2(-gameSize.x * 0.5, 0),
-      Vector2(-gameSize.x * 0.3, -gameSize.y * 0.2),
-      Vector2(-gameSize.x * 0.2, -gameSize.y * 0.1),
-      Vector2(0, -gameSize.y * 0.3),
-      Vector2(gameSize.x * 0.2, -gameSize.y * 0.15),
-      Vector2(gameSize.x * 0.3, -gameSize.y * 0.25),
-      Vector2(gameSize.x * 0.5, 0),
+      Vector2(-gameSize.x * 0.3, -gameSize.y * 0.1),
+      Vector2(-gameSize.x * 0.2, -gameSize.y * 0.05),
+      Vector2(0, -gameSize.y * 0.1),
+      Vector2(gameSize.x * 0.2, -gameSize.y * 0.07),
+      Vector2(gameSize.x * 0.3, -gameSize.y * 0.12),
+      Vector2(gameSize.x * 0.5, 0.05),
     ];
     final shape = PolygonShape()..set(mountainVertices);
     final fixtureDef = FixtureDef(shape)
@@ -356,14 +426,29 @@ class Mountain extends BodyComponent {
   }
 }
 
-class Player extends GravityBodyComponent with ContactCallbacks {
+class Player extends GravityBodyComponent with ContactCallbacks, HasGameRef<Forge2DGame> {
+  late final SpriteComponent spriteComponent; // 플레이어의 이미지 컴포넌트
+  bool isJumpSoundPlaying = false; // 점프 사운드 재생 여부
+
   @override
-  final Paint paint = Paint()..color = const Color(0xFFFFA500);
+  Future<void> onLoad() async {
+    super.onLoad();
+
+    // face.png 이미지를 로드하여 스프라이트 생성
+    final sprite = await gameRef.loadSprite('face.png');
+    spriteComponent = SpriteComponent(
+      sprite: sprite,
+      size: Vector2(30, 30), // 이미지 크기
+      anchor: Anchor.center, // 중심점 기준으로 정렬
+    );
+
+    add(spriteComponent); // 이미지 컴포넌트를 추가
+  }
 
   @override
   Body createBody() {
     final gameSize = game.size;
-    final shape = CircleShape()..radius = 15;
+    final shape = CircleShape()..radius = 15; // 충돌 영역은 원형으로 유지
     final fixtureDef = FixtureDef(shape)
       ..density = 4.0
       ..friction = 0.9
@@ -376,7 +461,27 @@ class Player extends GravityBodyComponent with ContactCallbacks {
     return playerBody;
   }
 
+  @override
+  void update(double dt) {
+    super.update(dt);
+
+    // 스프라이트의 위치를 물리 엔진의 월드 좌표로 변환
+    final bodyPosition = body.position; // Body의 현재 위치
+    spriteComponent.position = Vector2(bodyPosition.x, bodyPosition.y);
+
+    // 스프라이트의 회전을 Body의 각도와 동기화
+    spriteComponent.angle = body.angle;
+  }
+
   void jump() {
+    if (!isJumpSoundPlaying) {
+      isJumpSoundPlaying = true; // 재생 시작 표시
+      FlameAudio.play('hut.mp3');
+
+      Future.delayed(Duration(milliseconds: 1000), () {
+        isJumpSoundPlaying = false; // 1초 후 재생 가능
+      });
+    }
     final Vector2 currentVelocity = body.linearVelocity;
     double jumpStrength = -200000.0;
     double additionalForceY = jumpStrength - currentVelocity.y;
@@ -412,6 +517,7 @@ class Player extends GravityBodyComponent with ContactCallbacks {
   }
 }
 
+
 class BallAndChain extends GravityBodyComponent {
   final Player player;
   late Body ballBody;
@@ -421,7 +527,7 @@ class BallAndChain extends GravityBodyComponent {
 
   BallAndChain(this.player);
 
-  static const int chainSegments = 15;
+  static const int chainSegments = 10;
   static const double chainRadius = 2.0;
   static const double ballRadius = 10.0;
   static const double chainSpacing = 0.5;
@@ -445,7 +551,7 @@ class BallAndChain extends GravityBodyComponent {
       final chainShape = CircleShape()..radius = chainRadius;
       chainBody.createFixture(
         FixtureDef(chainShape)
-          ..density = 2.0
+          ..density = 4.0
           ..friction = 0.8
           ..restitution = 0.2,
       );
@@ -483,7 +589,7 @@ class BallAndChain extends GravityBodyComponent {
     final ballShape = CircleShape()..radius = ballRadius;
     ballBody.createFixture(
       FixtureDef(ballShape)
-        ..density = 2.0
+        ..density = 5.0
         ..friction = 0.8
         ..restitution = 0.2,
     );
