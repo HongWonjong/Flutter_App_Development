@@ -478,6 +478,7 @@ class BallAndChain extends GravityBodyComponent {
         ..type = BodyType.dynamic
         ..position = currentPosition;
       final chainBody = world.createBody(chainBodyDef);
+      chainBody.userData = "chain";
       final chainShape = CircleShape()..radius = chainRadius;
       chainBody.createFixture(
         FixtureDef(chainShape)
@@ -579,7 +580,7 @@ class Arrow extends BodyComponent with HasGameRef<Forge2DGame>, ContactCallbacks
   final double speed;
   bool markedForRemoval = false;
   double _lifeTime = 0.0; // 화살의 생존 시간
-  static const double lifeDuration = 7.0; // 화살이 사라지기까지의 시간 (초)
+  static const double lifeDuration = 8.0; // 화살이 사라지기까지의 시간 (초)
   final double damage; // 화살이 가하는 피해량
 
 
@@ -627,7 +628,16 @@ class Arrow extends BodyComponent with HasGameRef<Forge2DGame>, ContactCallbacks
     }
 
     body.linearVelocity = direction.normalized() * speed;
-    spriteComponent.angle = direction.angleTo(Vector2(1,0));
+
+    // 각도 보정
+    double angle = direction.angleTo(Vector2(1, 0));
+    // 플레이어가 위에 있을 경우 각도를 180도 뒤집습니다.
+    if (direction.y < 0) { // Y가 음수일 때, 즉 위쪽을 향할 때
+      angle = -angle;
+    }
+    body.setTransform(body.position, angle); // 스프라이트는 알아서 바디를 따라 회전함
+
+
     // 화살의 생존 시간을 추적하고, 지정된 시간이 지나면 제거
     _lifeTime += dt;
     if (_lifeTime >= lifeDuration) {
@@ -636,16 +646,46 @@ class Arrow extends BodyComponent with HasGameRef<Forge2DGame>, ContactCallbacks
   }
   @override
   void beginContact(Object other, Contact contact) {
+    super.beginContact(other, contact);
     if (other is Player) {
-      // 플레이어에게 피해를 입힘
+      // 플레이어와의 처리는 동일하게 유지
       other.takeDamage(damage);
-
-      // 화살을 제거
       markedForRemoval = true;
-
-      // 효과음 재생 (선택 사항)
       FlameAudio.play('hit.mp3');
+    } else {
+      final fixtureA = contact.fixtureA;
+      final fixtureB = contact.fixtureB;
+      final isSelfA = fixtureA.body == body;
+      final otherBody = isSelfA ? fixtureB.body : fixtureA.body;
+
+      if (otherBody.userData == "ball" || otherBody.userData == "chain") {
+        print("작동중");
+        _onHitBallAndChain();
+      }
     }
+  }
+
+  void _onHitBallAndChain() {
+    // 철구나 쇠사슬과 충돌 시
+    final newPosition = body.position;
+    final newVelocity = body.linearVelocity;
+
+    // 다음 프레임에 DummyArrow 추가
+    Future.microtask(() {
+      if (gameRef != null) { // 게임 참조가 존재할 때만 추가
+        final dummyArrow = DummyArrow(newPosition, newVelocity);
+        gameRef.add(dummyArrow);
+      }
+    });
+
+    // 기존 화살 제거
+    markedForRemoval = true;
+    print("화살 제거");
+
+
+
+
+
   }
 }
 
@@ -661,18 +701,28 @@ class Turret extends BodyComponent with HasGameRef<Forge2DGame> {
   double _timeSinceLastUltFire = 0.0; // 거대 화살을 위한 타이머
 
   // 연사 시 사용될 발사 간격 (초 단위)
-  final double burstInterval = 0.15; // 각 화살 사이의 간격
+  final double burstInterval = 0.2; // 각 화살 사이의 간격
   final int numberOfArrows = 3; // 한번의 발사당 화살 수
   bool _isChargingUlt = false;
   late CircleComponent _ultChargeEffect; // 붉은 색 기운을 표시할 컴포넌트
 
+  double _ultChargeStartTime = 0.0; // 궁극기 차징이 시작된 시간
+  double _ultChargeDuration = 0.8; // 궁극기 차징 완료까지의 시간 (초)
+  double _chargeEffectMaxRadius = 80.0; // 최대 반지름
+  double _chargeEffectMinRadius = 30.0; // 최소 반지름
+  double _minOpacity = 0.4; // 최소 투명도(궁극기 이펙트)
+  double _maxOpacity = 0.9; // 최대 투명도
+
+
   Turret(this.position) {
     _ultChargeEffect = CircleComponent(
-      radius: 50, // 터렛 크기보다 약간 큰 원으로 설정
+      radius: _chargeEffectMaxRadius, // 초기 반지름
       anchor: Anchor.center,
-      paint: Paint()..color = Colors.red.withOpacity(0.5),
+      paint: Paint()..color = Colors.red.withOpacity(_minOpacity),
     );
+    _ultChargeEffect.renderShape = false; // 기본적으로는 보이지 않게 설정
   }
+
 
   /// 플레이어를 설정하는 메서드
   void setPlayer(Player p) {
@@ -720,14 +770,24 @@ class Turret extends BodyComponent with HasGameRef<Forge2DGame> {
     _timeSinceLastFire += dt;
     _timeSinceLastUltFire += dt;
 
-    if (_timeSinceLastUltFire >= ultFireInterval - 0.8 && _timeSinceLastUltFire < ultFireInterval) {
+    if (_timeSinceLastUltFire >= ultFireInterval - _ultChargeDuration && _timeSinceLastUltFire < ultFireInterval) {
       if (!_isChargingUlt) {
         _isChargingUlt = true;
+        _ultChargeStartTime = _timeSinceLastUltFire; // 차징 시작 시간 기록
         _ultChargeEffect.renderShape = true; // 궁극기 충전 효과 보이기
       }
+      // 차징 중인 경우, 반지름을 줄여나가고 투명도를 변경
+      double chargeProgress = (_timeSinceLastUltFire - _ultChargeStartTime) / _ultChargeDuration;
+      double currentRadius = _chargeEffectMaxRadius - ((_chargeEffectMaxRadius - _chargeEffectMinRadius) * chargeProgress);
+      double currentOpacity = _minOpacity + ((_maxOpacity - _minOpacity) * chargeProgress);
+
+      _ultChargeEffect.radius = currentRadius;
+      _ultChargeEffect.paint.color = Colors.red.withOpacity(currentOpacity);
     } else {
       if (_isChargingUlt) {
         _isChargingUlt = false;
+        _ultChargeEffect.radius = _chargeEffectMaxRadius; // 차징 종료 시 원래 크기로 복구
+        _ultChargeEffect.paint.color = Colors.red.withOpacity(_minOpacity); // 투명도 초기화
         _ultChargeEffect.renderShape = false; // 충전 효과 숨기기
       }
     }
@@ -771,6 +831,8 @@ class Turret extends BodyComponent with HasGameRef<Forge2DGame> {
     // 화살 생성 및 게임에 추가
     final arrow = Arrow(arrowStart, direction, 80, 10);
     gameRef.add(arrow);
+
+
   }
 
   void _fireGiantArrow() {
@@ -871,16 +933,25 @@ class GiantArrow extends Arrow {
       removeFromParent();
       return;
     }
+
     // GiantArrow의 속도를 적용
     body.linearVelocity = direction.normalized() * speed;
-    spriteComponent.angle = direction.angleTo(Vector2(1,0));
+
+    // 각도 보정
+    double angle = direction.angleTo(Vector2(1, 0));
+    // 플레이어가 위에 있을 경우 각도를 180도 뒤집습니다.
+    if (direction.y < 0) { // Y가 음수일 때, 즉 위쪽을 향할 때
+      angle = -angle;
+    }
+    body.setTransform(body.position, angle); // 스프라이트와 바디의 회전각 동기화
   }
+
 
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    final arrowSprite = await gameRef.loadSprite('giant_arrow.png'); // 거대 화살의 이미지를 사용하세요
+    final arrowSprite = await gameRef.loadSprite('arrow.png'); // 거대 화살의 이미지를 사용하세요
     print("GiantArrow speed set to: ${speed}");
 
     spriteComponent = SpriteComponent(
@@ -908,5 +979,66 @@ class GiantArrow extends Arrow {
 
     arrowBody.linearVelocity = direction.normalized() * speed;
     return arrowBody;
+  }
+}
+
+class DummyArrow extends BodyComponent with HasGameRef<Forge2DGame> {
+  late SpriteComponent spriteComponent;
+  bool markedForRemoval = false;
+  double _lifeTime = 0.0;
+  static const double lifeDuration = 4.0;
+
+  DummyArrow(Vector2 position, Vector2 velocity) : super() {
+    body = _createAndInitBody(position, velocity);
+  }
+
+  Body _createAndInitBody(Vector2 position, Vector2 velocity) {
+    final shape = PolygonShape()..setAsBox(10, 2.5, Vector2.zero(), 0.0);
+    final fixtureDef = FixtureDef(shape)
+      ..density = 0.5
+      ..friction = 0.2
+      ..restitution = 0.3
+      ..isSensor = false;
+
+    final bodyDef = BodyDef()
+      ..type = BodyType.dynamic
+      ..position = position;
+    final arrowBody = world.createBody(bodyDef)..createFixture(fixtureDef);
+    arrowBody.userData = this;
+    arrowBody.linearVelocity = velocity;
+    return arrowBody;
+  }
+
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+    if (gameRef == null) {
+      print("DummyArrow onLoad 실패: gameRef가 null입니다.");
+      return;
+    }
+    final arrowSprite = await gameRef.loadSprite('arrow.png');
+    spriteComponent = SpriteComponent(
+      sprite: arrowSprite,
+      size: Vector2(20, 10),
+      anchor: Anchor.center,
+    );
+    add(spriteComponent);
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (markedForRemoval) {
+      world.destroyBody(body);
+      removeFromParent();
+      return;
+    }
+
+    _lifeTime += dt;
+    if (_lifeTime >= lifeDuration) {
+      markedForRemoval = true;
+    }
+
+    spriteComponent.angle = body.linearVelocity.angleTo(Vector2(1, 0));
   }
 }
