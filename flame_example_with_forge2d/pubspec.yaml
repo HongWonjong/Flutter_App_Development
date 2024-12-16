@@ -48,7 +48,18 @@ flutter:
   assets:
     - assets/audio/pow.mp3
     - assets/audio/hut.mp3
+    - assets/audio/shoot_3.mp3
+    - assets/audio/hit.mp3
+    - assets/audio/died.mp3
+
+
     - assets/images/face.png
+    - assets/images/turret.png
+    - assets/images/arrow.png
+    - assets/images/giant_arrow.png
+
+
+
 
 
   uses-material-design: true
