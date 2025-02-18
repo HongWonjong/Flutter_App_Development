@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:free_caption_on_video_website/pages/upload_page_components/custom_buttons.dart';
+import 'package:free_caption_on_video_website/pages/upload_page_components/custom_checkbox.dart';
 import 'package:free_caption_on_video_website/providers/language_provider.dart';
+import 'package:free_caption_on_video_website/providers/video_provider.dart';
+import 'package:free_caption_on_video_website/providers/process_provider.dart';
+import 'package:free_caption_on_video_website/providers/ffmpeg_provider.dart';
 import 'package:free_caption_on_video_website/services/file_picker_services.dart';
 import 'package:free_caption_on_video_website/services/indexdb_service.dart';
+import 'package:free_caption_on_video_website/services/ffmpeg_service.dart';
 
 class UploadPage extends ConsumerStatefulWidget {
   const UploadPage({super.key});
@@ -15,21 +20,24 @@ class UploadPage extends ConsumerStatefulWidget {
 class _UploadPageState extends ConsumerState<UploadPage> {
   final FilePickerService _filePickerService = FilePickerService();
   final IndexedDbService _indexedDbService = IndexedDbService();
-  int? _videoKey;
-  bool _isUploadChecked = false;
+  final FfmpegService _ffmpegService = FfmpegService();
 
   Future<void> _onUploadPressed() async {
     final videoBytes = await _filePickerService.pickVideoFile();
     if (videoBytes != null) {
       final key = await _indexedDbService.saveVideo(videoBytes);
-      setState(() {
-        _videoKey = key;
-        _isUploadChecked = true;
-      });
+      ref.read(videoProvider.notifier).state = VideoState(
+        videoKey: key,
+        isUploaded: true,
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('비디오 업로드 및 저장 성공!')),
       );
     } else {
+      ref.read(videoProvider.notifier).state = VideoState(
+        videoKey: null,
+        isUploaded: false,
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('비디오 선택을 취소했거나 오류가 발생했습니다.')),
       );
@@ -106,13 +114,36 @@ class _UploadPageState extends ConsumerState<UploadPage> {
     );
   }
 
-  void _onProcessPressed() {
-    final isLanguageSelected = ref.read(isLanguageSelectedProvider);
-    if (_isUploadChecked && isLanguageSelected) {
+  Future<void> _onProcessPressed() async {
+    final isProcessReady = ref.read(processProvider);
+    if (isProcessReady) {
+      final videoState = ref.read(videoProvider);
       final languagePair = ref.read(languageProvider);
       print(
-          '처리 시작 - IndexedDB 키: $_videoKey, 언어: ${languagePair.sourceLanguage} -> ${languagePair.targetLanguage}');
-      // TODO: ProcessingPage로 이동하거나 처리 로직 연결
+          '처리 시작 - IndexedDB 키: ${videoState.videoKey}, 언어: ${languagePair.sourceLanguage} -> ${languagePair.targetLanguage}');
+
+      // IndexedDB에서 비디오 가져오기
+      final videoBytes = await _indexedDbService.getVideo(videoState.videoKey!);
+      if (videoBytes != null) {
+        // FFmpeg로 오디오 추출
+        final audioBytes = await _ffmpegService.extractAudio(videoBytes);
+        if (audioBytes != null) {
+          ref.read(ffmpegProvider.notifier).state = FfmpegState(isAudioExtracted: true);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('오디오 추출 성공!')),
+          );
+          // TODO: audioBytes를 Whisper로 넘겨 자막 생성
+        } else {
+          ref.read(ffmpegProvider.notifier).state = FfmpegState(isAudioExtracted: false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('오디오 추출 실패')),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('비디오 데이터를 불러오지 못했습니다.')),
+        );
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('전 단계를 먼저 마쳐주세요.')),
@@ -122,8 +153,11 @@ class _UploadPageState extends ConsumerState<UploadPage> {
 
   @override
   Widget build(BuildContext context) {
+    final videoState = ref.watch(videoProvider);
     final languagePair = ref.watch(languageProvider);
     final isLanguageSelected = ref.watch(isLanguageSelectedProvider);
+    final isProcessReady = ref.watch(processProvider);
+    final ffmpegState = ref.watch(ffmpegProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -142,14 +176,10 @@ class _UploadPageState extends ConsumerState<UploadPage> {
                     onPressed: _onUploadPressed,
                   ),
                   const SizedBox(width: 10),
-                  Checkbox(
-                    value: _isUploadChecked,
-                    onChanged: null,
-                    checkColor: Colors.white,
-                    activeColor: Colors.green,
+                  CustomCheckbox(
+                    isChecked: videoState.isUploaded,
+                    text: 'index_db에 업로드 완료',
                   ),
-                  const SizedBox(width: 5),
-                  const Text('index_db에 업로드 완료'),
                 ],
               ),
             ),
@@ -163,16 +193,12 @@ class _UploadPageState extends ConsumerState<UploadPage> {
                     onPressed: _onLanguageSelectPressed,
                   ),
                   const SizedBox(width: 10),
-                  Checkbox(
-                    value: isLanguageSelected,
-                    onChanged: null,
-                    checkColor: Colors.white,
-                    activeColor: Colors.green,
+                  CustomCheckbox(
+                    isChecked: isLanguageSelected,
+                    text: languagePair.sourceLanguage != null && languagePair.targetLanguage != null
+                        ? '${languagePair.sourceLanguage} -> ${languagePair.targetLanguage}'
+                        : '언어 미선택',
                   ),
-                  const SizedBox(width: 5),
-                  Text(languagePair.sourceLanguage != null && languagePair.targetLanguage != null
-                      ? '${languagePair.sourceLanguage} -> ${languagePair.targetLanguage}'
-                      : '언어 미선택'),
                 ],
               ),
             ),
@@ -186,15 +212,16 @@ class _UploadPageState extends ConsumerState<UploadPage> {
                     onPressed: _onProcessPressed,
                   ),
                   const SizedBox(width: 10),
-                  if (_isUploadChecked && isLanguageSelected) ...[
-                    Checkbox(
-                      value: true,
-                      onChanged: null,
-                      checkColor: Colors.white,
-                      activeColor: Colors.green,
+                  if (isProcessReady) ...[
+                    CustomCheckbox(
+                      isChecked: isProcessReady,
+                      text: '번역 준비 완료',
                     ),
-                    const SizedBox(width: 5),
-                    const Text('번역 준비 완료'),
+                    const SizedBox(width: 10),
+                    CustomCheckbox(
+                      isChecked: ffmpegState.isAudioExtracted,
+                      text: '오디오 추출 완료',
+                    ),
                   ],
                 ],
               ),
