@@ -1,3 +1,4 @@
+// pages/upload_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:free_caption_on_video_website/pages/upload_page_components/custom_buttons.dart';
@@ -9,6 +10,7 @@ import 'package:free_caption_on_video_website/providers/ffmpeg_provider.dart';
 import 'package:free_caption_on_video_website/services/file_picker_services.dart';
 import 'package:free_caption_on_video_website/services/indexdb_service.dart';
 import 'package:free_caption_on_video_website/services/ffmpeg_service.dart';
+import 'package:free_caption_on_video_website/providers/ffmpeg_service_provider.dart';
 
 class UploadPage extends ConsumerStatefulWidget {
   const UploadPage({super.key});
@@ -18,9 +20,16 @@ class UploadPage extends ConsumerStatefulWidget {
 }
 
 class _UploadPageState extends ConsumerState<UploadPage> {
-  final FilePickerService _filePickerService = FilePickerService();
-  final IndexedDbService _indexedDbService = IndexedDbService();
-  final FfmpegService _ffmpegService = FfmpegService();
+  late final FilePickerService _filePickerService;
+  late final IndexedDbService _indexedDbService;
+  bool _isProcessing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _filePickerService = FilePickerService();
+    _indexedDbService = IndexedDbService();
+  }
 
   Future<void> _onUploadPressed() async {
     final videoBytes = await _filePickerService.pickVideoFile();
@@ -87,9 +96,7 @@ class _UploadPageState extends ConsumerState<UploadPage> {
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
               child: const Text('취소'),
             ),
             TextButton(
@@ -115,39 +122,48 @@ class _UploadPageState extends ConsumerState<UploadPage> {
   }
 
   Future<void> _onProcessPressed() async {
-    final isProcessReady = ref.read(processProvider);
-    if (isProcessReady) {
-      final videoState = ref.read(videoProvider);
-      final languagePair = ref.read(languageProvider);
-      print(
-          '처리 시작 - IndexedDB 키: ${videoState.videoKey}, 언어: ${languagePair.sourceLanguage} -> ${languagePair.targetLanguage}');
+    if (_isProcessing) {
+      print('Processing already in progress, ignoring button press');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('처리 중입니다. 잠시 기다려주세요.')),
+      );
+      return;
+    }
 
-      // IndexedDB에서 비디오 가져오기
-      final videoBytes = await _indexedDbService.getVideo(videoState.videoKey!);
-      if (videoBytes != null) {
-        // FFmpeg로 오디오 추출
-        final audioBytes = await _ffmpegService.extractAudio(videoBytes);
-        if (audioBytes != null) {
-          ref.read(ffmpegProvider.notifier).state = FfmpegState(isAudioExtracted: true);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('오디오 추출 성공!')),
-          );
-          // TODO: audioBytes를 Whisper로 넘겨 자막 생성
+    _isProcessing = true;
+    try {
+      final isProcessReady = ref.read(processProvider);
+      if (isProcessReady) {
+        final videoState = ref.read(videoProvider);
+        final languagePair = ref.read(languageProvider);
+        print(
+            '처리 시작 - IndexedDB 키: ${videoState.videoKey}, 언어: ${languagePair.sourceLanguage} -> ${languagePair.targetLanguage}');
+
+        final videoBytes = await _indexedDbService.getVideo(videoState.videoKey!);
+        if (videoBytes != null) {
+          final ffmpegService = ref.read(ffmpegServiceProvider); // Provider에서 가져옴
+          final audioBytes = await ffmpegService.extractAudio(videoBytes);
+          if (audioBytes != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('오디오 추출 성공!')),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('오디오 추출 실패')),
+            );
+          }
         } else {
-          ref.read(ffmpegProvider.notifier).state = FfmpegState(isAudioExtracted: false);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('오디오 추출 실패')),
+            const SnackBar(content: Text('비디오 데이터를 불러오지 못했습니다.')),
           );
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('비디오 데이터를 불러오지 못했습니다.')),
+          const SnackBar(content: Text('전 단계를 먼저 마쳐주세요.')),
         );
       }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('전 단계를 먼저 마쳐주세요.')),
-      );
+    } finally {
+      _isProcessing = false;
     }
   }
 
@@ -204,23 +220,85 @@ class _UploadPageState extends ConsumerState<UploadPage> {
             ),
             const SizedBox(height: 20),
             IntrinsicWidth(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CustomButton(
-                    text: '처리 시작',
-                    onPressed: _onProcessPressed,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CustomButton(
+                        text: '처리 시작',
+                        onPressed: _onProcessPressed,
+                      ),
+                      const SizedBox(width: 10),
+                      if (isProcessReady) ...[
+                        CustomCheckbox(
+                          isChecked: isProcessReady,
+                          text: '번역 준비 완료',
+                        ),
+                      ],
+                    ],
                   ),
-                  const SizedBox(width: 10),
                   if (isProcessReady) ...[
-                    CustomCheckbox(
-                      isChecked: isProcessReady,
-                      text: '번역 준비 완료',
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        const SizedBox(width: 10),
+                        CustomCheckbox(
+                          isChecked: ffmpegState.isInitialized,
+                          text: 'FFmpeg 초기화 완료',
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 10),
-                    CustomCheckbox(
-                      isChecked: ffmpegState.isAudioExtracted,
-                      text: '오디오 추출 완료',
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        const SizedBox(width: 10),
+                        CustomCheckbox(
+                          isChecked: ffmpegState.isFsReady,
+                          text: 'FS 모듈 준비 완료',
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        const SizedBox(width: 10),
+                        CustomCheckbox(
+                          isChecked: ffmpegState.isInputWritten,
+                          text: '입력 파일 쓰기 완료',
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        const SizedBox(width: 10),
+                        CustomCheckbox(
+                          isChecked: ffmpegState.isCommandExecuted,
+                          text: 'FFmpeg 명령어 실행 완료',
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        const SizedBox(width: 10),
+                        CustomCheckbox(
+                          isChecked: ffmpegState.isOutputRead,
+                          text: '출력 파일 읽기 완료',
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        const SizedBox(width: 10),
+                        CustomCheckbox(
+                          isChecked: ffmpegState.isAudioExtracted,
+                          text: '오디오 추출 완료',
+                        ),
+                      ],
                     ),
                   ],
                 ],
