@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:free_caption_on_video_website/style/responsive_sizes.dart';
 
 class CustomCheckbox extends StatelessWidget {
   final bool isChecked;
@@ -20,8 +21,11 @@ class CustomCheckbox extends StatelessWidget {
           checkColor: Colors.white,
           activeColor: Colors.green,
         ),
-        const SizedBox(width: 5),
-        Text(text),
+        SizedBox(width: ResponsiveSizes.h2),
+        Text(
+          text,
+          style: TextStyle(fontSize: ResponsiveSizes.textSize(3)),
+        ),
       ],
     );
   }

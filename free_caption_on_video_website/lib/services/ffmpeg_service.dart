@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:free_caption_on_video_website/providers/ffmpeg_provider.dart';
 import 'dart:js_util' as js_util;
+import '../providers/audio_provider.dart';
 
 @JS('FFmpeg.createFFmpeg')
 external JSFunction get createFFmpeg;
@@ -12,6 +13,7 @@ external JSFunction get createFFmpeg;
 @JS()
 external JSObject get FFmpeg;
 
+final ffmpegServiceProvider = Provider<FfmpegService>((ref) => FfmpegService(ref));
 
 class FfmpegService {
   JSObject? _ffmpeg;
@@ -47,6 +49,10 @@ class FfmpegService {
     } catch (e) {
       print('Error initializing FFmpeg: $e');
       _isInitialized = false;
+      ref.read(ffmpegProvider.notifier).state = ref.read(ffmpegProvider).copyWith(
+        errorMessage: 'Initialize failed: $e',
+        hasErrorDisplayed: true,
+      );
       rethrow;
     }
   }
@@ -68,15 +74,26 @@ class FfmpegService {
 
   Future<Uint8List?> extractAudio(Uint8List videoBytes) async {
     try {
+      ref.read(ffmpegProvider.notifier).state = FmpegState(); // 상태 리셋
+      print('FFmpeg state reset at start: ${ref.read(ffmpegProvider)}');
+
       await initialize();
       if (_ffmpeg == null || !_isInitialized) {
         print('FFmpeg instance is null or not initialized');
+        ref.read(ffmpegProvider.notifier).state = ref.read(ffmpegProvider).copyWith(
+          errorMessage: 'FFmpeg instance is null or not initialized',
+          hasErrorDisplayed: true,
+        );
         return null;
       }
 
       final fs = _ffmpeg!.getProperty<JSFunction>('FS'.toJS);
       if (fs == null) {
         print('FS module is null');
+        ref.read(ffmpegProvider.notifier).state = ref.read(ffmpegProvider).copyWith(
+          errorMessage: 'FS module not available',
+          hasErrorDisplayed: true,
+        );
         throw Exception('FS module not available');
       }
 
@@ -90,8 +107,9 @@ class FfmpegService {
       for (var arg in args) {
         js_util.callMethod(jsArgs, 'push', [arg.toJS]);
       }
+      print('jsArgs prepared: ${js_util.callMethod(jsArgs, 'toString', [])}');
 
-      final runResult = _ffmpeg!.callMethod('run'.toJS, jsArgs) as JSPromise;
+      final runResult = js_util.callMethod(_ffmpeg!, 'run', jsArgs.toDart) as JSPromise;
       await runResult.toDart;
       print('FFmpeg command executed successfully');
       ref.read(ffmpegProvider.notifier).state = ref.read(ffmpegProvider).copyWith(isCommandExecuted: true);
@@ -99,28 +117,60 @@ class FfmpegService {
       final readResult = fs.callAsFunction(_ffmpeg, 'readFile'.toJS, 'output.mp3'.toJS);
       if (readResult == null) {
         print('Failed to read output file: readResult is null');
+        ref.read(ffmpegProvider.notifier).state = ref.read(ffmpegProvider).copyWith(
+          errorMessage: 'FS.readFile returned null',
+          hasErrorDisplayed: true,
+        );
         throw Exception('FS.readFile returned null');
       }
 
-      final audioData = await (readResult as JSPromise).toDart as Uint8List?;
-      print('Audio extraction completed');
+      print('readResult type: ${readResult.runtimeType}');
+      Uint8List audioData;
+      if (readResult is JSUint8Array) {
+        audioData = Uint8List.fromList(readResult.toDart);
+      } else {
+        print('Unexpected readResult type: ${readResult.runtimeType}');
+        ref.read(ffmpegProvider.notifier).state = ref.read(ffmpegProvider).copyWith(
+          errorMessage: 'Unexpected readResult type: ${readResult.runtimeType}',
+          hasErrorDisplayed: true,
+        );
+        throw Exception('Unexpected readResult type');
+      }
+
+      print('Audio extraction completed, audioData length: ${audioData.length}');
       ref.read(ffmpegProvider.notifier).state = ref.read(ffmpegProvider).copyWith(
         isOutputRead: true,
         isAudioExtracted: true,
+        errorMessage: null,
+        hasErrorDisplayed: false,
+        audioFileSize: audioData.length,
       );
+
+      // 오디오 데이터를 audioProvider에 저장
+      ref.read(audioProvider.notifier).state = audioData;
+
       return audioData;
     } catch (e) {
       print('Error in extractAudio: $e');
+      ref.read(ffmpegProvider.notifier).state = ref.read(ffmpegProvider).copyWith(
+        errorMessage: e.toString(),
+        hasErrorDisplayed: true,
+      );
       return null;
     }
   }
 
-  void dispose() {
+  void reset() {
     if (_ffmpeg != null) {
       _ffmpeg!.callMethod('exit'.toJS);
       _ffmpeg = null;
       _isInitialized = false;
-      ref.read(ffmpegProvider.notifier).state = FfmpegState();
+      ref.read(ffmpegProvider.notifier).state = FmpegState();
+      print('FFmpeg reset completed');
     }
+  }
+
+  void dispose() {
+    reset();
   }
 }
