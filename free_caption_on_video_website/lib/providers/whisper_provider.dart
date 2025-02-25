@@ -8,9 +8,13 @@ class WhisperState {
   final String? requestError;
   final String? finalError;
   final bool hasErrorDisplayed;
-  final int progress;           // 진행률 (%)
-  final String? estimatedTime;  // 예상 시간
-  final String? translation;    // SRT 결과
+  final int progress;
+  final String? estimatedTime;
+  final String? translation;
+  final String transcriptionStatus;
+  final int? audioSize;
+  final int? responseStatusCode;
+
 
   WhisperState({
     this.isRequesting = false,
@@ -21,6 +25,10 @@ class WhisperState {
     this.progress = 0,
     this.estimatedTime,
     this.translation,
+    this.transcriptionStatus = 'notStarted',
+    this.audioSize,
+    this.responseStatusCode,
+
   });
 
   WhisperState copyWith({
@@ -32,6 +40,10 @@ class WhisperState {
     int? progress,
     String? estimatedTime,
     String? translation,
+    String? transcriptionStatus,
+    int? audioSize,
+    int? responseStatusCode,
+
   }) {
     return WhisperState(
       isRequesting: isRequesting ?? this.isRequesting,
@@ -42,6 +54,9 @@ class WhisperState {
       progress: progress ?? this.progress,
       estimatedTime: estimatedTime ?? this.estimatedTime,
       translation: translation ?? this.translation,
+      transcriptionStatus: transcriptionStatus ?? this.transcriptionStatus,
+      audioSize: audioSize ?? this.audioSize,
+      responseStatusCode: responseStatusCode ?? this.responseStatusCode,
     );
   }
 }

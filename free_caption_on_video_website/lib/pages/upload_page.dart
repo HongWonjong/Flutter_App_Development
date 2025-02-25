@@ -240,7 +240,7 @@ class _UploadPageState extends ConsumerState<UploadPage> {
       var audioData = ref.read(audioProvider);
       if (audioData == null) {
         final errorMsg = 'Audio data is null in audioProvider';
-        print(errorMsg);
+        print("[ERROR] $errorMsg");
         ref.read(whisperProvider.notifier).state = whisperState.copyWith(
           isRequesting: false,
           finalError: errorMsg,
@@ -255,12 +255,12 @@ class _UploadPageState extends ConsumerState<UploadPage> {
       }
 
       Uint8List audioBytes =
-          audioData is Uint8List ? audioData : throw 'Invalid audio data type';
+      audioData is Uint8List ? audioData : throw 'Invalid audio data type';
 
       final languagePair = ref.read(languageProvider);
       if (languagePair.sourceLanguage == null) {
         final errorMsg = 'Source language is not selected';
-        print(errorMsg);
+        print("[ERROR] $errorMsg");
         ref.read(whisperProvider.notifier).state = whisperState.copyWith(
           isRequesting: false,
           finalError: errorMsg,
@@ -274,9 +274,11 @@ class _UploadPageState extends ConsumerState<UploadPage> {
         return;
       }
 
+      print("[INFO] Transcription 시작...");
       final whisperService = ref.read(whisperServiceProvider);
       await for (var update in whisperService.transcribeAudioToSrt(
           audioBytes, languagePair.sourceLanguage!)) {
+        print("[INFO] Update: $update");
         if (update['status'] == 'completed') {
           setState(() {
             _srtContent = update['translation'];
@@ -286,12 +288,19 @@ class _UploadPageState extends ConsumerState<UploadPage> {
                 content: Text('Transcription successful!',
                     style: TextStyle(fontSize: ResponsiveSizes.textSize(3)))),
           );
+        } else if (update['status'] == 'error') {
+          final errorMsg = update['message'] ?? 'Unknown error occurred';
+          print("[ERROR] Transcription 실패: $errorMsg");
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text('Transcription failed: $errorMsg',
+                    style: TextStyle(fontSize: ResponsiveSizes.textSize(3)))),
+          );
         }
       }
     } catch (e) {
-      final errorMsg =
-          'Transcription 오류: $e\nStacktrace: ${StackTrace.current}';
-      print(errorMsg);
+      final errorMsg = 'Unexpected error: $e\nStacktrace: ${StackTrace.current}';
+      print("[ERROR] $errorMsg");
       ref.read(whisperProvider.notifier).state = whisperState.copyWith(
         isRequesting: false,
         finalError: errorMsg,
@@ -463,17 +472,52 @@ class _UploadPageState extends ConsumerState<UploadPage> {
                       ),
                       if (ffmpegState.isAudioExtracted) ...[
                         SizedBox(height: ResponsiveSizes.h2),
+                        // 요청 전송 상태
                         StatusRow(
-                          isChecked: whisperState.isSrtGenerated,
-                          text: whisperState.isRequesting
-                              ? 'SRT 변환 요청 중... (${whisperState.progress}%\n예상 시간: ${whisperState.estimatedTime ?? "계산 중"})'
-                              : 'SRT 변환 요청',
-                          errorMessage: whisperState.requestError ??
-                              whisperState.finalError,
-                          hasErrorDisplayed: !whisperState.isSrtGenerated &&
-                              (whisperState.requestError != null ||
-                                  whisperState.finalError != null),
+                          isChecked: whisperState.transcriptionStatus == 'requestSent' ||
+                              whisperState.transcriptionStatus == 'processing' ||
+                              whisperState.transcriptionStatus == 'completed',
+                          text: whisperState.transcriptionStatus == 'requestSent'
+                              ? '서버로 요청을 전송 중입니다...'
+                              : whisperState.transcriptionStatus == 'processing' || whisperState.transcriptionStatus == 'completed'
+                              ? '요청이 성공적으로 전송되었습니다.'
+                              : '서버로의 요청 전송을 기다리고 있습니다.',
+                          errorMessage: whisperState.transcriptionStatus == 'error' ? whisperState.requestError : null,
+                          hasErrorDisplayed: whisperState.transcriptionStatus == 'error' &&
+                              whisperState.requestError != null,
                         ),
+                        SizedBox(height: ResponsiveSizes.h2),
+                        // 처리 중 상태
+                        StatusRow(
+                          isChecked: whisperState.transcriptionStatus == 'processing' || whisperState.transcriptionStatus == 'completed',
+                          text: whisperState.transcriptionStatus == 'processing'
+                              ? '서버에서 오디오를 처리 중입니다... (${whisperState.progress}%)'
+                              : whisperState.transcriptionStatus == 'completed'
+                              ? '오디오 처리가 완료되었습니다.'
+                              : '서버에서 오디오를 처리하기 위해 대기 중입니다.',
+                          hasErrorDisplayed: whisperState.transcriptionStatus == 'error' &&
+                              whisperState.requestError != null,
+                        ),
+                        SizedBox(height: ResponsiveSizes.h2),
+                        // Whisper 처리 상태
+                        // SRT 생성 상태
+                        StatusRow(
+                          isChecked: whisperState.transcriptionStatus == 'completed',
+                          text: whisperState.transcriptionStatus == 'completed'
+                              ? 'SRT 파일 생성이 완료되었습니다.'
+                              : 'SRT 파일 생성을 기다리고 있습니다.',
+                          hasErrorDisplayed: whisperState.transcriptionStatus == 'error' &&
+                              whisperState.requestError != null,
+                        ),
+                        // 진행률 바
+                        if (whisperState.transcriptionStatus == 'processing')
+                          Padding(
+                            padding: EdgeInsets.only(top: ResponsiveSizes.h2),
+                            child: LinearProgressIndicator(
+                              value: whisperState.progress / 100.0,
+                              minHeight: ResponsiveSizes.h2,
+                            ),
+                          ),
                       ],
                     ],
                   ],

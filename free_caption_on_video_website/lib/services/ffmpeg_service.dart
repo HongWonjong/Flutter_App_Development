@@ -101,7 +101,7 @@ class FfmpegService {
       print('Input file written successfully');
       ref.read(ffmpegProvider.notifier).state = ref.read(ffmpegProvider).copyWith(isInputWritten: true);
 
-      final args = ['-i', 'input.mp4', '-vn', '-acodec', 'libmp3lame', '-q:a', '2', '-y', 'output.mp3'];
+      final args = ['-i', 'input.mp4', '-vn', '-acodec', 'libmp3lame', '-q:a', '8', '-y', 'output.mp3'];
       print('Running FFmpeg command with args: $args');
       final jsArgs = JSArray();
       for (var arg in args) {

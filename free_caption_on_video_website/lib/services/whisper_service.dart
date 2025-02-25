@@ -11,77 +11,68 @@ class WhisperService {
 
   WhisperService(this.ref);
 
-  static const String _apiEndpoint = 'https://124.52.62.85:5000/translate'; // ✅ Flask 서버 IP 확인
+  static const String _externalEndpoint = 'https://hongsreboratory123563122123.xyz/srt';
 
   Stream<Map<String, dynamic>> transcribeAudioToSrt(Uint8List audioBytes, String sourceLanguage) async* {
     try {
-      print("[INFO] 요청 시작: $_apiEndpoint");
-      print("[INFO] 오디오 크기: ${audioBytes.length} bytes");
-      print("[INFO] 언어 설정: ${_mapLanguageCode(sourceLanguage)}");
+      print("[INFO] 요청 시작: $_externalEndpoint");
 
+      // 요청 시작 전 상태 업데이트
       ref.read(whisperProvider.notifier).state = ref.read(whisperProvider).copyWith(
         isRequesting: true,
-        requestError: null,
-        hasErrorDisplayed: false,
+        transcriptionStatus: 'requestSent',
       );
 
-      var request = http.MultipartRequest('POST', Uri.parse(_apiEndpoint))
-        ..fields['language'] = _mapLanguageCode(sourceLanguage)
-        ..files.add(
-          http.MultipartFile.fromBytes(
-            'audio',
-            audioBytes,
-            filename: 'audio.mp3',
-          ),
-        );
+      var request = http.MultipartRequest('POST', Uri.parse(_externalEndpoint))
+        ..fields['language'] = sourceLanguage
+        ..files.add(http.MultipartFile.fromBytes('audio', audioBytes, filename: 'audio.mp3'));
 
       print("[INFO] 요청 보냄...");
-
-      var response = await request.send();
+      final response = await http.Client().send(request).timeout(Duration(seconds: 60));
       print("[INFO] 서버 응답 상태 코드: ${response.statusCode}");
 
-      if (response.statusCode != 200) {
-        print("[ERROR] 요청 실패: 상태 코드 ${response.statusCode}");
-        throw Exception("Failed to upload audio: ${response.reasonPhrase}");
+      // 요청 전송 후 1초 대기 후 성공 판단
+      await Future.delayed(Duration(seconds: 1));
+      if (response.statusCode == 200) {
+        print("[INFO] 요청이 1초 후에도 문제없음, 성공으로 간주");
+        ref.read(whisperProvider.notifier).state = ref.read(whisperProvider).copyWith(
+          isRequesting: true, // 아직 처리 중이니까 true 유지
+          transcriptionStatus: 'processing', // 성공적으로 전송됨
+        );
+      } else {
+        final errorMsg = "요청 실패: ${response.reasonPhrase} (Status: ${response.statusCode})";
+        print("[ERROR] $errorMsg");
+        ref.read(whisperProvider.notifier).state = ref.read(whisperProvider).copyWith(
+          isRequesting: false,
+          requestError: errorMsg,
+          transcriptionStatus: 'error',
+        );
+        yield {'status': 'error', 'message': errorMsg};
+        return;
       }
 
-      var stream = response.stream.transform(utf8.decoder).transform(LineSplitter());
-
-      await for (var line in stream) {
-        print("[INFO] 서버 응답: $line");
+      // 스트림을 한 번만 구독
+      await for (var line in response.stream.transform(utf8.decoder).transform(LineSplitter())) {
+        print("[INFO] 서버 응답 줄: $line");
         var data = jsonDecode(line);
         ref.read(whisperProvider.notifier).state = ref.read(whisperProvider).copyWith(
-          isRequesting: data['status'] != 'completed',
+          isRequesting: data['status'] != 'completed' && data['status'] != 'error',
           progress: data['progress'],
           estimatedTime: data['estimated_time'],
-          translation: data['status'] == 'completed' ? data['translation'] : null,
-          isSrtGenerated: data['status'] == 'completed',
+          transcriptionStatus: data['status'],
+          translation: data['status'] == 'completed' ? data['translation'] : null, // 추가
         );
         yield data;
       }
     } catch (e) {
+      final errorMsg = "요청 오류: $e";
+      print("[ERROR] $errorMsg");
       ref.read(whisperProvider.notifier).state = ref.read(whisperProvider).copyWith(
         isRequesting: false,
-        requestError: e.toString(),
-        hasErrorDisplayed: true,
+        requestError: errorMsg,
+        transcriptionStatus: 'error',
       );
-      print("[ERROR] Whisper 요청 오류: $e");
-      rethrow;
-    }
-  }
-
-  String _mapLanguageCode(String language) {
-    switch (language) {
-      case '영어':
-        return 'en';
-      case '한국어':
-        return 'ko';
-      case '일본어':
-        return 'ja';
-      case '중국어':
-        return 'zh';
-      default:
-        return 'en';
+      yield {'status': 'error', 'message': errorMsg};
     }
   }
 }
