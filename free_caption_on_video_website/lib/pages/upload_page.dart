@@ -107,7 +107,7 @@ class _UploadPageState extends ConsumerState<UploadPage> {
                   DropdownButtonFormField<String>(
                     decoration: const InputDecoration(labelText: '음성 언어'),
                     value: tempSourceLang,
-                    items: ['영어', '한국어', '일본어', '중국어']
+                    items: ['en', 'ko', 'jp', 'cn']
                         .map((lang) => DropdownMenuItem(
                             value: lang,
                             child: Text(lang,
@@ -123,7 +123,7 @@ class _UploadPageState extends ConsumerState<UploadPage> {
                   DropdownButtonFormField<String>(
                     decoration: const InputDecoration(labelText: '번역할 언어'),
                     value: tempTargetLang,
-                    items: ['영어', '한국어', '일본어', '중국어']
+                    items: ['en', 'ko', 'jp', 'cn']
                         .map((lang) => DropdownMenuItem(
                             value: lang,
                             child: Text(lang,
@@ -225,7 +225,7 @@ class _UploadPageState extends ConsumerState<UploadPage> {
   }
 
   Future<void> _onTranscribePressed() async {
-    final whisperState = ref.read(whisperProvider);
+    final whisperState = ref.watch(whisperProvider);
 
     if (whisperState.isRequesting) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -443,7 +443,7 @@ class _UploadPageState extends ConsumerState<UploadPage> {
                       SizedBox(height: ResponsiveSizes.h2),
                       AudioExtractionRow(
                         isChecked: ffmpegState.isAudioExtracted,
-                        text: '오디오 추출 완료',
+                        text: '오디오 추출&압축 완료',
                         errorMessage: ffmpegState.errorMessage,
                         hasErrorDisplayed: !ffmpegState.isAudioExtracted &&
                             ffmpegState.hasErrorDisplayed &&
@@ -472,7 +472,6 @@ class _UploadPageState extends ConsumerState<UploadPage> {
                       ),
                       if (ffmpegState.isAudioExtracted) ...[
                         SizedBox(height: ResponsiveSizes.h2),
-                        // 요청 전송 상태
                         StatusRow(
                           isChecked: whisperState.transcriptionStatus == 'requestSent' ||
                               whisperState.transcriptionStatus == 'processing' ||
@@ -483,33 +482,30 @@ class _UploadPageState extends ConsumerState<UploadPage> {
                               ? '요청이 성공적으로 전송되었습니다.'
                               : '서버로의 요청 전송을 기다리고 있습니다.',
                           errorMessage: whisperState.transcriptionStatus == 'error' ? whisperState.requestError : null,
-                          hasErrorDisplayed: whisperState.transcriptionStatus == 'error' &&
-                              whisperState.requestError != null,
+                          hasErrorDisplayed: whisperState.transcriptionStatus == 'error' && whisperState.requestError != null,
                         ),
                         SizedBox(height: ResponsiveSizes.h2),
-                        // 처리 중 상태
                         StatusRow(
                           isChecked: whisperState.transcriptionStatus == 'processing' || whisperState.transcriptionStatus == 'completed',
                           text: whisperState.transcriptionStatus == 'processing'
-                              ? '서버에서 오디오를 처리 중입니다... (${whisperState.progress}%)'
+                              ? '서버에서 오디오를 처리 중입니다... 예상 시간: ${whisperState.estimatedTime ?? "계산 중"})'
                               : whisperState.transcriptionStatus == 'completed'
                               ? '오디오 처리가 완료되었습니다.'
                               : '서버에서 오디오를 처리하기 위해 대기 중입니다.',
-                          hasErrorDisplayed: whisperState.transcriptionStatus == 'error' &&
-                              whisperState.requestError != null,
+                          hasErrorDisplayed: whisperState.transcriptionStatus == 'error' && whisperState.requestError != null,
+                        ),
+                        Text(
+                          "whisperState.estimatedTime: ${whisperState.estimatedTime ?? ''}",
+                          style: TextStyle(fontSize: ResponsiveSizes.textSize(2)),
                         ),
                         SizedBox(height: ResponsiveSizes.h2),
-                        // Whisper 처리 상태
-                        // SRT 생성 상태
                         StatusRow(
                           isChecked: whisperState.transcriptionStatus == 'completed',
                           text: whisperState.transcriptionStatus == 'completed'
                               ? 'SRT 파일 생성이 완료되었습니다.'
                               : 'SRT 파일 생성을 기다리고 있습니다.',
-                          hasErrorDisplayed: whisperState.transcriptionStatus == 'error' &&
-                              whisperState.requestError != null,
+                          hasErrorDisplayed: whisperState.transcriptionStatus == 'error' && whisperState.requestError != null,
                         ),
-                        // 진행률 바
                         if (whisperState.transcriptionStatus == 'processing')
                           Padding(
                             padding: EdgeInsets.only(top: ResponsiveSizes.h2),
