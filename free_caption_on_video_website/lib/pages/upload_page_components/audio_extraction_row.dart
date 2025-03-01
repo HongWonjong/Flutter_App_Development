@@ -107,7 +107,7 @@ class AudioExtractionRow extends StatelessWidget {
                       textStyle:
                       TextStyle(fontSize: ResponsiveSizes.textSize(3)),
                     ),
-                    child: const Text('SRT 다운로드'),
+                    child: const Text('원본 SRT 다운로드'),
                   ),
                 ],
               ],

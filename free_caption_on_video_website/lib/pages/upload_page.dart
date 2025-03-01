@@ -1,11 +1,11 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:free_caption_on_video_website/pages/upload_page_components/custom_buttons.dart';
 import 'package:free_caption_on_video_website/pages/upload_page_components/custom_checkbox.dart';
 import 'package:free_caption_on_video_website/pages/upload_page_components/status_row.dart';
 import 'package:free_caption_on_video_website/pages/upload_page_components/audio_extraction_row.dart';
+import 'package:free_caption_on_video_website/pages/upload_page_components/srt_modify_row.dart'; // 새로 추가
 import 'package:free_caption_on_video_website/providers/language_provider.dart';
 import 'package:free_caption_on_video_website/providers/video_provider.dart';
 import 'package:free_caption_on_video_website/providers/process_provider.dart';
@@ -18,6 +18,8 @@ import 'package:free_caption_on_video_website/services/ffmpeg_service.dart';
 import 'package:free_caption_on_video_website/services/whisper_service.dart';
 import 'package:free_caption_on_video_website/style/responsive_sizes.dart';
 import 'dart:html' as html;
+
+import '../providers/srt_provider.dart';
 
 class UploadPage extends ConsumerStatefulWidget {
   const UploadPage({super.key});
@@ -58,33 +60,44 @@ class _UploadPageState extends ConsumerState<UploadPage> {
     final videoBytes = await _filePickerService.pickVideoFile();
 
     ref.read(ffmpegProvider.notifier).state = FmpegState();
-    ref.read(languageProvider.notifier).state =
-        LanguagePair(sourceLanguage: null, targetLanguage: null);
+    ref.read(languageProvider.notifier).state = LanguagePair(sourceLanguage: null, targetLanguage: null);
     ref.read(ffmpegServiceProvider).reset();
     ref.read(whisperProvider.notifier).state = WhisperState();
+    ref.read(srtModifyProvider.notifier).state = SrtModifyState();
 
     if (videoBytes != null) {
-      final key = await _indexedDbService.saveVideo(videoBytes);
-      ref.read(videoProvider.notifier).state = VideoState(
-        videoKey: key,
-        isUploaded: true,
-        videoFileSize: videoBytes.length,
-      );
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text('비디오 업로드 및 저장 성공!',
-                style: TextStyle(fontSize: ResponsiveSizes.textSize(3)))),
-      );
+      debugPrint('비디오 업로드 시작: ${videoBytes.length} bytes');
+      try {
+        // 비디오 업로드
+        await ref.read(videoProvider.notifier).uploadVideo(videoBytes);
+        debugPrint('비디오 업로드 성공');
+
+        // 업로드 완료 후 썸네일 캡처
+        await ref.read(videoProvider.notifier).captureThumbnail();
+        final videoState = ref.read(videoProvider);
+        debugPrint('업로드 및 썸네일 처리 완료 - videoKey: ${videoState.videoKey}, thumbnail: ${videoState.thumbnail != null ? "있음" : "없음"}');
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('비디오 업로드 및 썸네일 추출 성공!', style: TextStyle(fontSize: ResponsiveSizes.textSize(3))),
+          ),
+        );
+      } catch (e) {
+        debugPrint('업로드 또는 썸네일 처리 실패: $e');
+        ref.read(videoProvider.notifier).reset();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('비디오 업로드 실패: $e', style: TextStyle(fontSize: ResponsiveSizes.textSize(3))),
+          ),
+        );
+      }
     } else {
-      ref.read(videoProvider.notifier).state = VideoState(
-        videoKey: null,
-        isUploaded: false,
-        videoFileSize: null,
-      );
+      debugPrint('비디오 선택 취소');
+      ref.read(videoProvider.notifier).reset();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text('비디오 선택을 취소했거나 오류가 발생했습니다.',
-                style: TextStyle(fontSize: ResponsiveSizes.textSize(3)))),
+          content: Text('비디오 선택을 취소했거나 오류가 발생했습니다.', style: TextStyle(fontSize: ResponsiveSizes.textSize(3))),
+        ),
       );
     }
     setState(() {});
@@ -109,10 +122,10 @@ class _UploadPageState extends ConsumerState<UploadPage> {
                     value: tempSourceLang,
                     items: ['en', 'ko', 'jp', 'cn']
                         .map((lang) => DropdownMenuItem(
-                            value: lang,
-                            child: Text(lang,
-                                style: TextStyle(
-                                    fontSize: ResponsiveSizes.textSize(3)))))
+                        value: lang,
+                        child: Text(lang,
+                            style: TextStyle(
+                                fontSize: ResponsiveSizes.textSize(3)))))
                         .toList(),
                     onChanged: (value) {
                       setState(() {
@@ -125,10 +138,10 @@ class _UploadPageState extends ConsumerState<UploadPage> {
                     value: tempTargetLang,
                     items: ['en', 'ko', 'jp', 'cn']
                         .map((lang) => DropdownMenuItem(
-                            value: lang,
-                            child: Text(lang,
-                                style: TextStyle(
-                                    fontSize: ResponsiveSizes.textSize(3)))))
+                        value: lang,
+                        child: Text(lang,
+                            style: TextStyle(
+                                fontSize: ResponsiveSizes.textSize(3)))))
                         .toList(),
                     onChanged: (value) {
                       setState(() {
@@ -188,7 +201,7 @@ class _UploadPageState extends ConsumerState<UploadPage> {
       if (isProcessReady) {
         final videoState = ref.read(videoProvider);
         final videoBytes =
-            await _indexedDbService.getVideo(videoState.videoKey!);
+        await _indexedDbService.getVideo(videoState.videoKey!);
         if (videoBytes != null) {
           final ffmpegService = ref.read(ffmpegServiceProvider);
           final audioBytes = await ffmpegService.extractAudio(videoBytes);
@@ -282,6 +295,7 @@ class _UploadPageState extends ConsumerState<UploadPage> {
         if (update['status'] == 'completed') {
           setState(() {
             _srtContent = update['translation'];
+            ref.read(srtModifyProvider.notifier).setSrtContent(_srtContent!); // SRT 내용 설정
           });
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -323,6 +337,7 @@ class _UploadPageState extends ConsumerState<UploadPage> {
     final ffmpegState = ref.watch(ffmpegProvider);
     final audioData = ref.watch(audioProvider);
     final whisperState = ref.watch(whisperProvider);
+    final srtModifyState = ref.watch(srtModifyProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -465,7 +480,7 @@ class _UploadPageState extends ConsumerState<UploadPage> {
                           final blob = html.Blob([_srtContent!], 'text/srt');
                           final url = html.Url.createObjectUrlFromBlob(blob);
                           final anchor = html.AnchorElement(href: url)
-                            ..setAttribute('download', 'subtitles.srt')
+                            ..setAttribute('download', 'original_subtitles.srt') // 이름 변경
                             ..click();
                           html.Url.revokeObjectUrl(url);
                         },
@@ -473,26 +488,40 @@ class _UploadPageState extends ConsumerState<UploadPage> {
                       if (ffmpegState.isAudioExtracted) ...[
                         SizedBox(height: ResponsiveSizes.h2),
                         StatusRow(
-                          isChecked: whisperState.transcriptionStatus == 'requestSent' ||
+                          isChecked: whisperState.transcriptionStatus ==
+                              'requestSent' ||
                               whisperState.transcriptionStatus == 'processing' ||
                               whisperState.transcriptionStatus == 'completed',
-                          text: whisperState.transcriptionStatus == 'requestSent'
+                          text: whisperState.transcriptionStatus ==
+                              'requestSent'
                               ? '서버로 요청을 전송 중입니다...'
-                              : whisperState.transcriptionStatus == 'processing' || whisperState.transcriptionStatus == 'completed'
+                              : whisperState.transcriptionStatus ==
+                              'processing' ||
+                              whisperState.transcriptionStatus == 'completed'
                               ? '요청이 성공적으로 전송되었습니다.'
                               : '서버로의 요청 전송을 기다리고 있습니다.',
-                          errorMessage: whisperState.transcriptionStatus == 'error' ? whisperState.requestError : null,
-                          hasErrorDisplayed: whisperState.transcriptionStatus == 'error' && whisperState.requestError != null,
+                          errorMessage: whisperState.transcriptionStatus ==
+                              'error'
+                              ? whisperState.requestError
+                              : null,
+                          hasErrorDisplayed:
+                          whisperState.transcriptionStatus == 'error' &&
+                              whisperState.requestError != null,
                         ),
                         SizedBox(height: ResponsiveSizes.h2),
                         StatusRow(
-                          isChecked: whisperState.transcriptionStatus == 'processing' || whisperState.transcriptionStatus == 'completed',
-                          text: whisperState.transcriptionStatus == 'processing'
+                          isChecked: whisperState.transcriptionStatus ==
+                              'processing' ||
+                              whisperState.transcriptionStatus == 'completed',
+                          text: whisperState.transcriptionStatus ==
+                              'processing'
                               ? '서버에서 오디오를 처리 중입니다... 예상 시간: ${whisperState.estimatedTime ?? "계산 중"})'
                               : whisperState.transcriptionStatus == 'completed'
                               ? '오디오 처리가 완료되었습니다.'
                               : '서버에서 오디오를 처리하기 위해 대기 중입니다.',
-                          hasErrorDisplayed: whisperState.transcriptionStatus == 'error' && whisperState.requestError != null,
+                          hasErrorDisplayed:
+                          whisperState.transcriptionStatus == 'error' &&
+                              whisperState.requestError != null,
                         ),
                         Text(
                           "whisperState.estimatedTime: ${whisperState.estimatedTime ?? ''}",
@@ -500,11 +529,14 @@ class _UploadPageState extends ConsumerState<UploadPage> {
                         ),
                         SizedBox(height: ResponsiveSizes.h2),
                         StatusRow(
-                          isChecked: whisperState.transcriptionStatus == 'completed',
+                          isChecked:
+                          whisperState.transcriptionStatus == 'completed',
                           text: whisperState.transcriptionStatus == 'completed'
                               ? 'SRT 파일 생성이 완료되었습니다.'
                               : 'SRT 파일 생성을 기다리고 있습니다.',
-                          hasErrorDisplayed: whisperState.transcriptionStatus == 'error' && whisperState.requestError != null,
+                          hasErrorDisplayed:
+                          whisperState.transcriptionStatus == 'error' &&
+                              whisperState.requestError != null,
                         ),
                         if (whisperState.transcriptionStatus == 'processing')
                           Padding(
@@ -514,6 +546,10 @@ class _UploadPageState extends ConsumerState<UploadPage> {
                               minHeight: ResponsiveSizes.h2,
                             ),
                           ),
+                        if (whisperState.transcriptionStatus == 'completed') ...[
+                          SizedBox(height: ResponsiveSizes.h2),
+                          SrtModifyRow(), // SRT 수정 기능 추가
+                        ],
                       ],
                     ],
                   ],
