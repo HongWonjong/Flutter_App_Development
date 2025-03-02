@@ -55,7 +55,7 @@ class _SubtitleEditorDialogState extends ConsumerState<SubtitleEditorDialog> {
       fontFamily = currentStyle.fontFamily;
       textColor = currentStyle.textColor;
       bgColor = currentStyle.bgColor; // 투명도 제거
-      paddingVertical = currentStyle.bgHeight / 2; // 상하 여백 계산
+      paddingVertical = 9; // 상하 여백 계산
       paddingHorizontal = 12.0; // 초기값 유지
     });
   }
@@ -513,7 +513,7 @@ class _SubtitleEditorDialogState extends ConsumerState<SubtitleEditorDialog> {
                 onColorChanged: (color) => selectedColor = color,
                 showLabel: true,
                 pickerAreaHeightPercent: 0.8,
-                enableAlpha: false, // 투명도 옵션 제거
+                enableAlpha: true, // 투명도 옵션 제거
                 displayThumbColor: true,
                 colorPickerWidth: 300,
                 pickerAreaBorderRadius: BorderRadius.circular(8),

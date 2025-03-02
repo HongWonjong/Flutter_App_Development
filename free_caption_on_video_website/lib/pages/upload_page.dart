@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:free_caption_on_video_website/pages/upload_page_components/custom_app_bar.dart';
 import 'package:free_caption_on_video_website/pages/upload_page_components/custom_buttons.dart';
 import 'package:free_caption_on_video_website/pages/upload_page_components/custom_checkbox.dart';
+import 'package:free_caption_on_video_website/pages/upload_page_components/loading_overlay.dart';
 import 'package:free_caption_on_video_website/pages/upload_page_components/memo_widget.dart';
 import 'package:free_caption_on_video_website/pages/upload_page_components/status_row.dart';
 import 'package:free_caption_on_video_website/pages/upload_page_components/audio_extraction_row.dart';
@@ -21,7 +22,6 @@ import 'package:free_caption_on_video_website/services/ffmpeg_service.dart';
 import 'package:free_caption_on_video_website/services/whisper_service.dart';
 import 'package:free_caption_on_video_website/style/responsive_sizes.dart';
 import 'dart:html' as html;
-
 import '../providers/srt_provider.dart';
 
 
@@ -287,7 +287,7 @@ class _UploadPageState extends ConsumerState<UploadPage> {
         if (update['status'] == 'completed') {
           setState(() {
             _srtContent = update['translation'];
-            final originalSrt = update['original']; // 원본 SRT
+            final originalSrt = update['original'];
             ref.read(srtModifyProvider.notifier).setSrtContent(_srtContent!, originalSrt);
           });
           ScaffoldMessenger.of(context).showSnackBar(
@@ -333,197 +333,203 @@ class _UploadPageState extends ConsumerState<UploadPage> {
     final srtModifyState = ref.watch(srtModifyProvider);
 
     return Scaffold(
-      appBar: const CustomAppBar(), // 분리된 앱 바 사용
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(ResponsiveSizes.h5),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      appBar: const CustomAppBar(),
+      body: Stack( // Stack으로 감싸 오버레이 추가
+        children: [
+          SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.all(ResponsiveSizes.h5),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Expanded(child: MemoWidget()), // 메모 위젯
-                  SizedBox(width: ResponsiveSizes.h5),
-                  TranscribeCountWidget(), // 카운트 위젯
-                ],
-              ),
-              SizedBox(height: ResponsiveSizes.h5),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      CustomButton(
-                        text: 'mp4 업로드',
-                        onPressed: _onUploadPressed,
+                      const Expanded(child: MemoWidget()),
+                      SizedBox(width: ResponsiveSizes.h5),
+                      TranscribeCountWidget(),
+                    ],
+                  ),
+                  SizedBox(height: ResponsiveSizes.h5),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomButton(
+                            text: 'mp4 업로드',
+                            onPressed: _onUploadPressed,
+                          ),
+                          SizedBox(height: ResponsiveSizes.h10),
+                          CustomButton(
+                            text: '번역 언어',
+                            onPressed: _onLanguageSelectPressed,
+                          ),
+                          SizedBox(height: ResponsiveSizes.h10),
+                          CustomButton(
+                            text: '오디오 추출',
+                            onPressed: _onProcessPressed,
+                          ),
+                        ],
                       ),
-                      SizedBox(height: ResponsiveSizes.h10),
-                      CustomButton(
-                        text: '번역 언어',
-                        onPressed: _onLanguageSelectPressed,
-                      ),
-                      SizedBox(height: ResponsiveSizes.h10),
-                      CustomButton(
-                        text: '오디오 추출',
-                        onPressed: _onProcessPressed,
+                      SizedBox(width: ResponsiveSizes.h10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomCheckbox(
+                              isChecked: videoState.isUploaded,
+                              text: 'index_db 업로드',
+                            ),
+                            if (videoState.isUploaded && videoState.videoFileSize != null)
+                              Padding(
+                                padding: EdgeInsets.only(left: ResponsiveSizes.h5),
+                                child: Text(
+                                  '용량: ${_formatFileSize(videoState.videoFileSize)}',
+                                  style: TextStyle(fontSize: ResponsiveSizes.textSize(2)),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            SizedBox(height: ResponsiveSizes.h2),
+                            CustomCheckbox(
+                              isChecked: isLanguageSelected,
+                              text: languagePair.sourceLanguage != null && languagePair.targetLanguage != null
+                                  ? '${languagePair.sourceLanguage} -> ${languagePair.targetLanguage}'
+                                  : '언어 미선택',
+                            ),
+                            SizedBox(height: ResponsiveSizes.h2),
+                            CustomCheckbox(
+                              isChecked: isProcessReady,
+                              text: '번역 준비 완료',
+                            ),
+                            if (isProcessReady) ...[
+                              SizedBox(height: ResponsiveSizes.h2),
+                              StatusRow(
+                                isChecked: ffmpegState.isInitialized,
+                                text: 'FFmpeg 초기화 완료',
+                                errorMessage: ffmpegState.errorMessage,
+                                hasErrorDisplayed: !ffmpegState.isInitialized && ffmpegState.hasErrorDisplayed,
+                              ),
+                              SizedBox(height: ResponsiveSizes.h2),
+                              StatusRow(
+                                isChecked: ffmpegState.isFsReady,
+                                text: 'FS 모듈 준비 완료',
+                                errorMessage: ffmpegState.errorMessage,
+                                hasErrorDisplayed: !ffmpegState.isFsReady && ffmpegState.hasErrorDisplayed && ffmpegState.isInitialized,
+                              ),
+                              SizedBox(height: ResponsiveSizes.h2),
+                              StatusRow(
+                                isChecked: ffmpegState.isInputWritten,
+                                text: '입력 파일 쓰기 완료',
+                                errorMessage: ffmpegState.errorMessage,
+                                hasErrorDisplayed: !ffmpegState.isInputWritten && ffmpegState.hasErrorDisplayed && ffmpegState.isFsReady,
+                              ),
+                              SizedBox(height: ResponsiveSizes.h2),
+                              StatusRow(
+                                isChecked: ffmpegState.isCommandExecuted,
+                                text: 'FFmpeg 명령어 실행 완료',
+                                errorMessage: ffmpegState.errorMessage,
+                                hasErrorDisplayed: !ffmpegState.isCommandExecuted && ffmpegState.hasErrorDisplayed && ffmpegState.isInputWritten,
+                              ),
+                              SizedBox(height: ResponsiveSizes.h2),
+                              StatusRow(
+                                isChecked: ffmpegState.isOutputRead,
+                                text: '출력 파일 읽기 완료',
+                                errorMessage: ffmpegState.errorMessage,
+                                hasErrorDisplayed: !ffmpegState.isOutputRead && ffmpegState.hasErrorDisplayed && ffmpegState.isCommandExecuted,
+                              ),
+                              SizedBox(height: ResponsiveSizes.h2),
+                              AudioExtractionRow(
+                                isChecked: ffmpegState.isAudioExtracted,
+                                text: '오디오 추출&압축 완료',
+                                errorMessage: ffmpegState.errorMessage,
+                                hasErrorDisplayed: !ffmpegState.isAudioExtracted && ffmpegState.hasErrorDisplayed && ffmpegState.isOutputRead,
+                                audioFileSize: ffmpegState.audioFileSize,
+                                audioData: audioData,
+                                formatFileSize: _formatFileSize,
+                                onDownloadPressed: () {
+                                  final blob = html.Blob([audioData], 'audio/mpeg');
+                                  final url = html.Url.createObjectUrlFromBlob(blob);
+                                  final anchor = html.AnchorElement(href: url)
+                                    ..setAttribute('download', 'audio.mp3')
+                                    ..click();
+                                  html.Url.revokeObjectUrl(url);
+                                },
+                                onTranscribePressed: _onTranscribePressed,
+                                srtContent: _srtContent,
+                                onSrtDownloadPressed: () {
+                                  final blob = html.Blob([_srtContent!], 'text/srt');
+                                  final url = html.Url.createObjectUrlFromBlob(blob);
+                                  final anchor = html.AnchorElement(href: url)
+                                    ..setAttribute('download', 'original_subtitles.srt')
+                                    ..click();
+                                  html.Url.revokeObjectUrl(url);
+                                },
+                              ),
+                              if (ffmpegState.isAudioExtracted) ...[
+                                SizedBox(height: ResponsiveSizes.h2),
+                                StatusRow(
+                                  isChecked: whisperState.transcriptionStatus == 'requestSent' ||
+                                      whisperState.transcriptionStatus == 'processing' ||
+                                      whisperState.transcriptionStatus == 'completed',
+                                  text: whisperState.transcriptionStatus == 'requestSent'
+                                      ? '서버로 요청을 전송 중입니다...'
+                                      : whisperState.transcriptionStatus == 'processing' || whisperState.transcriptionStatus == 'completed'
+                                      ? '요청이 성공적으로 전송되었습니다.'
+                                      : '서버로의 요청 전송을 기다리고 있습니다.',
+                                  errorMessage: whisperState.transcriptionStatus == 'error' ? whisperState.requestError : null,
+                                  hasErrorDisplayed: whisperState.transcriptionStatus == 'error' && whisperState.requestError != null,
+                                ),
+                                SizedBox(height: ResponsiveSizes.h2),
+                                StatusRow(
+                                  isChecked: whisperState.transcriptionStatus == 'processing' || whisperState.transcriptionStatus == 'completed',
+                                  text: whisperState.transcriptionStatus == 'processing'
+                                      ? '서버에서 오디오를 처리 중입니다... 예상 시간: ${whisperState.estimatedTime ?? "계산 중"})'
+                                      : whisperState.transcriptionStatus == 'completed'
+                                      ? '오디오 처리가 완료되었습니다.'
+                                      : '서버에서 오디오를 처리하기 위해 대기 중입니다.',
+                                  hasErrorDisplayed: whisperState.transcriptionStatus == 'error' && whisperState.requestError != null,
+                                ),
+                                Text(
+                                  "whisperState.estimatedTime: ${whisperState.estimatedTime ?? ''}",
+                                  style: TextStyle(fontSize: ResponsiveSizes.textSize(2)),
+                                ),
+                                SizedBox(height: ResponsiveSizes.h2),
+                                StatusRow(
+                                  isChecked: whisperState.transcriptionStatus == 'completed',
+                                  text: whisperState.transcriptionStatus == 'completed'
+                                      ? 'SRT 파일 생성이 완료되었습니다.'
+                                      : 'SRT 파일 생성을 기다리고 있습니다.',
+                                  hasErrorDisplayed: whisperState.transcriptionStatus == 'error' && whisperState.requestError != null,
+                                ),
+                                if (whisperState.transcriptionStatus == 'processing')
+                                  Padding(
+                                    padding: EdgeInsets.only(top: ResponsiveSizes.h2),
+                                    child: LinearProgressIndicator(
+                                      value: whisperState.progress / 100.0,
+                                      minHeight: ResponsiveSizes.h2,
+                                    ),
+                                  ),
+                                if (whisperState.transcriptionStatus == 'completed') ...[
+                                  SizedBox(height: ResponsiveSizes.h2),
+                                  SrtModifyRow(),
+                                ],
+                              ],
+                            ],
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                  SizedBox(width: ResponsiveSizes.h10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomCheckbox(
-                          isChecked: videoState.isUploaded,
-                          text: 'index_db 업로드',
-                        ),
-                        if (videoState.isUploaded && videoState.videoFileSize != null)
-                          Padding(
-                            padding: EdgeInsets.only(left: ResponsiveSizes.h5),
-                            child: Text(
-                              '용량: ${_formatFileSize(videoState.videoFileSize)}',
-                              style: TextStyle(fontSize: ResponsiveSizes.textSize(2)),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        SizedBox(height: ResponsiveSizes.h2),
-                        CustomCheckbox(
-                          isChecked: isLanguageSelected,
-                          text: languagePair.sourceLanguage != null && languagePair.targetLanguage != null
-                              ? '${languagePair.sourceLanguage} -> ${languagePair.targetLanguage}'
-                              : '언어 미선택',
-                        ),
-                        SizedBox(height: ResponsiveSizes.h2),
-                        CustomCheckbox(
-                          isChecked: isProcessReady,
-                          text: '번역 준비 완료',
-                        ),
-                        if (isProcessReady) ...[
-                          SizedBox(height: ResponsiveSizes.h2),
-                          StatusRow(
-                            isChecked: ffmpegState.isInitialized,
-                            text: 'FFmpeg 초기화 완료',
-                            errorMessage: ffmpegState.errorMessage,
-                            hasErrorDisplayed: !ffmpegState.isInitialized && ffmpegState.hasErrorDisplayed,
-                          ),
-                          SizedBox(height: ResponsiveSizes.h2),
-                          StatusRow(
-                            isChecked: ffmpegState.isFsReady,
-                            text: 'FS 모듈 준비 완료',
-                            errorMessage: ffmpegState.errorMessage,
-                            hasErrorDisplayed: !ffmpegState.isFsReady && ffmpegState.hasErrorDisplayed && ffmpegState.isInitialized,
-                          ),
-                          SizedBox(height: ResponsiveSizes.h2),
-                          StatusRow(
-                            isChecked: ffmpegState.isInputWritten,
-                            text: '입력 파일 쓰기 완료',
-                            errorMessage: ffmpegState.errorMessage,
-                            hasErrorDisplayed: !ffmpegState.isInputWritten && ffmpegState.hasErrorDisplayed && ffmpegState.isFsReady,
-                          ),
-                          SizedBox(height: ResponsiveSizes.h2),
-                          StatusRow(
-                            isChecked: ffmpegState.isCommandExecuted,
-                            text: 'FFmpeg 명령어 실행 완료',
-                            errorMessage: ffmpegState.errorMessage,
-                            hasErrorDisplayed: !ffmpegState.isCommandExecuted && ffmpegState.hasErrorDisplayed && ffmpegState.isInputWritten,
-                          ),
-                          SizedBox(height: ResponsiveSizes.h2),
-                          StatusRow(
-                            isChecked: ffmpegState.isOutputRead,
-                            text: '출력 파일 읽기 완료',
-                            errorMessage: ffmpegState.errorMessage,
-                            hasErrorDisplayed: !ffmpegState.isOutputRead && ffmpegState.hasErrorDisplayed && ffmpegState.isCommandExecuted,
-                          ),
-                          SizedBox(height: ResponsiveSizes.h2),
-                          AudioExtractionRow(
-                            isChecked: ffmpegState.isAudioExtracted,
-                            text: '오디오 추출&압축 완료',
-                            errorMessage: ffmpegState.errorMessage,
-                            hasErrorDisplayed: !ffmpegState.isAudioExtracted && ffmpegState.hasErrorDisplayed && ffmpegState.isOutputRead,
-                            audioFileSize: ffmpegState.audioFileSize,
-                            audioData: audioData,
-                            formatFileSize: _formatFileSize,
-                            onDownloadPressed: () {
-                              final blob = html.Blob([audioData], 'audio/mpeg');
-                              final url = html.Url.createObjectUrlFromBlob(blob);
-                              final anchor = html.AnchorElement(href: url)
-                                ..setAttribute('download', 'audio.mp3')
-                                ..click();
-                              html.Url.revokeObjectUrl(url);
-                            },
-                            onTranscribePressed: _onTranscribePressed,
-                            srtContent: _srtContent,
-                            onSrtDownloadPressed: () {
-                              final blob = html.Blob([_srtContent!], 'text/srt');
-                              final url = html.Url.createObjectUrlFromBlob(blob);
-                              final anchor = html.AnchorElement(href: url)
-                                ..setAttribute('download', 'original_subtitles.srt')
-                                ..click();
-                              html.Url.revokeObjectUrl(url);
-                            },
-                          ),
-                          if (ffmpegState.isAudioExtracted) ...[
-                            SizedBox(height: ResponsiveSizes.h2),
-                            StatusRow(
-                              isChecked: whisperState.transcriptionStatus == 'requestSent' ||
-                                  whisperState.transcriptionStatus == 'processing' ||
-                                  whisperState.transcriptionStatus == 'completed',
-                              text: whisperState.transcriptionStatus == 'requestSent'
-                                  ? '서버로 요청을 전송 중입니다...'
-                                  : whisperState.transcriptionStatus == 'processing' || whisperState.transcriptionStatus == 'completed'
-                                  ? '요청이 성공적으로 전송되었습니다.'
-                                  : '서버로의 요청 전송을 기다리고 있습니다.',
-                              errorMessage: whisperState.transcriptionStatus == 'error' ? whisperState.requestError : null,
-                              hasErrorDisplayed: whisperState.transcriptionStatus == 'error' && whisperState.requestError != null,
-                            ),
-                            SizedBox(height: ResponsiveSizes.h2),
-                            StatusRow(
-                              isChecked: whisperState.transcriptionStatus == 'processing' || whisperState.transcriptionStatus == 'completed',
-                              text: whisperState.transcriptionStatus == 'processing'
-                                  ? '서버에서 오디오를 처리 중입니다... 예상 시간: ${whisperState.estimatedTime ?? "계산 중"})'
-                                  : whisperState.transcriptionStatus == 'completed'
-                                  ? '오디오 처리가 완료되었습니다.'
-                                  : '서버에서 오디오를 처리하기 위해 대기 중입니다.',
-                              hasErrorDisplayed: whisperState.transcriptionStatus == 'error' && whisperState.requestError != null,
-                            ),
-                            Text(
-                              "whisperState.estimatedTime: ${whisperState.estimatedTime ?? ''}",
-                              style: TextStyle(fontSize: ResponsiveSizes.textSize(2)),
-                            ),
-                            SizedBox(height: ResponsiveSizes.h2),
-                            StatusRow(
-                              isChecked: whisperState.transcriptionStatus == 'completed',
-                              text: whisperState.transcriptionStatus == 'completed'
-                                  ? 'SRT 파일 생성이 완료되었습니다.'
-                                  : 'SRT 파일 생성을 기다리고 있습니다.',
-                              hasErrorDisplayed: whisperState.transcriptionStatus == 'error' && whisperState.requestError != null,
-                            ),
-                            if (whisperState.transcriptionStatus == 'processing')
-                              Padding(
-                                padding: EdgeInsets.only(top: ResponsiveSizes.h2),
-                                child: LinearProgressIndicator(
-                                  value: whisperState.progress / 100.0,
-                                  minHeight: ResponsiveSizes.h2,
-                                ),
-                              ),
-                            if (whisperState.transcriptionStatus == 'completed') ...[
-                              SizedBox(height: ResponsiveSizes.h2),
-                              SrtModifyRow(),
-                            ],
-                          ],
-                        ],
-                      ],
-                    ),
-                  ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
+          // 오버레이 추가: 요청 중일 때만 표시
+          LoadingOverlay(isVisible: whisperState.isRequesting),
+        ],
       ),
     );
   }

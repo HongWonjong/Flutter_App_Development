@@ -21,8 +21,8 @@ class CustomButton extends StatelessWidget {
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.symmetric(
-            horizontal: ResponsiveSizes.h2,
-            vertical: ResponsiveSizes.h3,
+            horizontal: ResponsiveSizes.h1,
+            vertical: ResponsiveSizes.h2,
           ), backgroundColor: Colors.transparent,
           textStyle: TextStyle(
             fontSize: ResponsiveSizes.textSize(4.5),
@@ -49,8 +49,8 @@ class CustomButton extends StatelessWidget {
         ),
         child: Container(
           padding: EdgeInsets.symmetric(
-            horizontal: ResponsiveSizes.h3,
-            vertical: ResponsiveSizes.h2,
+            horizontal: ResponsiveSizes.h2,
+            vertical: ResponsiveSizes.h1,
           ),
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -79,7 +79,7 @@ class CustomButton extends StatelessWidget {
                   strokeWidth: 2,
                 ),
               ),
-              SizedBox(width: ResponsiveSizes.h2),
+              SizedBox(width: ResponsiveSizes.h1),
               Text(
                 text,
                 style: TextStyle(

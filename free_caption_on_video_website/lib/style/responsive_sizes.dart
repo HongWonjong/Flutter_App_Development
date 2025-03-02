@@ -26,6 +26,7 @@ class ResponsiveSizes {
   }
 
   // 정의된 크기 (최대 크기 제한 포함)
+  static double get h1 => heightPercent(1, 8);  // 2%, 최대 10px (태블릿: 20px)
   static double get h2 => heightPercent(2, 10);  // 2%, 최대 10px (태블릿: 20px)
   static double get h3 => heightPercent(3, 12);  // 3%, 최대 12px (태블릿: 24px)
   static double get h5 => heightPercent(5, 15);  // 5%, 최대 15px (태블릿: 30px)
