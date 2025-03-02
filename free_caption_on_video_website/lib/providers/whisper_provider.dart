@@ -6,9 +6,10 @@ class WhisperState {
   final String? requestError;
   final String? finalError;
   final bool hasErrorDisplayed;
-  final double progress; // int -> double로 변경
+  final double progress;
   final String? estimatedTime;
-  final String? translation;
+  final String? translation;  // 번역된 SRT
+  final String? original;     // 원본 SRT (추가)
   final String transcriptionStatus;
   final int? audioSize;
   final int? responseStatusCode;
@@ -19,9 +20,10 @@ class WhisperState {
     this.requestError,
     this.finalError,
     this.hasErrorDisplayed = false,
-    this.progress = 0.0, // 기본값 0 -> 0.0
+    this.progress = 0.0,
     this.estimatedTime,
     this.translation,
+    this.original,            // 원본 SRT 필드 추가
     this.transcriptionStatus = 'notStarted',
     this.audioSize,
     this.responseStatusCode,
@@ -33,9 +35,10 @@ class WhisperState {
     String? requestError,
     String? finalError,
     bool? hasErrorDisplayed,
-    double? progress, // int -> double
+    double? progress,
     String? estimatedTime,
     String? translation,
+    String? original,         // copyWith에 추가
     String? transcriptionStatus,
     int? audioSize,
     int? responseStatusCode,
@@ -49,6 +52,7 @@ class WhisperState {
       progress: progress ?? this.progress,
       estimatedTime: estimatedTime ?? this.estimatedTime,
       translation: translation ?? this.translation,
+      original: original ?? this.original,  // 원본 SRT 반영
       transcriptionStatus: transcriptionStatus ?? this.transcriptionStatus,
       audioSize: audioSize ?? this.audioSize,
       responseStatusCode: responseStatusCode ?? this.responseStatusCode,
@@ -68,6 +72,7 @@ class WhisperNotifier extends StateNotifier<WhisperState> {
     double? progress,
     String? estimatedTime,
     String? translation,
+    String? original,         // update에 추가
     String? transcriptionStatus,
     int? audioSize,
     int? responseStatusCode,
@@ -81,6 +86,7 @@ class WhisperNotifier extends StateNotifier<WhisperState> {
       progress: progress,
       estimatedTime: estimatedTime,
       translation: translation,
+      original: original,     // 원본 SRT 저장
       transcriptionStatus: transcriptionStatus,
       audioSize: audioSize,
       responseStatusCode: responseStatusCode,

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../class/srt_entry.dart';
 import '../../providers/srt_provider.dart';
+import '../../style/editor_style.dart';
 
 class SrtModifyDialog extends ConsumerStatefulWidget {
+  const SrtModifyDialog({super.key});
+
   @override
   _SrtModifyDialogState createState() => _SrtModifyDialogState();
 }
@@ -21,112 +23,166 @@ class _SrtModifyDialogState extends ConsumerState<SrtModifyDialog> {
         : List.from(srtModifyState.parsedSrtEntries);
   }
 
-  // 타임스탬프를 초 단위로 간소화하는 함수
-  String _formatTimestamp(String timestamp) {
-    final parts = timestamp.split(',');
-    if (parts.length == 2) {
-      return parts[0]; // 초 단위까지만 반환 (예: 00:00:00)
-    }
-    return timestamp;
+  String _simplifyTimestamp(String timestamp) {
+    final parts = timestamp.split(',')[0].split(':');
+    final seconds = int.parse(parts[0]) * 3600 + int.parse(parts[1]) * 60 + int.parse(parts[2]);
+    return '${seconds}초';
+  }
+
+  String _formatTimestampRange(String start, String end) {
+    final startSeconds = _simplifyTimestamp(start).replaceAll('초', '');
+    final endSeconds = _simplifyTimestamp(end).replaceAll('초', '');
+    return '$startSeconds~$endSeconds초';
   }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.8, // 다이얼로그 너비를 화면의 80%로 설정
-      height: MediaQuery.of(context).size.height * 0.7, // 다이얼로그 높이를 화면의 70%로 제한
-      child: SingleChildScrollView(
+    return Dialog(
+      shape: AppStyles.dialogShape,
+      elevation: AppStyles.dialogElevation,
+      backgroundColor: AppStyles.dialogBackgroundColor,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.85,
+        height: MediaQuery.of(context).size.height * 0.75,
         child: Column(
-          children: entries.map((entry) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0), // 줄 간 여백 증가
-              child: Container(
-                padding: EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: Colors.white, // 흰색 배경
-                  borderRadius: BorderRadius.circular(8.0), // 둥근 모서리
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.3),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3), // 그림자 효과
-                    ),
-                  ],
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 타임스탬프 영역
-                    Container(
-                      width: 150, // 고정 너비 설정
-                      padding: EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.black), // 검은색 테두리
-                        borderRadius: BorderRadius.circular(4.0),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            entry.index.toString(),
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            '${_formatTimestamp(entry.startTime)} --> ${_formatTimestamp(entry.endTime)}',
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(width: 10), // 구분을 위한 여백
-
-                    // 원본 텍스트 영역
-                    Expanded(
-                      child: Container(
-                        padding: EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: Colors.black), // 검은색 테두리
-                          borderRadius: BorderRadius.circular(4.0),
+          children: [
+            // 헤더
+            Container(
+              padding: EdgeInsets.all(16.0),
+              decoration: AppStyles.headerDecoration(context),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'SRT 편집',
+                    style: AppStyles.headerTextStyle(context),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.close, color: AppStyles.headerIconColor),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+            ),
+            // 자막 리스트
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  children: entries.map((entry) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 200),
+                        padding: EdgeInsets.all(12.0),
+                        decoration: AppStyles.itemContainerDecoration,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // 타임스탬프
+                            Container(
+                              width: 90,
+                              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                              decoration: AppStyles.timestampBoxDecoration,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    entry.index.toString(),
+                                    style: AppStyles.timestampIndexTextStyle(context),
+                                  ),
+                                  SizedBox(height: 4.0),
+                                  Text(
+                                    _formatTimestampRange(entry.startTime, entry.endTime),
+                                    style: AppStyles.timestampRangeTextStyle(context),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(width: 12.0),
+                            // 원본 텍스트
+                            Expanded(
+                              child: Container(
+                                padding: EdgeInsets.all(12.0),
+                                decoration: AppStyles.textBoxDecoration,
+                                child: Text(
+                                  entry.originalText,
+                                  style: AppStyles.textBoxTextStyle(context),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 12.0),
+                            // 구분선
+                            Container(
+                              width: 2.0,
+                              height: 40.0,
+                              decoration: AppStyles.dividerDecoration,
+                            ),
+                            SizedBox(width: 12.0),
+                            // 번역 텍스트
+                            Expanded(
+                              child: Container(
+                                padding: EdgeInsets.all(12.0),
+                                decoration: AppStyles.textBoxDecoration,
+                                child: Text(
+                                  entry.text,
+                                  style: AppStyles.textBoxTextStyle(context),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 12.0),
+                            // 수정 텍스트
+                            Expanded(
+                              child: Container(
+                                padding: EdgeInsets.all(8.0),
+                                decoration: AppStyles.editTextFieldDecoration(context),
+                                child: TextField(
+                                  controller: TextEditingController(text: entry.text),
+                                  decoration: AppStyles.editTextFieldInputDecoration,
+                                  style: AppStyles.textBoxTextStyle(context),
+                                  maxLines: null,
+                                  onChanged: (value) {
+                                    entry.text = value;
+                                    ref.read(srtModifyProvider.notifier).updateModifiedEntries(entries);
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        child: Text(
-                          entry.text,
-                          style: TextStyle(fontSize: 14),
-                        ),
                       ),
-                    ),
-                    SizedBox(width: 10), // 구분을 위한 여백
-
-                    // 수정할 텍스트 영역
-                    Expanded(
-                      child: Container(
-                        padding: EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: Colors.black), // 검은색 테두리
-                          borderRadius: BorderRadius.circular(4.0),
-                        ),
-                        child: TextField(
-                          controller: TextEditingController(text: entry.text),
-                          decoration: InputDecoration(
-                            border: InputBorder.none, // 내부 테두리 제거
-                            contentPadding: EdgeInsets.zero, // 여백 제거
-                          ),
-                          maxLines: null, // 여러 줄 입력 가능
-                          onChanged: (value) {
-                            entry.text = value;
-                            ref.read(srtModifyProvider.notifier).updateModifiedEntries(entries);
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
+                    );
+                  }).toList(),
                 ),
               ),
-            );
-          }).toList(),
+            ),
+            // 하단 버튼
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: AppStyles.cancelButtonStyle,
+                    child: Text('취소'),
+                  ),
+                  SizedBox(width: 16.0),
+                  ElevatedButton(
+                    onPressed: () {
+                      ref.read(srtModifyProvider.notifier).setEditing(false);
+                      Navigator.pop(context);
+                    },
+                    style: AppStyles.submitButtonStyle(context),
+                    child: Text(
+                      '제출',
+                      style: AppStyles.submitButtonTextStyle,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

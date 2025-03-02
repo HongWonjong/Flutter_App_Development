@@ -1,8 +1,11 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:free_caption_on_video_website/pages/upload_page_components/custom_checkbox.dart';
-import 'package:free_caption_on_video_website/style/responsive_sizes.dart'; // 추가
-import 'dart:html' as html;
+import 'package:free_caption_on_video_website/style/responsive_sizes.dart';
+import 'package:free_caption_on_video_website/services/transcribe_count_service.dart';
+
+import 'custom_buttons.dart';
+
 
 class AudioExtractionRow extends StatelessWidget {
   final bool isChecked;
@@ -17,7 +20,7 @@ class AudioExtractionRow extends StatelessWidget {
   final String? srtContent;
   final VoidCallback onSrtDownloadPressed;
 
-  const AudioExtractionRow({
+   AudioExtractionRow({
     super.key,
     required this.isChecked,
     required this.text,
@@ -32,17 +35,17 @@ class AudioExtractionRow extends StatelessWidget {
     required this.onSrtDownloadPressed,
   });
 
+  final _transcribeCountService = TranscribeCountService();
+
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽 정렬
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 체크박스와 텍스트
         CustomCheckbox(
           isChecked: isChecked,
           text: text,
         ),
-        // 오류 메시지 (체크 안 된 상태에서 오류가 있을 때)
         if (!isChecked && errorMessage != null && hasErrorDisplayed)
           Padding(
             padding: EdgeInsets.only(left: ResponsiveSizes.h5),
@@ -54,7 +57,6 @@ class AudioExtractionRow extends StatelessWidget {
               ),
             ),
           ),
-        // 오디오 용량 정보 (체크된 상태에서 용량이 있을 때)
         if (isChecked && audioFileSize != null)
           Padding(
             padding: EdgeInsets.only(left: ResponsiveSizes.h5),
@@ -64,50 +66,28 @@ class AudioExtractionRow extends StatelessWidget {
             ),
           ),
         SizedBox(height: ResponsiveSizes.h2),
-
-        // 버튼들 (오디오 데이터가 있을 때)
         if (isChecked && audioData != null)
           Padding(
             padding: EdgeInsets.only(left: ResponsiveSizes.h5),
             child: Row(
               children: [
-                ElevatedButton(
+                CustomButton( // ElevatedButton → CustomButton
+                  text: 'mp3 다운로드',
                   onPressed: onDownloadPressed,
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: ResponsiveSizes.h3,
-                      vertical: ResponsiveSizes.h2,
-                    ),
-                    textStyle: TextStyle(fontSize: ResponsiveSizes.textSize(3)),
-                  ),
-                  child: const Text('다운로드'),
                 ),
                 SizedBox(width: ResponsiveSizes.h3),
-                ElevatedButton(
-                  onPressed: onTranscribePressed,
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: ResponsiveSizes.h3,
-                      vertical: ResponsiveSizes.h2,
-                    ),
-                    textStyle: TextStyle(fontSize: ResponsiveSizes.textSize(3)),
-                  ),
-                  child: const Text('SRT로 변환'),
+                CustomButton( // ElevatedButton → CustomButton
+                  text: 'mp3 -> SRT 변환',
+                  onPressed: () async {
+                    await _transcribeCountService.incrementTranscribeCount(); // Firestore에 카운트 증가
+                    onTranscribePressed(); // 기존 동작 호출
+                  },
                 ),
-
                 if (srtContent != null) ...[
                   SizedBox(width: ResponsiveSizes.h3),
-                  ElevatedButton(
+                  CustomButton( // ElevatedButton → CustomButton
+                    text: '원본 SRT 다운로드',
                     onPressed: onSrtDownloadPressed,
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: ResponsiveSizes.h3,
-                        vertical: ResponsiveSizes.h2,
-                      ),
-                      textStyle:
-                      TextStyle(fontSize: ResponsiveSizes.textSize(3)),
-                    ),
-                    child: const Text('원본 SRT 다운로드'),
                   ),
                 ],
               ],

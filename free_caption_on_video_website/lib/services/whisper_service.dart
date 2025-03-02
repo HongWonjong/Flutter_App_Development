@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import '../providers/whisper_provider.dart';
 
-// WhisperService 제공자 정의
 final whisperServiceProvider = Provider<WhisperService>((ref) => WhisperService(ref));
 
 class WhisperService {
@@ -18,13 +17,10 @@ class WhisperService {
     try {
       print("[INFO] 요청 시작");
 
-      // 오디오 파일 크기 계산 (MB 단위)
       final audioSizeMB = audioBytes.length / (1024 * 1024);
-      // 예상 시간 계산 (초 단위)
-      final estimatedTimeSeconds = (audioSizeMB * 12.73).round();
+      final estimatedTimeSeconds = (audioSizeMB * 24).round();
       final estimatedTime = '${estimatedTimeSeconds}s';
 
-      // 상태 업데이트 (예상 시간 포함)
       ref.read(whisperProvider.notifier).update(
         isRequesting: true,
         transcriptionStatus: 'processing',
@@ -56,7 +52,8 @@ class WhisperService {
             isRequesting: false,
             transcriptionStatus: 'completed',
             translation: data['translation'],
-            estimatedTime: '변환 완료', // 작업 완료 시 0으로 설정
+            original: data['original'],  // 원본 SRT 저장
+            estimatedTime: '변환 완료',
           );
         }
         yield data;

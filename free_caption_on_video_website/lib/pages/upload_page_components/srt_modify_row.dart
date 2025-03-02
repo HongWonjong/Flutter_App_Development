@@ -10,8 +10,9 @@ import '../../providers/subtle_style_provider.dart';
 import '../../providers/video_provider.dart';
 import '../../services/ffmpeg_overlay_service.dart';
 import '../../services/indexdb_service.dart';
+import 'custom_buttons.dart';
 import 'custom_checkbox.dart';
-import 'srt_modify_dialog.dart';
+import 'srt_modify_dialog.dart'; // 수정된 다이얼로그 임포트
 import 'subtle_editor_dialog.dart';
 
 class SrtModifyRow extends ConsumerWidget {
@@ -31,22 +32,19 @@ class SrtModifyRow extends ConsumerWidget {
           builder: (context, constraints) {
             final isMobile = constraints.maxWidth < 600;
             final buttons = [
-              ElevatedButton(
+              CustomButton(
+                text: 'SRT 편집',
                 onPressed: () {
                   ref.read(srtModifyProvider.notifier).setEditing(true);
-                  _showModifyDialog(context, ref);
+                  showDialog(
+                    context: context,
+                    builder: (context) => SrtModifyDialog(), // 직접 호출
+                  );
                 },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: ResponsiveSizes.h3,
-                    vertical: ResponsiveSizes.h2,
-                  ),
-                  textStyle: TextStyle(fontSize: ResponsiveSizes.textSize(3)),
-                ),
-                child: Text('SRT 편집'),
               ),
               if (isModified) ...[
-                ElevatedButton(
+                CustomButton(
+                  text: '편집된 SRT 다운로드',
                   onPressed: () {
                     final blob = html.Blob([srtModifyState.modifiedSrtContent!], 'text/srt');
                     final url = html.Url.createObjectUrlFromBlob(blob);
@@ -55,16 +53,9 @@ class SrtModifyRow extends ConsumerWidget {
                       ..click();
                     html.Url.revokeObjectUrl(url);
                   },
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: ResponsiveSizes.h3,
-                      vertical: ResponsiveSizes.h2,
-                    ),
-                    textStyle: TextStyle(fontSize: ResponsiveSizes.textSize(3)),
-                  ),
-                  child: Text('편집된 SRT 다운로드'),
                 ),
-                ElevatedButton(
+                CustomButton(
+                  text: '동영상에 자막 오버레이',
                   onPressed: () async {
                     debugPrint('동영상에 자막 오버레이 버튼 클릭');
                     if (videoState.videoKey == null || videoState.thumbnail == null || videoState.thumbnail!.isEmpty) {
@@ -85,7 +76,7 @@ class SrtModifyRow extends ConsumerWidget {
                       final style = await showDialog<SubtitleStyleState>(
                         context: context,
                         builder: (_) => SubtitleEditorDialog(
-                          frameImage: videoState.thumbnail!, // 썸네일 전달
+                          frameImage: videoState.thumbnail!,
                         ),
                       );
                       if (style != null) {
@@ -96,10 +87,8 @@ class SrtModifyRow extends ConsumerWidget {
                             'fontSize': style.fontSize,
                             'fontFamily': style.fontFamily,
                             'textColor': style.textColor,
-                            'textOpacity': style.textOpacity,
                             'bgHeight': style.bgHeight,
                             'bgColor': style.bgColor,
-                            'bgOpacity': style.bgOpacity,
                             'subtitlePosition': style.subtitlePosition,
                           },
                         );
@@ -129,14 +118,6 @@ class SrtModifyRow extends ConsumerWidget {
                       );
                     }
                   },
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: ResponsiveSizes.h3,
-                      vertical: ResponsiveSizes.h2,
-                    ),
-                    textStyle: TextStyle(fontSize: ResponsiveSizes.textSize(3)),
-                  ),
-                  child: Text('동영상에 자막 오버레이'),
                 ),
               ],
             ];
@@ -176,39 +157,6 @@ class SrtModifyRow extends ConsumerWidget {
           ),
         ),
       ],
-    );
-  }
-
-  void _showModifyDialog(BuildContext context, WidgetRef ref) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(
-            'SRT 편집',
-            style: TextStyle(fontSize: ResponsiveSizes.textSize(3)),
-          ),
-          content: SrtModifyDialog(),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(
-                '취소',
-                style: TextStyle(fontSize: ResponsiveSizes.textSize(3)),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text(
-                '제출',
-                style: TextStyle(fontSize: ResponsiveSizes.textSize(3)),
-              ),
-            ),
-          ],
-        );
-      },
     );
   }
 }
