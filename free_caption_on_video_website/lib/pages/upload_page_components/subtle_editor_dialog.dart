@@ -135,7 +135,7 @@ class _SubtitleEditorDialogState extends ConsumerState<SubtitleEditorDialog> {
               padding: EdgeInsets.all(ResponsiveSizes.h2),
               color: theme.primaryColor,
               child: Text(
-                '자막 스타일 편집',
+                '자막 스타일 편집(아직 완성되지 않은 기능입니다. 편집된 srt 다운로드 까지만 이용 가능!)',
                 style: GoogleFonts.poppins(
                   fontSize: ResponsiveSizes.textSize(5),
                   fontWeight: FontWeight.bold,

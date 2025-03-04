@@ -500,8 +500,8 @@ class _UploadPageState extends ConsumerState<UploadPage> {
                                 StatusRow(
                                   isChecked: whisperState.transcriptionStatus == 'completed',
                                   text: whisperState.transcriptionStatus == 'completed'
-                                      ? 'SRT 파일 생성이 완료되었습니다.'
-                                      : 'SRT 파일 생성을 기다리고 있습니다.',
+                                      ? 'SRT 생성 완료'
+                                      : 'SRT 대기 중 (밀린 요청이 많으면 예상 시간보다 늦어질 수 있습니다.)',
                                   hasErrorDisplayed: whisperState.transcriptionStatus == 'error' && whisperState.requestError != null,
                                 ),
                                 if (whisperState.transcriptionStatus == 'processing')
