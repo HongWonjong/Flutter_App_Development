@@ -4,15 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:uuid/uuid.dart';
 
-// 디바운스 함수 정의
-void Function() debounce(void Function() func, Duration duration) {
-  Timer? timer;
-  return () {
-    if (timer?.isActive ?? false) timer!.cancel();
-    timer = Timer(duration, func);
-  };
-}
-
 class FloatingWidgetList extends StatefulWidget {
   final String roomKey;
   final bool isEditMode;
@@ -21,11 +12,6 @@ class FloatingWidgetList extends StatefulWidget {
   final Function(Map<String, dynamic>) onUpdateWidget;
   final Function(Map<String, dynamic>) onAddGuideline;
   final Function(Map<String, dynamic>) onRemoveGuideline;
-  final Color backgroundColor;
-  final Function(Color) onBackgroundColorChanged;
-  final Color appBarColor;
-  final Function(Color) onAppBarColorChanged;
-  final String roomTitle;
   final Function(String) onUpdateRoomTitle;
 
   const FloatingWidgetList({
@@ -37,11 +23,6 @@ class FloatingWidgetList extends StatefulWidget {
     required this.onUpdateWidget,
     required this.onAddGuideline,
     required this.onRemoveGuideline,
-    required this.backgroundColor,
-    required this.onBackgroundColorChanged,
-    required this.appBarColor,
-    required this.onAppBarColorChanged,
-    required this.roomTitle,
     required this.onUpdateRoomTitle,
   });
 
@@ -51,86 +32,41 @@ class FloatingWidgetList extends StatefulWidget {
 
 class _FloatingWidgetListState extends State<FloatingWidgetList> {
   late Stream<DocumentSnapshot> _roomStream;
-  late void Function() _debouncedAddWidget;
-  late void Function() _debouncedRemoveWidget;
-  late void Function() _debouncedUpdateWidget;
-  late void Function() _debouncedAddGuideline;
-  late void Function() _debouncedRemoveGuideline;
-  late void Function() _debouncedBackgroundColorUpdate;
-  late void Function() _debouncedAppBarColorUpdate;
-  late void Function() _debouncedUpdateRoomTitle;
-
-  Map<String, dynamic>? _pendingWidgetData;
-  Map<String, dynamic>? _pendingGuidelineData;
-  Color? _pendingBackgroundColor;
-  Color? _pendingAppBarColor;
-  String? _pendingRoomTitle;
+  Map<String, Map<String, dynamic>> _localWidgets = {};
+  Map<String, Map<String, dynamic>> _localGuidelines = {};
+  Timer? _debounceTimer;
+  bool _isDragging = false;
 
   @override
   void initState() {
     super.initState();
     _roomStream = FirebaseFirestore.instance.collection('rooms').doc(widget.roomKey).snapshots();
-
-    _debouncedAddWidget = debounce(() {
-      if (_pendingWidgetData != null) widget.onAddWidget(_pendingWidgetData!);
-    }, const Duration(milliseconds: 300));
-    _debouncedRemoveWidget = debounce(() {
-      if (_pendingWidgetData != null) widget.onRemoveWidget(_pendingWidgetData!);
-    }, const Duration(milliseconds: 300));
-    _debouncedUpdateWidget = debounce(() {
-      if (_pendingWidgetData != null) widget.onUpdateWidget(_pendingWidgetData!);
-    }, const Duration(milliseconds: 300));
-    _debouncedAddGuideline = debounce(() {
-      if (_pendingGuidelineData != null) widget.onAddGuideline(_pendingGuidelineData!);
-    }, const Duration(milliseconds: 300));
-    _debouncedRemoveGuideline = debounce(() {
-      if (_pendingGuidelineData != null) widget.onRemoveGuideline(_pendingGuidelineData!);
-    }, const Duration(milliseconds: 300));
-    _debouncedBackgroundColorUpdate = debounce(() {
-      if (_pendingBackgroundColor != null) widget.onBackgroundColorChanged(_pendingBackgroundColor!);
-    }, const Duration(milliseconds: 300));
-    _debouncedAppBarColorUpdate = debounce(() {
-      if (_pendingAppBarColor != null) widget.onAppBarColorChanged(_pendingAppBarColor!);
-    }, const Duration(milliseconds: 300));
-    _debouncedUpdateRoomTitle = debounce(() {
-      if (_pendingRoomTitle != null) widget.onUpdateRoomTitle(_pendingRoomTitle!);
-    }, const Duration(milliseconds: 300));
   }
 
-  void _showColorPicker(BuildContext context, Function(Color) onColorChanged, Color initialColor) {
-    Color currentColor = initialColor;
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('색상 선택'),
-        content: SingleChildScrollView(
-          child: ColorPicker(
-            pickerColor: currentColor,
-            onColorChanged: (color) {
-              currentColor = color;
-              setState(() {
-                if (onColorChanged == widget.onBackgroundColorChanged) {
-                  _pendingBackgroundColor = color;
-                  _debouncedBackgroundColorUpdate();
-                } else if (onColorChanged == widget.onAppBarColorChanged) {
-                  _pendingAppBarColor = color;
-                  _debouncedAppBarColorUpdate();
-                }
-              });
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              onColorChanged(currentColor);
-              Navigator.pop(context);
-            },
-            child: const Text('확인'),
-          ),
-        ],
-      ),
-    );
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    super.dispose();
+  }
+
+  void _debouncedUpdate(Map<String, dynamic> data) {
+    if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      widget.onUpdateWidget(data);
+    });
+  }
+
+  void _startDragging() {
+    setState(() {
+      _isDragging = true;
+    });
+  }
+
+  void _stopDragging(Map<String, dynamic> data) {
+    setState(() {
+      _isDragging = false;
+    });
+    _debouncedUpdate(data);
   }
 
   @override
@@ -147,16 +83,45 @@ class _FloatingWidgetListState extends State<FloatingWidgetList> {
             if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
             }
-            final roomData = snapshot.data!.data() as Map<String, dynamic>?;
-            final widgets = roomData?['widgets'] as List<dynamic>? ?? [];
-            final guidelines = roomData?['guidelines'] as List<dynamic>? ?? [];
+            final roomData = snapshot.data!.data() as Map<String, dynamic>? ?? {};
+            final widgets = roomData['widgets'] as List<dynamic>? ?? [];
+            final guidelines = roomData['guidelines'] as List<dynamic>? ?? [];
+            final backgroundColor = Color(int.parse((roomData['backgroundColor'] as String? ?? '#FFFFFF').replaceAll('#', '0xff')));
+            final appBarColor = Color(int.parse((roomData['appBarColor'] as String? ?? '#42A5F5').replaceAll('#', '0xff')));
+
+            // 드래그 중이 아닐 때만 Firestore 데이터를 로컬 상태에 반영
+            if (!_isDragging) {
+              _localWidgets = {
+                for (var w in widgets)
+                  w['id']: Map<String, dynamic>.from(w)
+                    ..update(
+                      'position',
+                          (pos) => {
+                        'xfactor': (pos['xfactor'] ?? (pos['x'] ?? 0.0) / screenWidth).toDouble().clamp(0.0, 1.0),
+                        'yfactor': (pos['yfactor'] ?? (pos['y'] ?? 0.0) / screenHeight).toDouble().clamp(0.0, 1.0),
+                      },
+                      ifAbsent: () => {'xfactor': 0.0, 'yfactor': 0.0},
+                    )
+              };
+              _localGuidelines = {
+                for (var g in guidelines)
+                  g['id']: Map<String, dynamic>.from(g)
+                    ..update(
+                      'position',
+                          (pos) => (pos is double ? pos : 0.5).toDouble().clamp(0.0, 1.0),
+                      ifAbsent: () => 0.5,
+                    )
+              };
+            }
 
             return Container(
-              color: widget.backgroundColor,
+              color: backgroundColor,
+              width: screenWidth, // 명시적으로 크기 지정
+              height: screenHeight, // 명시적으로 크기 지정
               child: Stack(
                 children: [
-                  ...widgets.map((widgetData) => _buildWidget(context, widgetData as Map<String, dynamic>, screenWidth, screenHeight)),
-                  ...guidelines.map((guidelineData) => _buildGuideline(context, guidelineData as Map<String, dynamic>, screenWidth, screenHeight)),
+                  ..._localWidgets.values.map((widgetData) => _buildWidget(context, widgetData, screenWidth, screenHeight)),
+                  ..._localGuidelines.values.map((guidelineData) => _buildGuideline(context, guidelineData, screenWidth, screenHeight)),
                   if (widget.isEditMode)
                     Positioned(
                       top: 10,
@@ -193,16 +158,13 @@ class _FloatingWidgetListState extends State<FloatingWidgetList> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   ElevatedButton(
-                                    onPressed: () {
-                                      _pendingWidgetData = {
-                                        'id': Uuid().v4(),
-                                        'type': 'text',
-                                        'content': '새 텍스트',
-                                        'position': {'x': screenWidth * 0.1, 'y': screenHeight * 0.1},
-                                        'style': {'fontSizeFactor': 0.04, 'color': '#000000', 'alignment': 'center', 'widthFactor': 0.2, 'heightFactor': 0.1},
-                                      };
-                                      _debouncedAddWidget();
-                                    },
+                                    onPressed: () => widget.onAddWidget({
+                                      'id': Uuid().v4(),
+                                      'type': 'text',
+                                      'content': '새 텍스트',
+                                      'position': {'xfactor': 0.1, 'yfactor': 0.1},
+                                      'style': {'fontSizeFactor': 0.01, 'color': '#000000', 'alignment': 'center', 'widthFactor': 0.3, 'heightFactor': 0.15},
+                                    }),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.lightGreen[300],
                                       foregroundColor: Colors.white,
@@ -212,16 +174,13 @@ class _FloatingWidgetListState extends State<FloatingWidgetList> {
                                   ),
                                   const SizedBox(width: 10),
                                   ElevatedButton(
-                                    onPressed: () {
-                                      _pendingWidgetData = {
-                                        'id': Uuid().v4(),
-                                        'type': 'image',
-                                        'content': 'https://via.placeholder.com/150',
-                                        'position': {'x': screenWidth * 0.1, 'y': screenHeight * 0.1},
-                                        'style': {'fontSizeFactor': 0.04, 'color': '#000000', 'alignment': 'center', 'widthFactor': 0.2, 'heightFactor': 0.1},
-                                      };
-                                      _debouncedAddWidget();
-                                    },
+                                    onPressed: () => widget.onAddWidget({
+                                      'id': Uuid().v4(),
+                                      'type': 'image',
+                                      'content': 'https://via.placeholder.com/150',
+                                      'position': {'xfactor': 0.1, 'yfactor': 0.1},
+                                      'style': {'fontSizeFactor': 0.01, 'color': '#000000', 'alignment': 'center', 'widthFactor': 0.3, 'heightFactor': 0.15},
+                                    }),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.lightGreen[300],
                                       foregroundColor: Colors.white,
@@ -236,15 +195,12 @@ class _FloatingWidgetListState extends State<FloatingWidgetList> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   ElevatedButton(
-                                    onPressed: () {
-                                      _pendingGuidelineData = {
-                                        'id': Uuid().v4(),
-                                        'type': 'horizontal',
-                                        'position': screenHeight * 0.5,
-                                        'color': '#FF0000',
-                                      };
-                                      _debouncedAddGuideline();
-                                    },
+                                    onPressed: () => widget.onAddGuideline({
+                                      'id': Uuid().v4(),
+                                      'type': 'horizontal',
+                                      'position': 0.5,
+                                      'color': '#FF0000',
+                                    }),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.lightGreen[300],
                                       foregroundColor: Colors.white,
@@ -254,15 +210,12 @@ class _FloatingWidgetListState extends State<FloatingWidgetList> {
                                   ),
                                   const SizedBox(width: 10),
                                   ElevatedButton(
-                                    onPressed: () {
-                                      _pendingGuidelineData = {
-                                        'id': Uuid().v4(),
-                                        'type': 'vertical',
-                                        'position': screenWidth * 0.5,
-                                        'color': '#FF0000',
-                                      };
-                                      _debouncedAddGuideline();
-                                    },
+                                    onPressed: () => widget.onAddGuideline({
+                                      'id': Uuid().v4(),
+                                      'type': 'vertical',
+                                      'position': 0.5,
+                                      'color': '#FF0000',
+                                    }),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.lightGreen[300],
                                       foregroundColor: Colors.white,
@@ -277,7 +230,11 @@ class _FloatingWidgetListState extends State<FloatingWidgetList> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   ElevatedButton(
-                                    onPressed: () => _showColorPicker(context, widget.onBackgroundColorChanged, widget.backgroundColor),
+                                    onPressed: () => _showColorPicker(context, (color) {
+                                      FirebaseFirestore.instance.collection('rooms').doc(widget.roomKey).update({
+                                        'backgroundColor': '#${color.value.toRadixString(16).substring(2)}',
+                                      });
+                                    }),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.lightGreen[300],
                                       foregroundColor: Colors.white,
@@ -287,7 +244,11 @@ class _FloatingWidgetListState extends State<FloatingWidgetList> {
                                   ),
                                   const SizedBox(width: 10),
                                   ElevatedButton(
-                                    onPressed: () => _showColorPicker(context, widget.onAppBarColorChanged, widget.appBarColor),
+                                    onPressed: () => _showColorPicker(context, (color) {
+                                      FirebaseFirestore.instance.collection('rooms').doc(widget.roomKey).update({
+                                        'appBarColor': '#${color.value.toRadixString(16).substring(2)}',
+                                      });
+                                    }),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.lightGreen[300],
                                       foregroundColor: Colors.white,
@@ -314,10 +275,16 @@ class _FloatingWidgetListState extends State<FloatingWidgetList> {
   Widget _buildWidget(BuildContext context, Map<String, dynamic> widgetData, double screenWidth, double screenHeight) {
     final style = widgetData['style'] as Map<String, dynamic>;
     final position = widgetData['position'] as Map<String, dynamic>;
+    final xfactor = (position['xfactor'] as double?) ?? 0.0;
+    final yfactor = (position['yfactor'] as double?) ?? 0.0;
     final color = Color(int.parse(style['color'].replaceAll('#', '0xff')));
     final fontSize = screenWidth * (style['fontSizeFactor'] as double);
     final width = screenWidth * (style['widthFactor'] as double);
     final height = screenHeight * (style['heightFactor'] as double);
+
+    // 화면 밖으로 나가지 않도록 위치 조정
+    final left = (xfactor * screenWidth).clamp(0.0, screenWidth - width);
+    final top = (yfactor * screenHeight).clamp(0.0, screenHeight - height);
 
     Widget content;
     switch (widgetData['type']) {
@@ -325,18 +292,20 @@ class _FloatingWidgetListState extends State<FloatingWidgetList> {
         content = Text(widgetData['content'], style: TextStyle(fontSize: fontSize, color: color));
         break;
       case 'image':
-        content = Image.network(widgetData['content'], width: width, height: height);
+        content = Image.network(widgetData['content'], width: width, height: height, fit: BoxFit.cover);
         break;
       default:
         content = const SizedBox.shrink();
     }
 
     return Positioned(
-      left: position['x'] as double,
-      top: position['y'] as double,
+      left: left,
+      top: top,
       child: GestureDetector(
         onTap: widget.isEditMode ? () => _showEditPanel(context, widgetData, screenWidth, screenHeight) : null,
-        onPanUpdate: widget.isEditMode ? (details) => _updatePosition(widgetData, details) : null,
+        onPanStart: widget.isEditMode ? (_) => _startDragging() : null,
+        onPanUpdate: widget.isEditMode ? (details) => _updatePosition(widgetData, details, screenWidth, screenHeight) : null,
+        onPanEnd: widget.isEditMode ? (_) => _stopDragging(widgetData) : null,
         child: Container(
           width: width,
           height: height,
@@ -350,15 +319,17 @@ class _FloatingWidgetListState extends State<FloatingWidgetList> {
 
   Widget _buildGuideline(BuildContext context, Map<String, dynamic> guidelineData, double screenWidth, double screenHeight) {
     final type = guidelineData['type'] as String;
-    final position = guidelineData['position'] as double;
+    final positionFactor = (guidelineData['position'] as double?) ?? 0.5;
     final color = Color(int.parse((guidelineData['color'] as String).replaceAll('#', '0xff')));
 
     return Positioned(
-      top: type == 'horizontal' ? position : 0,
-      left: type == 'vertical' ? position : 0,
+      top: type == 'horizontal' ? (positionFactor * screenHeight).clamp(0.0, screenHeight - 3) : 0,
+      left: type == 'vertical' ? (positionFactor * screenWidth).clamp(0.0, screenWidth - 3) : 0,
       child: GestureDetector(
         onTap: widget.isEditMode ? () => _showGuidelineOptions(context, guidelineData, screenWidth, screenHeight) : null,
-        onPanUpdate: widget.isEditMode ? (details) => _updateGuidelinePosition(guidelineData, details) : null,
+        onPanStart: widget.isEditMode ? (_) => _startDragging() : null,
+        onPanUpdate: widget.isEditMode ? (details) => _updateGuidelinePosition(guidelineData, details, screenWidth, screenHeight) : null,
+        onPanEnd: widget.isEditMode ? (_) => _stopDragging(guidelineData) : null,
         child: SizedBox(
           width: type == 'horizontal' ? screenWidth : 3,
           height: type == 'vertical' ? screenHeight * 1.5 : 3,
@@ -371,10 +342,7 @@ class _FloatingWidgetListState extends State<FloatingWidgetList> {
                   bottom: type == 'vertical' ? 0 : null,
                   child: IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      _pendingGuidelineData = guidelineData;
-                      _debouncedRemoveGuideline();
-                    },
+                    onPressed: () => widget.onRemoveGuideline(guidelineData),
                   ),
                 ),
             ],
@@ -384,20 +352,33 @@ class _FloatingWidgetListState extends State<FloatingWidgetList> {
     );
   }
 
-  void _updatePosition(Map<String, dynamic> widgetData, DragUpdateDetails details) {
+  void _updatePosition(Map<String, dynamic> widgetData, DragUpdateDetails details, double screenWidth, double screenHeight) {
     final position = widgetData['position'] as Map<String, dynamic>;
-    position['x'] = (position['x'] as double) + details.delta.dx;
-    position['y'] = (position['y'] as double) + details.delta.dy;
-    _pendingWidgetData = widgetData;
-    _debouncedUpdateWidget();
+    final style = widgetData['style'] as Map<String, dynamic>;
+    final widthFactor = style['widthFactor'] as double;
+    final heightFactor = style['heightFactor'] as double;
+
+    position['xfactor'] = ((position['xfactor'] as double?) ?? 0.0) + details.delta.dx / screenWidth;
+    position['yfactor'] = ((position['yfactor'] as double?) ?? 0.0) + details.delta.dy / screenHeight;
+
+    // 위젯이 화면 밖으로 나가지 않도록 제한
+    position['xfactor'] = position['xfactor'].clamp(0.0, 1.0 - widthFactor);
+    position['yfactor'] = position['yfactor'].clamp(0.0, 1.0 - heightFactor);
+
+    _localWidgets[widgetData['id']] = Map.from(widgetData);
+    setState(() {});
   }
 
-  void _updateGuidelinePosition(Map<String, dynamic> guidelineData, DragUpdateDetails details) {
+  void _updateGuidelinePosition(Map<String, dynamic> guidelineData, DragUpdateDetails details, double screenWidth, double screenHeight) {
     final type = guidelineData['type'] as String;
-    guidelineData['position'] = (guidelineData['position'] as double) +
-        (type == 'horizontal' ? details.delta.dy : details.delta.dx);
-    _pendingGuidelineData = guidelineData;
-    _debouncedUpdateWidget();
+    guidelineData['position'] = ((guidelineData['position'] as double?) ?? 0.5) +
+        (type == 'horizontal' ? details.delta.dy / screenHeight : details.delta.dx / screenWidth);
+
+    // 기준선이 화면 밖으로 나가지 않도록 제한
+    guidelineData['position'] = guidelineData['position'].clamp(0.0, 1.0);
+
+    _localGuidelines[guidelineData['id']] = Map.from(guidelineData);
+    setState(() {});
   }
 
   Alignment _getAlignment(String alignment) {
@@ -458,9 +439,8 @@ class _FloatingWidgetListState extends State<FloatingWidgetList> {
                 ElevatedButton(
                   onPressed: () => _showColorPicker(context, (color) {
                     style['color'] = '#${color.value.toRadixString(16).substring(2)}';
-                    _pendingWidgetData = widgetData;
-                    _debouncedUpdateWidget();
-                  }, Color(int.parse(style['color'].replaceAll('#', '0xff')))),
+                    widget.onUpdateWidget(widgetData);
+                  }),
                   child: const Text('색상 선택'),
                 ),
               ],
@@ -473,16 +453,14 @@ class _FloatingWidgetListState extends State<FloatingWidgetList> {
                 style['fontSizeFactor'] = fontSizeFactor;
                 style['widthFactor'] = widthFactor;
                 style['heightFactor'] = heightFactor;
-                _pendingWidgetData = widgetData;
-                _debouncedUpdateWidget();
+                widget.onUpdateWidget(widgetData);
                 Navigator.pop(context);
               },
               child: const Text('저장'),
             ),
             TextButton(
               onPressed: () {
-                _pendingWidgetData = widgetData;
-                _debouncedRemoveWidget();
+                widget.onRemoveWidget(widgetData);
                 Navigator.pop(context);
               },
               child: const Text('삭제'),
@@ -496,7 +474,6 @@ class _FloatingWidgetListState extends State<FloatingWidgetList> {
   void _showGuidelineOptions(BuildContext context, Map<String, dynamic> guidelineData, double screenWidth, double screenHeight) {
     final type = guidelineData['type'] as String;
     double newPosition = guidelineData['position'] as double;
-    Color currentColor = Color(int.parse((guidelineData['color'] as String).replaceAll('#', '0xff')));
 
     showDialog(
       context: context,
@@ -507,18 +484,17 @@ class _FloatingWidgetListState extends State<FloatingWidgetList> {
             child: Column(
               children: [
                 TextField(
-                  decoration: InputDecoration(labelText: '위치 (${type == 'horizontal' ? 'Y' : 'X'}축)'),
+                  decoration: InputDecoration(labelText: '위치 비율 (0.0~1.0)'),
                   keyboardType: TextInputType.number,
                   controller: TextEditingController(text: newPosition.toString()),
-                  onChanged: (value) => newPosition = double.parse(value),
+                  onChanged: (value) => newPosition = double.parse(value).clamp(0.0, 1.0),
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () => _showColorPicker(context, (color) {
                     guidelineData['color'] = '#${color.value.toRadixString(16).substring(2)}';
-                    _pendingGuidelineData = guidelineData;
-                    _debouncedUpdateWidget();
-                  }, currentColor),
+                    widget.onUpdateWidget(guidelineData);
+                  }),
                   child: const Text('색상 선택'),
                 ),
               ],
@@ -528,16 +504,14 @@ class _FloatingWidgetListState extends State<FloatingWidgetList> {
             TextButton(
               onPressed: () {
                 guidelineData['position'] = newPosition;
-                _pendingGuidelineData = guidelineData;
-                _debouncedUpdateWidget();
+                widget.onUpdateWidget(guidelineData);
                 Navigator.pop(context);
               },
               child: const Text('저장'),
             ),
             TextButton(
               onPressed: () {
-                _pendingGuidelineData = guidelineData;
-                _debouncedRemoveGuideline();
+                widget.onRemoveGuideline(guidelineData);
                 Navigator.pop(context);
               },
               child: const Text('삭제'),
@@ -548,8 +522,33 @@ class _FloatingWidgetListState extends State<FloatingWidgetList> {
     );
   }
 
+  void _showColorPicker(BuildContext context, ValueChanged<Color> onColorChanged) {
+    Color currentColor = Colors.white;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('색상 선택'),
+        content: SingleChildScrollView(
+          child: ColorPicker(
+            pickerColor: currentColor,
+            onColorChanged: (color) => currentColor = color,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              onColorChanged(currentColor);
+              Navigator.pop(context);
+            },
+            child: const Text('확인'),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showTitleDialog(BuildContext context) {
-    final TextEditingController tempController = TextEditingController(text: widget.roomTitle);
+    final TextEditingController tempController = TextEditingController();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -565,8 +564,7 @@ class _FloatingWidgetListState extends State<FloatingWidgetList> {
           ),
           TextButton(
             onPressed: () {
-              _pendingRoomTitle = tempController.text;
-              _debouncedUpdateRoomTitle();
+              widget.onUpdateRoomTitle(tempController.text);
               Navigator.pop(context);
             },
             child: const Text('저장'),
