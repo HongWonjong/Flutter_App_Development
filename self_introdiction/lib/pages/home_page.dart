@@ -15,6 +15,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _keyController = TextEditingController();
+  int _currentPage = 1; // 현재 페이지 번호
+  final int _itemsPerPage = 10; // 페이지당 항목 수
 
   void _createNewRoom() {
     final String newKey = Uuid().v4();
@@ -165,40 +167,116 @@ class _MyHomePageState extends State<MyHomePage> {
                       return const Center(child: CircularProgressIndicator());
                     }
                     final rooms = snapshot.data!.docs;
-                    return SingleChildScrollView(
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: DataTable(
-                          columnSpacing: 20,
-                          columns: const [
-                            DataColumn(label: Text('번호', style: TextStyle(fontWeight: FontWeight.bold))),
-                            DataColumn(label: Text('제목', style: TextStyle(fontWeight: FontWeight.bold))),
-                            DataColumn(label: Text('생성일', style: TextStyle(fontWeight: FontWeight.bold))),
-                          ],
-                          rows: List<DataRow>.generate(
-                            rooms.length,
-                                (index) {
-                              final room = rooms[index];
-                              final roomKey = room.id;
-                              final roomData = room.data() as Map<String, dynamic>;
-                              final title = roomData['title'] ?? '제목 없음';
-                              final createdAt = roomData['createdAt']?.toDate().toString() ?? '생성일 없음';
-                              return DataRow(
-                                cells: [
-                                  DataCell(Text((index + 1).toString())),
-                                  DataCell(Text(title)),
-                                  DataCell(Text(createdAt)),
+                    final totalItems = rooms.length;
+                    final totalPages = (totalItems / _itemsPerPage).ceil();
+
+                    // 현재 페이지에 표시할 데이터 슬라이싱
+                    final startIndex = (_currentPage - 1) * _itemsPerPage;
+                    final endIndex = startIndex + _itemsPerPage > totalItems
+                        ? totalItems
+                        : startIndex + _itemsPerPage;
+                    final paginatedRooms = rooms.sublist(startIndex, endIndex);
+
+                    return Column(
+                      children: [
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: DataTable(
+                                columnSpacing: 20,
+                                columns: const [
+                                  DataColumn(label: Text('번호', style: TextStyle(fontWeight: FontWeight.bold))),
+                                  DataColumn(label: Text('제목', style: TextStyle(fontWeight: FontWeight.bold))),
+                                  DataColumn(label: Text('생성일', style: TextStyle(fontWeight: FontWeight.bold))),
                                 ],
-                                onSelectChanged: (selected) {
-                                  if (selected ?? false) {
-                                    context.go('/room/$roomKey?mode=read');
-                                  }
-                                },
-                              );
-                            },
+                                rows: List<DataRow>.generate(
+                                  paginatedRooms.length,
+                                      (index) {
+                                    final room = paginatedRooms[index];
+                                    final roomKey = room.id;
+                                    final roomData = room.data() as Map<String, dynamic>;
+                                    final title = roomData['title'] ?? '제목 없음';
+                                    final createdAt = roomData['createdAt']?.toDate().toString() ?? '생성일 없음';
+                                    return DataRow(
+                                      cells: [
+                                        DataCell(Text((startIndex + index + 1).toString())),
+                                        DataCell(Text(title)),
+                                        DataCell(Text(createdAt)),
+                                      ],
+                                      onSelectChanged: (selected) {
+                                        if (selected ?? false) {
+                                          context.go('/room/$roomKey?mode=read');
+                                        }
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        // 페이지네이션 UI
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // << (이전 페이지)
+                              IconButton(
+                                icon: const Icon(Icons.chevron_left),
+                                onPressed: _currentPage > 1
+                                    ? () => setState(() => _currentPage--)
+                                    : null,
+                              ),
+                              // 처음으로 버튼
+                              if (_currentPage > 3)
+                                TextButton(
+                                  onPressed: () => setState(() => _currentPage = 1),
+                                  child: const Text('처음으로'),
+                                ),
+                              // 페이지 번호들 (최대 5개 표시)
+                              ...List.generate(
+                                5,
+                                    (index) {
+                                  final pageNum = _currentPage - 2 + index;
+                                  if (pageNum >= 1 && pageNum <= totalPages) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                      child: TextButton(
+                                        onPressed: () => setState(() => _currentPage = pageNum),
+                                        style: TextButton.styleFrom(
+                                          backgroundColor: _currentPage == pageNum
+                                              ? Colors.blueAccent
+                                              : null,
+                                          foregroundColor: _currentPage == pageNum
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                        child: Text('$pageNum'),
+                                      ),
+                                    );
+                                  }
+                                  return const SizedBox.shrink();
+                                },
+                              ),
+                              // 마지막 버튼
+                              if (_currentPage < totalPages - 2)
+                                TextButton(
+                                  onPressed: () => setState(() => _currentPage = totalPages),
+                                  child: const Text('마지막'),
+                                ),
+                              // >> (다음 페이지)
+                              IconButton(
+                                icon: const Icon(Icons.chevron_right),
+                                onPressed: _currentPage < totalPages
+                                    ? () => setState(() => _currentPage++)
+                                    : null,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     );
                   },
                 ),

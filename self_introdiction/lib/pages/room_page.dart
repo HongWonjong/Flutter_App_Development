@@ -46,7 +46,7 @@ class _RoomPageState extends State<RoomPage> {
   @override
   Widget build(BuildContext context) {
     final queryParams = GoRouterState.of(context).uri.queryParameters;
-    _mode = queryParams['mode'] ?? 'edit'; // setState 제거, 직접 할당
+    _mode = queryParams['mode'] ?? 'edit';
 
     return StreamBuilder<DocumentSnapshot>(
       stream: _roomLogic.getRoomStream(widget.roomKey),
@@ -65,19 +65,34 @@ class _RoomPageState extends State<RoomPage> {
               tooltip: '돌아가기',
             ),
             backgroundColor: appBarColor,
-            title: _mode == 'edit'
-                ? Row(
-              children: [
-                const Text('방: '),
-                Expanded(child: Text(widget.roomKey, overflow: TextOverflow.ellipsis)),
-                IconButton(
-                  icon: const Icon(Icons.copy),
-                  onPressed: _copyRoomKey,
-                  tooltip: '방 키 복사',
-                ),
-              ],
-            )
-                : Text(_roomTitle.isEmpty ? '방 보기' : _roomTitle),
+            title: Center(
+              child: Text(
+                _mode == 'edit'
+                    ? (_roomTitle.isEmpty ? '제목 없음' : _roomTitle)
+                    : (_roomTitle.isEmpty ? '방 보기' : _roomTitle),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            actions: _mode == 'edit'
+                ? [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('방: '),
+                  Text(
+                    widget.roomKey,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: const Icon(Icons.copy),
+                    onPressed: _copyRoomKey,
+                    tooltip: '방 키 복사',
+                  ),
+                ],
+              ),
+            ]
+                : null,
           ),
           body: FloatingWidgetList(
             roomKey: widget.roomKey,
@@ -87,6 +102,7 @@ class _RoomPageState extends State<RoomPage> {
             onUpdateWidget: (widgetData) => _roomLogic.updateWidget(widget.roomKey, widgetData),
             onAddGuideline: (guidelineData) => _roomLogic.addGuideline(widget.roomKey, guidelineData),
             onRemoveGuideline: (guidelineData) => _roomLogic.removeGuideline(widget.roomKey, guidelineData),
+            onUpdateGuideline: (guidelineData) => _roomLogic.updateGuideline(widget.roomKey, guidelineData),
             onUpdateRoomTitle: _updateRoomTitle,
           ),
         );
