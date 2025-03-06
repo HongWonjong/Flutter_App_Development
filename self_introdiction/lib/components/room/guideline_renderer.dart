@@ -13,26 +13,13 @@ Widget buildGuideline(
     Function(Map<String, dynamic>) onUpdateGuideline,
     Function(Map<String, dynamic>) onRemoveGuideline) {
   final type = guidelineData['type'] as String;
-
-  // 디버깅: position의 실제 타입 출력
-  print('guidelineData["position"] type: ${guidelineData['position'].runtimeType}');
-  print('guidelineData["position"] value: ${guidelineData['position']}');
-
-  // 안전한 타입 변환
-  final positionValue = guidelineData['position'];
-  final positionFactor = (positionValue is num
-      ? positionValue.toDouble()
-      : positionValue is String
-      ? double.tryParse(positionValue) ?? 0.5
-      : 0.5);
-
+  final positionFactor = (guidelineData['position'] as double?) ?? 0.5;
   final color = Color(int.parse((guidelineData['color'] as String).replaceAll('#', '0xff')));
 
-  const visibleWidth = 3.0;
-  const visibleHeight = 3.0;
-  const touchPadding = 20.0;
+  const visibleWidth = 5.0; // 기준선 두께
+  const visibleHeight = 5.0;
+  const touchPadding = 30.0; // 터치 패딩 크기
 
-  // clamp 제거: 스크롤 영역 전체를 활용하도록
   final top = type == 'horizontal' ? positionFactor * screenHeight : 0.0;
   final left = type == 'vertical' ? positionFactor * screenWidth : 0.0;
 
@@ -40,18 +27,23 @@ Widget buildGuideline(
     top: top,
     left: left,
     child: GestureDetector(
+      behavior: HitTestBehavior.translucent, // 터치 감도 개선
       onTap: isEditMode ? () => showGuidelineOptionsFunc(context, guidelineData, screenWidth, screenHeight, onUpdateGuideline, onRemoveGuideline) : null,
       onPanStart: isEditMode ? (_) => startDragging() : null,
       onPanUpdate: isEditMode ? updateGuidelinePosition : null,
       onPanEnd: isEditMode ? (_) => stopDragging(guidelineData) : null,
       child: Padding(
-        padding: const EdgeInsets.all(touchPadding),
+        padding: type == 'horizontal'
+            ? EdgeInsets.symmetric(vertical: touchPadding) // 가로선: 위아래 패딩
+            : EdgeInsets.symmetric(horizontal: touchPadding), // 세로선: 좌우 패딩
         child: SizedBox(
-          width: type == 'horizontal' ? screenWidth - (2 * touchPadding) : visibleWidth,
-          height: type == 'vertical' ? screenHeight * 1.5 - (2 * touchPadding) : visibleHeight,
+          width: type == 'horizontal' ? screenWidth : visibleWidth, // 가로선: 화면 너비, 세로선: 기준선 두께
+          height: type == 'vertical' ? screenHeight : visibleHeight, // 세로선: 화면 높이, 가로선: 기준선 두께
           child: Stack(
             children: [
-              Container(color: color.withOpacity(0.5)),
+              Container(
+                color: color.withOpacity(0.5), // 기준선 색상
+              ),
               if (isEditMode)
                 Positioned(
                   right: type == 'horizontal' ? 0 : null,

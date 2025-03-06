@@ -387,6 +387,7 @@ class _FloatingWidgetListState extends State<FloatingWidgetList> {
                                   ),
                                   const SizedBox(height: 12),
                                   Row(
+
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       SizedBox(
@@ -429,20 +430,55 @@ class _FloatingWidgetListState extends State<FloatingWidgetList> {
                                     ],
                                   ),
                                   const SizedBox(height: 12),
-                                  SizedBox(
-                                    width: 120,
-                                    height: 40,
-                                    child: ElevatedButton(
-                                      onPressed: _showDeleteRoomDialog, // 삭제 다이얼로그 호출
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.red[300], // 삭제 버튼은 빨간색으로 구분
-                                        foregroundColor: Colors.white,
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      SizedBox(
+                                        width: 120,
+                                        height: 40,
+                                        child: ElevatedButton(
+                                          onPressed: _showDeleteRoomDialog, // 삭제 다이얼로그 호출
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.red[300], // 삭제 버튼은 빨간색으로 구분
+                                            foregroundColor: Colors.white,
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                                          ),
+                                          child: const Text('방 삭제', style: TextStyle(fontSize: 14)),
+                                        ),
                                       ),
-                                      child: const Text('방 삭제', style: TextStyle(fontSize: 14)),
-                                    ),
-                                  ),
+                                      const SizedBox(width: 12),
+                                      SizedBox(
+                                        width: 120,
+                                        height: 40,
+                                        child: ElevatedButton(
+                                          onPressed: () => widget.onAddWidget({
+                                            'id': Uuid().v4(),
+                                            'type': 'button',
+                                            'content': '새 버튼',
+                                            'position': {'xfactor': 0.1, 'yfactor': 0.1},
+                                            'style': {
+                                              'backgroundColor': '#42A5F5', // 기본 파란색
+                                              'borderRadius': 0.2, // 약간 둥근 모서리
+                                              'opacity': 0.8, // 완전 불투명
+                                              'widthFactor': 0.3,
+                                              'heightFactor': 0.1,
+                                              'color': '#000000', // 흰색 텍스트
+                                              'fontSizeFactor': 0.015,
+                                            },
+                                            'url': 'https://example.com', // 기본 URL
+                                          }),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.lightGreen[300],
+                                            foregroundColor: Colors.white,
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                                          ),
+                                          child: const Text('하이퍼링크', style: TextStyle(fontSize: 14)),
+                                        ),
+                                      ),
+                                    ],
+                                  )
                                 ],
                               ),
                             ),
