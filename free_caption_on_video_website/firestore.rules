@@ -1,0 +1,22 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /transcribe_counts/{document} {
+      // 누구나 읽기 가능
+      allow read: if true;
+
+      // 쓰기 허용 조건 (완화)
+      allow write: if
+        // 필수 필드 포함 확인
+        request.resource.data.keys().hasAll(['total_count', 'daily_counts', 'secret_key']) &&
+        // 비밀 키 확인
+        request.resource.data.secret_key == 'SE135r3f213f';
+    }
+
+    // 다른 모든 경로 차단
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
