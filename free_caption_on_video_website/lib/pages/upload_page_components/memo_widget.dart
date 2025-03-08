@@ -79,9 +79,8 @@ class MemoWidget extends StatelessWidget {
           SizedBox(height: ResponsiveSizes.h2),
           // 메모 내용
           Text(
-            '아직 개발중인 웹사이트이지만 편집된 자막을 비디오에 오버레이 하는 기능을 제외하면 다 작동합니다. (개발자 컴퓨터가 꺼져있을 때 제외)\n'
-                '문의 있으시면 wonhong1996@gmail.com으로 연락 주세요. 서버 켜달라고 메일 보내시면 켜드립니다.\n'
-                '본 웹사이트는 여러분의 동영상이나 자막 등을 따로 저장하지 않습니다. 마음 놓고 사용해주세요.',
+                '문의 있으시면 wonhong1996@gmail.com으로 연락 주세요.\n'
+                '본 웹사이트는 동영상이나 자막 등을 따로 저장하지 않습니다.',
             style: TextStyle(
               fontSize: ResponsiveSizes.textSize(3),
               color: Colors.black87,
