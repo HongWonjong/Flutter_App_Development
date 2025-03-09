@@ -258,26 +258,16 @@ class _DraggableElementWidgetState extends State<DraggableElementWidget> {
         child: Container(
           width: 32,
           height: 32,
-          padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: widget.textColor.withOpacity(0.5),
-              width: 2,
+            color: widget.textColor.withOpacity(0.1),
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(12),
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
           ),
           child: Icon(
-            Icons.open_in_full,
-            size: 18,
-            color: widget.textColor.withOpacity(0.7),
+            Icons.drag_handle,
+            size: 20,
+            color: Colors.black, // 아이콘 색상을 항상 검은색으로 설정
           ),
         ),
       ),
