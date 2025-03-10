@@ -17,11 +17,10 @@ class ShoppingMall {
     print("\n=== 상품 목록 ===");
     for (int i = 0; i < products.length; i++) {
       String cartMessage = "";
-      // 장바구니에서 해당 상품 찾기
       for (CartItem item in cart) {
         if (item.product.name == products[i].name) {
           cartMessage = " (이 상품을 ${item.quantity}개 담으셨습니다!)";
-          break; // 같은 상품을 찾았으면 더 찾을 필요 없음
+          break;
         }
       }
       print("${i + 1}. ${products[i].name} / ${products[i].price}원$cartMessage");
@@ -58,8 +57,9 @@ class ShoppingMall {
       print("\n장바구니가 비어 있습니다.");
       return;
     }
-
-    print("\n=== 장바구니 ===");
+    print("------------------------------------------------------------");
+    print("                           장바구니  ");
+    print("------------------------------------------------------------");
     int totalPrice = 0;
     for (int i = 0; i < cart.length; i++) {
       CartItem item = cart[i];
@@ -96,7 +96,7 @@ class ShoppingMall {
       int? choice = int.tryParse(input ?? "");
 
       if (choice == null || choice < 1 || choice > 4) {
-        print("1에서 4 사이의 숫자를 입력하세요.");
+        print("1에서 4 사이의 정수를 입력하세요.");
         continue;
       }
 
