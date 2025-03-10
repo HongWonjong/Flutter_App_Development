@@ -55,10 +55,9 @@ class ShoppingMall {
   void showCart() {
     if (cart.isEmpty) {
       print("\n장바구니가 비어 있습니다.");
-      return;
     }
     print("------------------------------------------------------------");
-    print("                           장바구니  ");
+    print("     장바구니(현재 화면에서 6을 눌러 장바구니를 초기화할 수 있습니다.)  ");
     print("------------------------------------------------------------");
     int totalPrice = 0;
     for (int i = 0; i < cart.length; i++) {
@@ -68,6 +67,21 @@ class ShoppingMall {
       totalPrice += itemTotal;
     }
     print("총 가격: $totalPrice원");
+    String? confirmInput = stdin.readLineSync();
+    int? confirmChoice = int.tryParse(confirmInput ?? "");
+    if (confirmChoice == 6) {
+      if(cart.length > 0) {
+        print("장바구니를 초기화합니다.");
+        cart = [];
+      } else {
+        print("이미 장바구니가 비어있습니다.");
+      }
+
+    } else {
+      print("메뉴로 되돌아갑니다..");
+    }
+
+
   }
 
   bool confirmExit() {
