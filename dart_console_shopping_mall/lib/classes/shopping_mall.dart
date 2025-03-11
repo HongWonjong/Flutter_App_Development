@@ -81,7 +81,6 @@ class ShoppingMall {
       print("메뉴로 되돌아갑니다..");
     }
 
-
   }
 
   bool confirmExit() {
