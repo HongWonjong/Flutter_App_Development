@@ -1,4 +1,4 @@
-import 'products.dart';
+import 'product.dart';
 
 class CartItem { // 제품과 수량을 묶어 CartItem 객체를 만들어보도록 haza
   Product product;
