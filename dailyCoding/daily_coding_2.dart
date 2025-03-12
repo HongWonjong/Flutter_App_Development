@@ -1,4 +1,4 @@
-// 로마자 변환 클래스를 만들어보자.
+// 로마자 변환 클래스를 만들어보자. 완성
 
 class Solution {
   List<String> splitted_roman = [];
