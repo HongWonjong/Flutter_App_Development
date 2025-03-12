@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'product.dart';
-import 'cart_item.dart';
 
 class ShoppingMall {
   List<Product> products = [
@@ -11,17 +10,15 @@ class ShoppingMall {
     Product("5개를 채우기 위한 의미 없는 상품", 9999999),
   ];
 
-  List<CartItem> cart = [];
+  // 장바구니를 Map으로 변경: 키는 상품 인덱스(0부터 시작), 값은 수량
+  Map<int, int> cart = {};
 
   void showProductList() {
     print("\n=== 상품 목록 ===");
     for (int i = 0; i < products.length; i++) {
       String cartMessage = "";
-      for (CartItem item in cart) {
-        if (item.product.name == products[i].name) {
-          cartMessage = " (이 상품을 ${item.quantity}개 담으셨습니다!)";
-          break;
-        }
+      if (cart.containsKey(i) && cart[i]! > 0) {
+        cartMessage = " (이 상품을 ${cart[i]}개 담으셨습니다!)";
       }
       print("${i + 1}. ${products[i].name} / ${products[i].price}원$cartMessage");
     }
@@ -47,40 +44,47 @@ class ShoppingMall {
       return;
     }
 
-    Product selectedProduct = products[productIndex - 1];
-    cart.add(CartItem(selectedProduct, quantity));
-    print("${selectedProduct.name} ${quantity}개가 장바구니에 담겼습니다.");
+    // Map에서 해당 상품의 기존 수량에 더하기
+    int index = productIndex - 1;
+    cart[index] = (cart[index] ?? 0) + quantity;
+    print("${products[index].name} ${quantity}개가 장바구니에 담겼습니다.");
   }
 
   void showCart() {
     if (cart.isEmpty) {
       print("\n장바구니가 비어 있습니다.");
+    } else {
+      print("------------------------------------------------------------");
+      print("     장바구니(현재 화면에서 6을 눌러 장바구니를 초기화할 수 있습니다.)  ");
+      print("------------------------------------------------------------");
+      int totalPrice = 0;
+      int displayIndex = 1;
+
+      cart.forEach((index, quantity) {
+        if (quantity > 0) {
+          int itemTotal = products[index].price * quantity;
+          print("$displayIndex. ${products[index].name} - ${quantity}개 - ${itemTotal}원");
+          totalPrice += itemTotal;
+          displayIndex++;
+        }
+      });
+
+      print("총 가격: $totalPrice원");
     }
-    print("------------------------------------------------------------");
-    print("     장바구니(현재 화면에서 6을 눌러 장바구니를 초기화할 수 있습니다.)  ");
-    print("------------------------------------------------------------");
-    int totalPrice = 0;
-    for (int i = 0; i < cart.length; i++) {
-      CartItem item = cart[i];
-      int itemTotal = item.product.price * item.quantity;
-      print("${i + 1}. ${item.product.name} - ${item.quantity}개 - ${itemTotal}원");
-      totalPrice += itemTotal;
-    }
-    print("총 가격: $totalPrice원");
+
     String? confirmInput = stdin.readLineSync();
     int? confirmChoice = int.tryParse(confirmInput ?? "");
+
     if (confirmChoice == 6) {
-      if(cart.length > 0) {
+      if (cart.isNotEmpty) {
         print("장바구니를 초기화합니다.");
-        cart = [];
+        cart.clear();
       } else {
         print("이미 장바구니가 비어있습니다.");
       }
-
     } else {
       print("메뉴로 되돌아갑니다..");
     }
-
   }
 
   bool confirmExit() {
@@ -131,4 +135,9 @@ class ShoppingMall {
       }
     }
   }
+}
+
+void main() {
+  ShoppingMall mall = ShoppingMall();
+  mall.run();
 }
