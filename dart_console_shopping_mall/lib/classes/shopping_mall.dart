@@ -136,8 +136,3 @@ class ShoppingMall {
     }
   }
 }
-
-void main() {
-  ShoppingMall mall = ShoppingMall();
-  mall.run();
-}
