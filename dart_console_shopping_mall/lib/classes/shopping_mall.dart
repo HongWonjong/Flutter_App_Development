@@ -11,7 +11,7 @@ class ShoppingMall {
   ];
 
   // 장바구니를 Map으로 구현, 키는 상품 인덱스(0부터 시작), 값은 수량
-  Map<int, int> cart = {};
+  Map<int, int> cart = {}; // 키-값 상품 인덱스 -수량
 
   void showProductList() {
     print("\n=== 상품 목록 ===");
