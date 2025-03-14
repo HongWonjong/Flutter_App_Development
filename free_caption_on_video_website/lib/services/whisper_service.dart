@@ -32,7 +32,7 @@ class WhisperService {
         ..files.add(http.MultipartFile.fromBytes('audio', audioBytes, filename: 'audio.mp3'));
 
       print("[INFO] 요청 보냄...");
-      final response = await http.Client().send(request).timeout(Duration(seconds: 180));
+      final response = await http.Client().send(request); // 타임아웃 제거
 
       if (response.statusCode != 200) {
         final errorMsg = "요청 실패: ${response.statusCode}";
