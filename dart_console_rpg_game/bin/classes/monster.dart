@@ -49,8 +49,8 @@ void tentaclePush(RpgGame game, BossMonster boss) async {
   int hits = 3 + random.nextInt(3);
   int totalDamage = 0;
   for (int i = 0; i < hits; i++) {
-    int baseDamage = (boss.atk * (1 + i * 0.2)).toInt(); // 기본 데미지
-    int damage = (baseDamage - (game.total_def / 2).floor()).clamp(0, baseDamage); // 방어력의 절반만 반영
+    int baseDamage = (boss.atk * (1 + i * 0.2)).toInt();
+    int damage = (baseDamage - (game.total_def / 2).floor()).clamp(0, baseDamage);
     totalDamage += damage;
     game.hp_now -= damage;
     print("${boss.name}의 촉수가 갑옷을 꿰뚫는 날카로운 창으로 변해 당신을 밀칩니다! $damage 데미지!");
@@ -60,10 +60,10 @@ void tentaclePush(RpgGame game, BossMonster boss) async {
 }
 
 final List<Monster> monsterList = [
-  Monster("슬라임", 20, 5, 2, "끈적거리는 작은 괴물이다.", 1),
-  Monster("고블린", 30, 8, 4, "작고 교활한 도둑이다.", 3),
-  Monster("웨어울프", 50, 15, 8, "달빛 아래 포효하는 야수다.", 5, skill: hardenedClaws),
-  Monster("미노타우르스", 80, 20, 12, "거대한 뿔을 가진 괴수다.", 7, skill: berserk),
+  Monster("슬라임", 20, 5, 2, "끈적끈적.", 1),
+  Monster("고블린", 30, 8, 4, "고블린은 전부 죽인다.", 3),
+  Monster("웨어울프", 50, 15, 8, "갑옷을 부숴버리는 날카로운 발톱 공격을 하는 괴수다.", 5, skill: hardenedClaws),
+  Monster("미노타우르스", 80, 20, 12, "분노 할수록 강해지는 괴물이다.", 8, skill: berserk),
 ];
 
 

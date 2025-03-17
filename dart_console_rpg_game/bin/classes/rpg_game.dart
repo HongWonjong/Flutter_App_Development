@@ -204,22 +204,22 @@ class RpgGame {
         }
 
         if (monsterHp > 0) {
-          // 몬스터 스킬 체크
+
           if (currentMonster.skill != null) {
             if (currentMonster.name == "미노타우르스" &&
                 monsterHp < monsterMaxHp * 0.5 &&
                 !currentMonster.skill_used) {
               currentMonster.skill!(this, currentMonster);
-              monsterAtk += 20; // 광폭화로 공격력 증가
+              monsterAtk += 20;
             } else if (currentMonster.name == "웨어울프" &&
                 random.nextDouble() < 0.3) {
               currentMonster.skill!(this, currentMonster);
               await Future.delayed(Duration(seconds: 1));
-              continue; // 웨어울프는 스킬 후 바로 턴 종료
+              continue;
             }
           }
 
-          // 일반 공격 (미노타우르스는 광폭화 턴에도 공격)
+
           int damage = (monsterAtk - total_def).clamp(0, monsterAtk);
           hp_now -= damage;
           print("몬스터가 공격! $damage 데미지를 입었습니다. (HP: $hp_now)");
@@ -263,7 +263,7 @@ class RpgGame {
   }
 
   Future<void> fightBoss() async {
-    BossMonster boss = bossList[0]; // 첫 번째 보스 (외신 크툴루)
+    BossMonster boss = bossList[0]; // 첫 번째 보스는 외신 크툴루임. 두 번째 보스 만들지는 잘 모르겠다.
     int bossHp = boss.hp;
     int bossMaxHp = boss.hp;
     Random random = Random();
