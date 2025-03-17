@@ -44,12 +44,20 @@ void indescribableGaze(RpgGame game, BossMonster boss) {
   print("${boss.name}의 형언할 수 없는 공포의 응시! 당신의 공격력이 $reducedAtk, 방어력이 $reducedDef로 줄어들었습니다!");
 }
 
+void justAttack(RpgGame game, BossMonster boss) {
+  Random random = Random();
+  int atk_multiple = random.nextInt(50) + 100; // 이렇게 기본 공격 배수의 1~최대 1.5배의 일반 공격을 구현했다.
+  int damage = boss.atk * atk_multiple ~/ 100;
+  game.hp_now -= damage;
+  print("${boss.name}의 일격!");
+}
+
 void tentaclePush(RpgGame game, BossMonster boss) async {
   Random random = Random();
   int hits = 3 + random.nextInt(3);
   int totalDamage = 0;
   for (int i = 0; i < hits; i++) {
-    int baseDamage = (boss.atk * (1 + i * 0.2)).toInt();
+    int baseDamage = (boss.atk * (1 + i * 0.2)).toInt(); // 다단히트가 길어질수록 아프게 때린다.
     int damage = (baseDamage - (game.total_def / 2).floor()).clamp(0, baseDamage);
     totalDamage += damage;
     game.hp_now -= damage;
@@ -70,11 +78,11 @@ final List<Monster> monsterList = [
 final List<BossMonster> bossList = [
   BossMonster(
     "외신 크툴루",
-    200,
+    250,
     25,
     15,
-    "형언할 수 없는 존재감이 느껴지는 고대의 신이다.",
+    "형언할 수 없는 존재감이 느껴지는 고대의 신이다. 눈을 마주친 것 만으로도 용기가 녹아내린다.",
     11,
-    [indescribableGaze, tentaclePush],
+    [indescribableGaze, tentaclePush, justAttack],
   ),
 ];
