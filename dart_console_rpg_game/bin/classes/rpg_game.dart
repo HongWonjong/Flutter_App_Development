@@ -32,7 +32,6 @@ class RpgGame {
   int get total_atk => base_atk + buff_atk + item_atk;
   int get total_def => base_def + buff_def + item_def;
 
-
   String getHealthBar(int currentHp, int maxHp) {
     const int barLength = 10;
     int filledBlocks = ((currentHp / maxHp) * barLength).round();
@@ -175,7 +174,8 @@ class RpgGame {
 
       Monster currentMonster = availableMonsters[random.nextInt(availableMonsters.length)];
       int monsterHp = currentMonster.hp;
-      int monsterMaxHp = currentMonster.hp; // 최대 체력 저장
+      int monsterMaxHp = currentMonster.hp;
+      int monsterAtk = currentMonster.atk;
       print("스테이지 $stage: ${currentMonster.name}이 나타났습니다! 체력: ${getHealthBar(monsterHp, monsterMaxHp)} ($monsterHp/$monsterMaxHp)");
       print("${currentMonster.description}");
       await Future.delayed(Duration(seconds: 1));
@@ -188,7 +188,7 @@ class RpgGame {
 
         if (choice == 1) {
           monsterHp -= total_atk;
-          monsterHp = monsterHp.clamp(0, monsterMaxHp); // 음수 방지
+          monsterHp = monsterHp.clamp(0, monsterMaxHp);
           print("몬스터에게 $total_atk 데미지를 입혔습니다! (남은 체력: ${getHealthBar(monsterHp, monsterMaxHp)})");
           await Future.delayed(Duration(seconds: 1));
         } else if (choice == 2) {
@@ -204,7 +204,23 @@ class RpgGame {
         }
 
         if (monsterHp > 0) {
-          int damage = (currentMonster.atk - total_def).clamp(0, currentMonster.atk);
+          // 몬스터 스킬 체크
+          if (currentMonster.skill != null) {
+            if (currentMonster.name == "미노타우르스" &&
+                monsterHp < monsterMaxHp * 0.5 &&
+                !currentMonster.skill_used) {
+              currentMonster.skill!(this, currentMonster);
+              monsterAtk += 20; // 광폭화로 공격력 증가
+            } else if (currentMonster.name == "웨어울프" &&
+                random.nextDouble() < 0.3) {
+              currentMonster.skill!(this, currentMonster);
+              await Future.delayed(Duration(seconds: 1));
+              continue; // 웨어울프는 스킬 후 바로 턴 종료
+            }
+          }
+
+          // 일반 공격 (미노타우르스는 광폭화 턴에도 공격)
+          int damage = (monsterAtk - total_def).clamp(0, monsterAtk);
           hp_now -= damage;
           print("몬스터가 공격! $damage 데미지를 입었습니다. (HP: $hp_now)");
           await Future.delayed(Duration(seconds: 1));
@@ -229,8 +245,86 @@ class RpgGame {
     }
 
     if (stage > maxStage) {
-      print("던전 10 스테이지를 모두 클리어했습니다! 마을로 돌아갑니다.");
+      print("던전 10 스테이지를 모두 클리어하자, 눈 앞에 커다란 문이 나타납니다.");
       await Future.delayed(Duration(seconds: 2));
+      print("커다란 문 뒤에서 형언할 수 없는 무언가의 존재감이 느껴진다..");
+      await Future.delayed(Duration(seconds: 2));
+      print("입장하시겠습니까?");
+      print("1: 들어간다. | 2: 돌아간다. (그 외는 자동으로 돌아감)");
+      int? choice = int.tryParse(stdin.readLineSync() ?? '');
+
+      if (choice == 1) {
+        await fightBoss();
+      } else {
+        print("마을로 돌아갑니다.");
+        await Future.delayed(Duration(seconds: 2));
+      }
+    }
+  }
+
+  Future<void> fightBoss() async {
+    BossMonster boss = bossList[0]; // 첫 번째 보스 (외신 크툴루)
+    int bossHp = boss.hp;
+    int bossMaxHp = boss.hp;
+    Random random = Random();
+    print("---------------------");
+    print("어두운 방 한 가운데에 무언가 거대한 것의 실루엣이 꿈틀거린다.");
+    await Future.delayed(Duration(seconds: 2));
+    print("Y’AI ’NG’NGAH, YOG-SOTHOTH H’EE—L’GEB F’AI THRODOG UAAAH");
+    await Future.delayed(Duration(seconds: 2));
+    print("OGTHROD AI’F GEB’L—EE’H YOG-SOTHOTH ‘NGAH’NG AI’Y ZHRO!");
+    await Future.delayed(Duration(seconds: 2));
+    print("따라할 수 조차 없는 찬양들이 외신을 둘러싸고 시끄럽게 울려퍼진다.");
+    await Future.delayed(Duration(seconds: 2));
+    print("${boss.name}가 나타났습니다! 체력: ${getHealthBar(bossHp, bossMaxHp)} ($bossHp/$bossMaxHp)");
+    print("${boss.description}");
+    await Future.delayed(Duration(seconds: 2));
+
+    while (hp_now > 0 && bossHp > 0) {
+      print("당신 HP: $hp_now, 공격력: $total_atk, 방어력: $total_def");
+      print("보스 체력: ${getHealthBar(bossHp, bossMaxHp)} ($bossHp/$bossMaxHp)");
+      print("1. 공격 | 2. 스킬 사용 (광분) | 3. 스킬 사용 (방패 올리기) | 4. 도망가기");
+      int? choice = int.tryParse(stdin.readLineSync() ?? '');
+
+      if (choice == 1) {
+        bossHp -= total_atk;
+        bossHp = bossHp.clamp(0, bossMaxHp);
+        print("보스에게 $total_atk 데미지를 입혔습니다! (남은 체력: ${getHealthBar(bossHp, bossMaxHp)})");
+        await Future.delayed(Duration(seconds: 1));
+      } else if (choice == 2) {
+        useSkill(skills[2]);
+        await Future.delayed(Duration(seconds: 1));
+      } else if (choice == 3) {
+        useSkill(skills[1]);
+        await Future.delayed(Duration(seconds: 1));
+      } else if (choice == 4) {
+        print("도망쳤습니다...");
+        await Future.delayed(Duration(seconds: 1));
+        return;
+      }
+
+      if (bossHp > 0) {
+        // 보스 스킬 랜덤 사용
+        int skillIndex = random.nextInt(boss.bossSkills.length);
+        boss.bossSkills[skillIndex](this, boss);
+        await Future.delayed(Duration(seconds: 2));
+      } else {
+        print("${boss.name}를 물리쳤습니다! 보상: 500골드");
+        inventory[0].quantity += 500;
+        print("마을로 돌아갑니다.");
+        await Future.delayed(Duration(seconds: 2));
+        return;
+      }
+
+      if (hp_now <= 0) {
+        print("사망했습니다... 골드가 반으로 줄어듭니다.");
+        inventory[0].quantity ~/= 2;
+        hp_now = hp_max;
+        buff_atk = 0;
+        buff_def = 0;
+        await Future.delayed(Duration(seconds: 2));
+        return;
+      }
     }
   }
 
@@ -238,18 +332,18 @@ class RpgGame {
     print("---------------------");
     if (inventory[0].quantity < 100) {
       print("대장장이: 아이고 손님요 반갑...뭐고 이 100골드도 없는 걸베이 쉐리는? 바쁘니까 말 걸지 마래이");
-      await Future.delayed(Duration(seconds: 2));
+      await Future.delayed(Duration(seconds: 1));
       print("나레이션: 아무래도 아직 거지와는 상대해주지 않는 듯 하다..");
     } else if (inventory[0].quantity >= 100 && inventory[0].quantity < 250) {
       print("대장장이: 어 그래 왔나. 여 새로 갈아놓은 칼 있으니까 함 보고.");
-      await Future.delayed(Duration(seconds: 2));
+      await Future.delayed(Duration(seconds: 1));
       print("나레이션: 이제 손님 취급은 해 주는 듯 하다.");
     } else if (inventory[0].quantity >= 200) {
       print("대장장이: 아이고 어서 오세요 손님~ 커피라도 한잔 타다 드릴까요?");
-      await Future.delayed(Duration(seconds: 2));
+      await Future.delayed(Duration(seconds: 1));
       print("나레이션: 수상하게 친절해졌다.");
     }
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(Duration(seconds: 1));
     await shopMenu();
   }
 
@@ -257,7 +351,7 @@ class RpgGame {
     bool inShop = true;
     while (inShop) {
       print("---------------------");
-      print("현재 주머니에 ${inventory[0].quantity}골드가 있습니다.");
+      print("현재 소지 골드: ${inventory[0].quantity}");
       for (int i = 0; i < merchants_item.length; i++) {
         print("${i}. ${merchants_item[i].name} | ${merchants_item[i].price}골드 | ${merchants_item[i].description}");
       }
@@ -298,7 +392,7 @@ class RpgGame {
   }
 
   void quest() {
-    // 퀘스트 수주
+    // 아직 구현 안 함
   }
 
   void status_on() {
