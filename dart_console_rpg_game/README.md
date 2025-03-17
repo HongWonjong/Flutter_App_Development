@@ -1,1 +1,5 @@
-A sample command-line application providing basic argument parsing with an entrypoint in `bin/`.
+반갑습니다. 이건 다트 코드만을 이용해서 만든, 콘솔 내에서의 선택을 통해 이루어지는 던전 어드밴쳐 게임입니다. 
+
+기본적으로는 마을에서의 회복-구매-판매-퀘스트 수주 => 던전 탐사 => 마을...의 반복적인 구조를 가지고 있습니다.
+
+원래의 과제에서는 외부 텍스트 파일을 이용해서 
