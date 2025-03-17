@@ -15,7 +15,7 @@ class Monster {
       {this.skill, this.skill_used = false});
 }
 
-class BossMonster extends Monster {
+class BossMonster extends Monster { // 보스 몬스터 클래스를 별도로 만들어서, 일반 스테이지에서 보스가 나오지 않도록 구분했음.
   final List<Function(RpgGame, BossMonster)> bossSkills;
 
   BossMonster(String name, int hp, int atk, int def, String description, int level, this.bossSkills)
@@ -24,7 +24,7 @@ class BossMonster extends Monster {
 
 
 void berserk(RpgGame game, Monster monster) {
-  print("${monster.name}가 광폭화했습니다! 공격력이 ${monster.atk + 20}으로 증가했습니다.");
+  print("${monster.name}가 광폭화했습니다! 공격력이 ${monster.atk + 20}으로 증가하고 방어력이 ${monster.def + 10} 증가합니다.");
   monster.skill_used = true;
 }
 
@@ -60,10 +60,10 @@ void tentaclePush(RpgGame game, BossMonster boss) async {
 }
 
 final List<Monster> monsterList = [
-  Monster("슬라임", 20, 5, 2, "끈적끈적.", 1),
-  Monster("고블린", 30, 8, 4, "고블린은 전부 죽인다.", 3),
-  Monster("웨어울프", 50, 15, 8, "갑옷을 부숴버리는 날카로운 발톱 공격을 하는 괴수다.", 5, skill: hardenedClaws),
-  Monster("미노타우르스", 80, 20, 12, "분노 할수록 강해지는 괴물이다.", 8, skill: berserk),
+  Monster("슬라임", 20, 11, 2, "끈적끈적하다.", 1),
+  Monster("고블린", 40, 13, 4, "초등학생과 대등하거나 그 이상이다.", 3),
+  Monster("웨어울프", 70, 15, 8, "갑옷을 부숴버리는 날카로운 발톱 공격을 하는 괴수다.", 5, skill: hardenedClaws),
+  Monster("미노타우르스", 100, 20, 12, "분노 할수록 강해지는 괴물이다.", 8, skill: berserk),
 ];
 
 

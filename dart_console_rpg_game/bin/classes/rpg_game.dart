@@ -176,6 +176,7 @@ class RpgGame {
       int monsterHp = currentMonster.hp;
       int monsterMaxHp = currentMonster.hp;
       int monsterAtk = currentMonster.atk;
+      int monsterDef = currentMonster.def;
       print("스테이지 $stage: ${currentMonster.name}이 나타났습니다! 체력: ${getHealthBar(monsterHp, monsterMaxHp)} ($monsterHp/$monsterMaxHp)");
       print("${currentMonster.description}");
       await Future.delayed(Duration(seconds: 1));
@@ -207,12 +208,13 @@ class RpgGame {
 
           if (currentMonster.skill != null) {
             if (currentMonster.name == "미노타우르스" &&
-                monsterHp < monsterMaxHp * 0.5 &&
+                monsterHp < monsterMaxHp * 0.5 && // 미노타우스르의 체력이 절반 미만으로 깎이면 광폭화 패턴
                 !currentMonster.skill_used) {
               currentMonster.skill!(this, currentMonster);
               monsterAtk += 20;
+              monsterDef += 10;
             } else if (currentMonster.name == "웨어울프" &&
-                random.nextDouble() < 0.3) {
+                random.nextDouble() < 0.3) { // 강화 공격은 30% 확률로 발동됨.
               currentMonster.skill!(this, currentMonster);
               await Future.delayed(Duration(seconds: 1));
               continue;
