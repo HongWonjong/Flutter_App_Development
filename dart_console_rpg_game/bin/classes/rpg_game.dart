@@ -21,12 +21,11 @@ class RpgGame {
     Item("gold", false, 1, false, 50, "이 작은 콘솔 세상의 기본 거래 단위입니다."),
     Item("진짜_그냥_나뭇가지", false, 1, true, 1, "이건 왜 들고 계신거죠?", atk: 3),
   ];
-  List<Item> equippedItems = [];
+  List<Item> equippedItems = []; // 사용자가 직접 장착할 수 있는 아이템들은 여기에 장착할 수 있다. 칼을 여러개 장착 할 수도 있도록 해둠.
 
   List<Skill> skills = [
-    Skill("줘 패기", "폭력은 대답이 아니라 질문입니다. (계수: 총 공격력 * 1.0)", 0, true, 1, false, false, false),
-    Skill("방패 올리기", "방패를 들어 방어력을 일시적으로 증가시킵니다.", 5, false, 5, false, true, false),
-    Skill("광분", "일시적으로 공격력을 증가시킵니다.", 5, false, 5, false, true, false),
+    Skill("광분", "일시적으로 공격력을 증가시킵니다.", 10, false, 10, false, true, false),
+    Skill("방패 올리기", "방패를 들어 방어력을 일시적으로 증가시킵니다. (방패가 있어야 사용 가능)", 10, false, 10, false, true, false),
   ];
 
   int get total_atk => base_atk + buff_atk + item_atk;
@@ -184,7 +183,7 @@ class RpgGame {
       while (hp_now > 0 && monsterHp > 0) {
         print("당신 HP: $hp_now, 공격력: $total_atk, 방어력: $total_def");
         print("몬스터 체력: ${getHealthBar(monsterHp, monsterMaxHp)} ($monsterHp/$monsterMaxHp)");
-        print("1. 공격 | 2. 스킬 사용 (광분) | 3. 스킬 사용 (방패 올리기) | 4. 도망가기");
+        print("1. 공격 | 2. ${skills[0]} | 3. ${skills[1]} | 4. 도망가기");
         int? choice = int.tryParse(stdin.readLineSync() ?? '');
 
         if (choice == 1) {
@@ -294,7 +293,7 @@ class RpgGame {
         print("보스에게 $total_atk 데미지를 입혔습니다! (남은 체력: ${getHealthBar(bossHp, bossMaxHp)})");
         await Future.delayed(Duration(seconds: 1));
       } else if (choice == 2) {
-        useSkill(skills[2]);
+        useSkill(skills[0]);
         await Future.delayed(Duration(seconds: 1));
       } else if (choice == 3) {
         useSkill(skills[1]);
