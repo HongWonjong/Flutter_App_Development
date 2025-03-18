@@ -7,6 +7,8 @@ class Item{
   final int mp;
   final int atk;
   final int def;
+  final int hp_increase;
+  final int mp_increase;
   int quantity;
   final String description;
 
@@ -15,5 +17,7 @@ class Item{
   this.mp = 0,
   this.atk = 0,
   this.def = 0,
+  this.hp_increase = 0,
+  this.mp_increase = 0,
   });
 }

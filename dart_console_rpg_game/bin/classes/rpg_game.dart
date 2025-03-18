@@ -20,6 +20,7 @@ class RpgGame {
   List<Item> inventory = [
     Item("gold", false, 1, false, 50, "이 작은 콘솔 세상의 기본 거래 단위입니다."),
     Item("진짜_그냥_나뭇가지", false, 1, true, 1, "이건 왜 들고 계신거죠?", atk: 3),
+    Item("빨간_포션", true, 10, false, 1, hp: 50, "제픔 설명: 타우린, 고농축 카페인, 합성 착향 색소, 아르기닌 500mg 포함"),
   ];
   List<Item> equippedItems = []; // 사용자가 직접 장착할 수 있는 아이템들은 여기에 장착할 수 있다. 칼을 여러개 장착 할 수도 있도록 해둠.
 
@@ -90,6 +91,16 @@ class RpgGame {
       buff_atk += item.atk;
       buff_def += item.def;
       print("${item.name}을 사용했습니다! 공격력: $total_atk, 방어력: $total_def");
+    }
+
+    if (item.hp_increase > 0) {
+      print("${item.name}을 사용했습니다! 최대 HP: $hp_max");
+      hp_max += item.hp_increase;
+      print("${item.name}을 사용했습니다! 최대 HP: $hp_max");
+    }
+    if (item.mp_increase > 0) {
+      mp_max += item.mp_increase;
+      print("${item.name}을 사용했습니다! 최대 MP: $mp_max");
     }
 
 
@@ -451,7 +462,8 @@ class RpgGame {
           );
           if (existingItem.name.isEmpty) {
             inventory.add(Item(purchased.name, purchased.isConsumable, purchased.price, purchased.wearable, 1,
-                purchased.description, hp: purchased.hp, mp: purchased.mp, atk: purchased.atk, def: purchased.def));
+                purchased.description, hp: purchased.hp, mp: purchased.mp, atk: purchased.atk,
+              def: purchased.def, hp_increase: purchased.hp_increase, mp_increase: purchased.mp_increase));
           } else {
             existingItem.quantity += 1;
           }
