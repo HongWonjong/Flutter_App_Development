@@ -207,12 +207,11 @@ class RpgGame {
   }
 
   Future<void> fightBoss() async {
-    BossMonster boss = bossList[0];
+    BossMonster boss = bossList[0]; // 현재로써는 보스가 하나 뿐이다. 추후 만들게 된다면 전 단계에서 어떤 레벨의 보스를 소환할지 매개변수를 전달해주자.
     int bossHp = boss.hp;
     int bossMaxHp = boss.hp;
     int bossAtk = boss.atk;
     int bossDef = boss.def;
-    List<Skill> bossSkills = boss.bossSkills.map((skill) => Skill(skill.toString(), "", 0, false, 0, false, false, false)).toList();
     Random random = Random();
     print("---------------------");
     print("어두운 방 한 가운데에 무언가 거대한 것의 실루엣이 꿈틀거린다."); // 보스 소개 문구
