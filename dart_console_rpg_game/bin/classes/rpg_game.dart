@@ -5,197 +5,26 @@ import 'merchant.dart';
 import 'skill.dart';
 import 'monster.dart';
 import 'quest.dart';
+import 'player.dart'; // 새로 추가
 
 class RpgGame {
-  int hp_now = 100;
-  int hp_max = 100;
-  int mp_now = 100;
-  int mp_max = 100;
-  int base_atk = 10;
-  int base_def = 10;
-  int buff_atk = 0;
-  int buff_def = 0;
-  int item_atk = 0;
-  int item_def = 0;
+  Player player; // 플레이어 인스턴스
+  List<Item> merchantsItem = Merchants().merchants_item;
+  Map<String, int> killedMonsters = {};
 
-  List<Item> merchants_item = Merchants().merchants_item;
-  List<Item> inventory = [
-    Item("gold", false, 1, false, 50, "이 작은 콘솔 세상의 기본 거래 단위입니다."),
-    Item("진짜_그냥_나뭇가지", false, 1, true, 1, "이건 왜 들고 계신거죠?", atk: 3),
-    Item("빨간_포션", true, 10, false, 1, hp: 50, "제픔 설명: 타우린, 고농축 카페인, 합성 착향 색소, 아르기닌 500mg 포함"),
-  ];
-  List<Item> equippedItems = []; // 사용자가 직접 장착할 수 있는 아이템들은 여기에 장착할 수 있다. 칼을 여러개 장착 할 수도 있도록 해둠.
-
-  Map<String, int> killedMonsters = {}; // 몬스터 이름과 처치 횟수를 저장하여 퀘스트, 기록 등에 사용.
-
-
-  List<Skill> skills = [
-    Skill("광분", "일시적으로 공격력을 증가시킵니다.", 10, false, 10, false, true, false),
-    Skill("방패 올리기", "방패를 들어 방어력을 일시적으로 증가시킵니다. (방패가 있어야 사용 가능)", 10, false, 10, false, true, false),
-  ];
-
-  int get total_atk => base_atk + buff_atk + item_atk;
-  int get total_def => base_def + buff_def + item_def;
-
-  String getHealthBar(int currentHp, int maxHp) {
-    const int barLength = 10;
-    int filledBlocks = ((currentHp / maxHp) * barLength).round();
-    filledBlocks = filledBlocks.clamp(0, barLength);
-    String bar = "█" * filledBlocks + "□" * (barLength - filledBlocks);
-    return bar;
-  }
-
-  void useSkill(Skill skill) {
-    if (mp_now < skill.skill_mp_cost) {
-      print("MP가 부족합니다.");
-      return;
-    }
-    if (skill.skill_name == "방패 올리기") {
-      if (!inventory.any((item) => item.name == "나무_방패") && !equippedItems.any((item) => item.name == "나무_방패")) {
-        print("나무 방패가 없어 방패 올리기 스킬을 사용할 수 없습니다.");
-        return;
-      }
-      mp_now -= skill.skill_mp_cost;
-      buff_def = skill.skill_damage_calculation.toInt();
-      print("${skill.skill_name} 사용! 방어력이 $total_def로 증가했습니다.");
-    } else if (skill.skill_name == "광분") {
-      mp_now -= skill.skill_mp_cost;
-      buff_atk = skill.skill_damage_calculation.toInt();
-      print("${skill.skill_name} 사용! 공격력이 $total_atk로 증가했습니다.");
-    } else if (skill.is_attack) {
-      mp_now -= skill.skill_mp_cost;
-      int damage = (total_atk * skill.skill_damage_calculation).toInt();
-      print("${skill.skill_name} 사용! 데미지: $damage");
-    } else if (skill.is_heal) {
-      mp_now -= skill.skill_mp_cost;
-      hp_now = (hp_now + skill.skill_damage_calculation).clamp(0, hp_max).toInt();
-      print("${skill.skill_name} 사용! HP가 $hp_now로 회복되었습니다.");
-    }
-  }
-  void useItem(String itemName) {
-    Item? item = inventory.firstWhere(
-          (item) => item.name == itemName && item.isConsumable && item.quantity > 0,
-      orElse: () => Item("", false, 0, false, 0, ""),
-    );
-
-    if (item.name.isEmpty) {
-      print("해당 이름의 소비 가능한 아이템이 없거나 수량이 부족합니다.");
-      return;
-    }
-
-
-    if (item.hp > 0) {
-      hp_now = (hp_now + item.hp).clamp(0, hp_max).toInt();
-      print("${item.name}을 사용했습니다! HP가 $hp_now로 회복되었습니다.");
-    }
-    if (item.mp > 0) {
-      mp_now = (mp_now + item.mp).clamp(0, mp_max).toInt();
-      print("${item.name}을 사용했습니다! MP가 $mp_now로 회복되었습니다.");
-    }
-    if (item.atk > 0 || item.def > 0) {
-      buff_atk += item.atk;
-      buff_def += item.def;
-      print("${item.name}을 사용했습니다! 공격력: $total_atk, 방어력: $total_def");
-    }
-
-    if (item.hp_increase > 0) {
-      print("${item.name}을 사용했습니다! 최대 HP: $hp_max");
-      hp_max += item.hp_increase;
-      print("${item.name}을 사용했습니다! 최대 HP: $hp_max");
-    }
-    if (item.mp_increase > 0) {
-      mp_max += item.mp_increase;
-      print("${item.name}을 사용했습니다! 최대 MP: $mp_max");
-    }
-
-
-    item.quantity -= 1;
-    if (item.quantity == 0 && item.name != "gold") {
-      inventory.remove(item);
-    }
-  }
-
-  void equipItem(String itemName, int equipCount) {
-    Item? item = inventory.firstWhere(
-          (item) => item.name == itemName && item.wearable && item.quantity > 0,
-      orElse: () => Item("", false, 0, false, 0, ""),
-    );
-
-    if (item.name.isEmpty) {
-      print("해당 이름의 장착 가능한 아이템이 없거나 수량이 부족합니다.");
-      return;
-    }
-
-    if (equipCount <= 0 || equipCount > item.quantity) {
-      print("장착할 수 있는 개수가 유효하지 않습니다. (보유: ${item.quantity})");
-      return;
-    }
-
-    Item equipped = Item(item.name, item.isConsumable, item.price, item.wearable, equipCount, item.description,
-        hp: item.hp, mp: item.mp, atk: item.atk, def: item.def);
-    item.quantity -= equipCount;
-
-    Item? existingEquipped = equippedItems.firstWhere(
-          (e) => e.name == itemName,
-      orElse: () => Item("", false, 0, false, 0, ""),
-    );
-    if (existingEquipped.name.isEmpty) {
-      equippedItems.add(equipped);
-    } else {
-      existingEquipped.quantity += equipCount;
-    }
-
-    item_atk += item.atk * equipCount;
-    item_def += item.def * equipCount;
-    print("$itemName $equipCount개를 장착했습니다. 공격력: $total_atk, 방어력: $total_def");
-
-    if (item.quantity == 0 && item.name != "gold") {
-      inventory.remove(item);
-    }
-  }
-
-  void unequipItem(String itemName, int unequipCount) {
-    List<Item> toUnequip = equippedItems.where((item) => item.name == itemName).toList();
-    if (toUnequip.isEmpty) {
-      print("$itemName은 장착 중이 아닙니다.");
-      return;
-    }
-
-    int totalEquippedCount = toUnequip.fold(0, (sum, item) => sum + item.quantity);
-    if (unequipCount <= 0 || unequipCount > totalEquippedCount) {
-      print("해제할 수 있는 개수가 유효하지 않습니다. (장착 중: $totalEquippedCount)");
-      return;
-    }
-
-    int remaining = unequipCount;
-    for (var equipped in toUnequip.toList()) {
-      if (remaining <= 0) break;
-
-      int countToRemove = remaining > equipped.quantity ? equipped.quantity : remaining;
-      equipped.quantity -= countToRemove;
-      remaining -= countToRemove;
-
-      item_atk -= equipped.atk * countToRemove;
-      item_def -= equipped.def * countToRemove;
-
-      Item? existingItem = inventory.firstWhere(
-            (item) => item.name == itemName,
-        orElse: () => Item("", false, 0, false, 0, ""),
-      );
-      if (existingItem.name.isEmpty) {
-        inventory.add(Item(itemName, false, equipped.price, true, countToRemove, equipped.description,
-            atk: equipped.atk, def: equipped.def));
-      } else {
-        existingItem.quantity += countToRemove;
-      }
-
-      if (equipped.quantity == 0) {
-        equippedItems.remove(equipped);
-      }
-    }
-
-    print("$itemName $unequipCount개를 장착 해제했습니다. 공격력: $total_atk, 방어력: $total_def");
-  }
+  RpgGame()
+      : player = Player(
+    inventory: [
+      Item("gold", false, 1, false, 50, "이 작은 콘솔 세상의 기본 거래 단위입니다."),
+      Item("진짜_그냥_나뭇가지", false, 1, true, 1, "이건 왜 들고 계신거죠?", atk: 3),
+      Item("빨간_포션", true, 10, false, 1, hp: 50, "제픔 설명: 타우린, 고농축 카페인, 합성 착향 색소, 아르기닌 500mg 포함"),
+    ],
+    equippedItems: [],
+    skills: [
+      Skill("광분", "일시적으로 공격력을 증가시킵니다.", 10, false, 10, false, true, false),
+      Skill("방패 올리기", "방패를 들어 방어력을 일시적으로 증가시킵니다. (방패가 있어야 사용 가능)", 10, false, 10, false, true, false),
+    ],
+  );
 
   Future<void> dungeon() async {
     print("---------------------");
@@ -206,9 +35,9 @@ class RpgGame {
     int stage = 1;
     const int maxStage = 10;
 
-    while (stage <= maxStage && hp_now > 0) {
-      buff_atk = 0;
-      buff_def = 0;
+    while (stage <= maxStage && player.hpNow > 0) {
+      player.buffAtk = 0;
+      player.buffDef = 0;
 
       List<Monster> availableMonsters = monsterList.where((monster) {
         int stageLevel = stage;
@@ -224,34 +53,36 @@ class RpgGame {
       int monsterMaxHp = currentMonster.hp;
       int monsterAtk = currentMonster.atk;
       int monsterDef = currentMonster.def;
-      print("스테이지 $stage: ${currentMonster.name}이 나타났습니다! 체력: ${getHealthBar(monsterHp, monsterMaxHp)} ($monsterHp/$monsterMaxHp)");
-      print("${currentMonster.description}");
+      print(" ");
+      print(" ");
+
+      print("스테이지 $stage: ${currentMonster.name}이 나타났습니다! 체력: ${player.getHealthBar(monsterHp, monsterMaxHp)} ($monsterHp/$monsterMaxHp)");
+      print("몬스터 설명: ${currentMonster.description}");
       await Future.delayed(Duration(seconds: 1));
 
-      while (hp_now > 0 && monsterHp > 0) {
-        print("당신 HP: $hp_now, 공격력: $total_atk, 방어력: $total_def");
-        print("몬스터 체력: ${getHealthBar(monsterHp, monsterMaxHp)} ($monsterHp/$monsterMaxHp)");
-        print("1. 공격 | 2. ${skills[0].skill_name} | 3. ${skills[1].skill_name} | 4. 도망가기 | 5. 아이템 사용");
+      while (player.hpNow > 0 && monsterHp > 0) {
+        print("당신 HP: ${player.hpNow}, 공격력: ${player.totalAtk}, 방어력: ${player.totalDef}");
+        print("몬스터 체력: ${player.getHealthBar(monsterHp, monsterMaxHp)} ($monsterHp/$monsterMaxHp)");
+        print("1. 공격 | 2. ${player.skills[0].skill_name} | 3. ${player.skills[1].skill_name} | 4. 도망가기 | 5. 아이템 사용");
         int? choice = int.tryParse(stdin.readLineSync() ?? '');
 
         if (choice == 1) {
-          monsterHp -= total_atk;
+          monsterHp -= player.totalAtk;
           monsterHp = monsterHp.clamp(0, monsterMaxHp);
-          print("몬스터에게 $total_atk 데미지를 입혔습니다! (남은 체력: ${getHealthBar(monsterHp, monsterMaxHp)})");
+          print("몬스터에게 ${player.totalAtk} 데미지를 입혔습니다! (남은 체력: ${player.getHealthBar(monsterHp, monsterMaxHp)})");
           await Future.delayed(Duration(seconds: 1));
         } else if (choice == 2) {
-          useSkill(skills[0]); // 광분
+          player.useSkill(player.skills[0]);
           await Future.delayed(Duration(seconds: 1));
         } else if (choice == 3) {
-          useSkill(skills[1]); // 방패 올리기
+          player.useSkill(player.skills[1]);
           await Future.delayed(Duration(seconds: 1));
         } else if (choice == 4) {
           print("도망쳤습니다...");
           await Future.delayed(Duration(seconds: 1));
           return;
         } else if (choice == 5) {
-          // 소비 아이템 목록 표시
-          List<Item> consumables = inventory.where((item) => item.isConsumable && item.quantity > 0).toList();
+          List<Item> consumables = player.inventory.where((item) => item.isConsumable && item.quantity > 0).toList();
           if (consumables.isEmpty) {
             print("소비 가능한 아이템이 없습니다.");
             await Future.delayed(Duration(seconds: 1));
@@ -265,7 +96,7 @@ class RpgGame {
             print("사용할 아이템 이름을 입력하세요 (취소하려면 '취소' 입력):");
             String? itemName = stdin.readLineSync();
             if (itemName != null && itemName.toLowerCase() != "취소") {
-              useItem(itemName);
+              player.useItem(itemName);
             } else {
               print("아이템 사용을 취소했습니다.");
             }
@@ -289,32 +120,29 @@ class RpgGame {
             }
           }
 
-          int damage = (monsterAtk - total_def).clamp(0, monsterAtk);
-          hp_now -= damage;
-          print("몬스터가 공격! $damage 데미지를 입었습니다. (HP: $hp_now)");
+          int damage = (monsterAtk - player.totalDef).clamp(0, monsterAtk);
+          player.hpNow -= damage;
+          print("몬스터가 공격! $damage 데미지를 입었습니다. (HP: ${player.hpNow})");
           await Future.delayed(Duration(seconds: 1));
         } else {
           print("${currentMonster.name}을 처치했습니다! 보상: ${stage * 10}골드");
-
-          // 몬스터 처치 카운트를 업데이트한다.
           if (killedMonsters.containsKey(currentMonster.name)) {
             killedMonsters[currentMonster.name] = killedMonsters[currentMonster.name]! + 1;
           } else {
             killedMonsters[currentMonster.name] = 1;
           }
-
-          inventory[0].quantity += stage * 10; // 각 스테이지를 깼을 때의 기본 보상은 요 정도로 해보자.
-          stage++; // 다음 ㄱㄱ
+          player.inventory[0].quantity += stage * 10;
+          stage++;
           await Future.delayed(Duration(seconds: 1));
           break;
         }
 
-        if (hp_now <= 0) {
+        if (player.hpNow <= 0) {
           print("사망했습니다... 골드가 반으로 줄어듭니다.");
-          inventory[0].quantity ~/= 2; // 사망 시 골드는 반으로 나눴을 때의 정수 부분.
-          hp_now = hp_max; // 죽고 나면 체력은 회복시켜주자.
-          buff_atk = 0;
-          buff_def = 0;
+          player.inventory[0].quantity ~/= 2;
+          player.hpNow = player.hpMax;
+          player.buffAtk = 0;
+          player.buffDef = 0;
           await Future.delayed(Duration(seconds: 2));
           return;
         }
@@ -340,7 +168,7 @@ class RpgGame {
   }
 
   Future<void> fightBoss() async {
-    BossMonster boss = bossList[0]; // 첫 번째 보스는 외신 크툴루임. 두 번째 보스 만들지는 잘 모르겠다.
+    BossMonster boss = bossList[0];
     int bossHp = boss.hp;
     int bossMaxHp = boss.hp;
     Random random = Random();
@@ -349,38 +177,38 @@ class RpgGame {
     await Future.delayed(Duration(seconds: 2));
     print("Y’AI ’NG’NGAH, YOG-SOTHOTH H’EE—L’GEB F’AI THRODOG UAAAH");
     await Future.delayed(Duration(seconds: 2));
+    print("불길한 목소리의 중얼거림이 방 안을 가득 채운다.");
     print("OGTHROD AI’F GEB’L—EE’H YOG-SOTHOTH ‘NGAH’NG AI’Y ZHRO!");
     await Future.delayed(Duration(seconds: 2));
     print("따라할 수 조차 없는 찬양들이 외신을 둘러싸고 시끄럽게 울려퍼진다.");
     await Future.delayed(Duration(seconds: 2));
-    print("${boss.name}가 나타났습니다! 체력: ${getHealthBar(bossHp, bossMaxHp)} ($bossHp/$bossMaxHp)");
+    print("${boss.name}가 나타났습니다! 체력: ${player.getHealthBar(bossHp, bossMaxHp)} ($bossHp/$bossMaxHp)");
     print("${boss.description}");
     await Future.delayed(Duration(seconds: 2));
 
-    while (hp_now > 0 && bossHp > 0) {
-      print("당신 HP: $hp_now, 공격력: $total_atk, 방어력: $total_def");
-      print("보스 체력: ${getHealthBar(bossHp, bossMaxHp)} ($bossHp/$bossMaxHp)");
+    while (player.hpNow > 0 && bossHp > 0) {
+      print("당신 HP: ${player.hpNow}, 공격력: ${player.totalAtk}, 방어력: ${player.totalDef}");
+      print("보스 체력: ${player.getHealthBar(bossHp, bossMaxHp)} ($bossHp/$bossMaxHp)");
       print("1. 공격 | 2. 스킬 사용 (광분) | 3. 스킬 사용 (방패 올리기) | 4. 도망가기 | 5. 아이템 사용");
       int? choice = int.tryParse(stdin.readLineSync() ?? '');
 
       if (choice == 1) {
-        bossHp -= total_atk;
+        bossHp -= player.totalAtk;
         bossHp = bossHp.clamp(0, bossMaxHp);
-        print("보스에게 $total_atk 데미지를 입혔습니다! (남은 체력: ${getHealthBar(bossHp, bossMaxHp)})");
+        print("보스에게 ${player.totalAtk} 데미지를 입혔습니다! (남은 체력: ${player.getHealthBar(bossHp, bossMaxHp)})");
         await Future.delayed(Duration(seconds: 1));
       } else if (choice == 2) {
-        useSkill(skills[0]);
+        player.useSkill(player.skills[0]);
         await Future.delayed(Duration(seconds: 1));
       } else if (choice == 3) {
-        useSkill(skills[1]);
+        player.useSkill(player.skills[1]);
         await Future.delayed(Duration(seconds: 1));
       } else if (choice == 4) {
         print("도망쳤습니다...");
         await Future.delayed(Duration(seconds: 1));
         return;
       } else if (choice == 5) {
-
-        List<Item> consumables = inventory.where((item) => item.isConsumable && item.quantity > 0).toList();
+        List<Item> consumables = player.inventory.where((item) => item.isConsumable && item.quantity > 0).toList();
         if (consumables.isEmpty) {
           print("소비 가능한 아이템이 없습니다.");
           await Future.delayed(Duration(seconds: 1));
@@ -394,7 +222,7 @@ class RpgGame {
           print("사용할 아이템 이름을 입력하세요 (취소하려면 '취소' 입력):");
           String? itemName = stdin.readLineSync();
           if (itemName != null && itemName.toLowerCase() != "취소") {
-            useItem(itemName);
+            player.useItem(itemName);
           } else {
             print("아이템 사용을 취소했습니다.");
           }
@@ -402,25 +230,32 @@ class RpgGame {
         }
       }
 
+      // 보스가 살아있을 때만 스킬 실행
       if (bossHp > 0) {
-
         int skillIndex = random.nextInt(boss.bossSkills.length);
-        boss.bossSkills[skillIndex](this, boss);
-        await Future.delayed(Duration(seconds: 2));
+        var selectedSkill = boss.bossSkills[skillIndex];
+
+        // 비동기 스킬(tentaclePush)일 경우 await로 대기
+        if (selectedSkill == tentaclePush) {
+          await selectedSkill(this, boss);
+        } else {
+          selectedSkill(this, boss);
+          await Future.delayed(Duration(seconds: 2)); // 동기 스킬은 기본 딜레이
+        }
       } else {
         print("${boss.name}를 물리쳤습니다! 보상: 500골드");
-        inventory[0].quantity += 500;
+        player.inventory[0].quantity += 500;
         print("마을로 돌아갑니다.");
         await Future.delayed(Duration(seconds: 2));
         return;
       }
 
-      if (hp_now <= 0) {
+      if (player.hpNow <= 0) {
         print("사망했습니다... 골드가 반으로 줄어듭니다.");
-        inventory[0].quantity ~/= 2;
-        hp_now = hp_max;
-        buff_atk = 0;
-        buff_def = 0;
+        player.inventory[0].quantity ~/= 2;
+        player.hpNow = player.hpMax;
+        player.buffAtk = 0;
+        player.buffDef = 0;
         await Future.delayed(Duration(seconds: 2));
         return;
       }
@@ -429,15 +264,15 @@ class RpgGame {
 
   Future<void> shop() async {
     print("---------------------");
-    if (inventory[0].quantity < 100) {
+    if (player.inventory[0].quantity < 100) {
       print("대장장이: 아이고 손님요 반갑...뭐고 이 100골드도 없는 걸베이 쉐리는? 바쁘니까 말 걸지 마래이");
       await Future.delayed(Duration(seconds: 1));
       print("나레이션: 아무래도 아직 거지와는 상대해주지 않는 듯 하다..");
-    } else if (inventory[0].quantity >= 100 && inventory[0].quantity < 250) {
+    } else if (player.inventory[0].quantity >= 100 && player.inventory[0].quantity < 250) {
       print("대장장이: 어 그래 왔나. 여 새로 갈아놓은 칼 있으니까 함 보고.");
       await Future.delayed(Duration(seconds: 1));
       print("나레이션: 이제 손님 취급은 해 주는 듯 하다.");
-    } else if (inventory[0].quantity >= 200) {
+    } else if (player.inventory[0].quantity >= 200) {
       print("대장장이: 아이고 어서 오세요 손님~ 커피라도 한잔 타다 드릴까요?");
       await Future.delayed(Duration(seconds: 1));
       print("나레이션: 수상하게 친절해졌다.");
@@ -450,9 +285,9 @@ class RpgGame {
     bool inShop = true;
     while (inShop) {
       print("---------------------");
-      print("현재 소지 골드: ${inventory[0].quantity}");
-      for (int i = 0; i < merchants_item.length; i++) {
-        print("${i}. ${merchants_item[i].name} | ${merchants_item[i].price}골드 | ${merchants_item[i].description}");
+      print("현재 소지 골드: ${player.inventory[0].quantity}");
+      for (int i = 0; i < merchantsItem.length; i++) {
+        print("${i}. ${merchantsItem[i].name} | ${merchantsItem[i].price}골드 | ${merchantsItem[i].description}");
       }
       print("---------------------");
 
@@ -465,18 +300,18 @@ class RpgGame {
         inShop = false;
       } else if (choice == 9) {
         inShop = false;
-      } else if (choice >= 0 && choice < merchants_item.length) {
-        if (inventory[0].quantity >= merchants_item[choice].price) {
-          inventory[0].quantity -= merchants_item[choice].price;
-          Item purchased = merchants_item[choice];
-          Item? existingItem = inventory.firstWhere(
+      } else if (choice >= 0 && choice < merchantsItem.length) {
+        if (player.inventory[0].quantity >= merchantsItem[choice].price) {
+          player.inventory[0].quantity -= merchantsItem[choice].price;
+          Item purchased = merchantsItem[choice];
+          Item? existingItem = player.inventory.firstWhere(
                 (item) => item.name == purchased.name,
             orElse: () => Item("", false, 0, false, 0, ""),
           );
           if (existingItem.name.isEmpty) {
-            inventory.add(Item(purchased.name, purchased.isConsumable, purchased.price, purchased.wearable, 1,
+            player.inventory.add(Item(purchased.name, purchased.isConsumable, purchased.price, purchased.wearable, 1,
                 purchased.description, hp: purchased.hp, mp: purchased.mp, atk: purchased.atk,
-              def: purchased.def, hp_increase: purchased.hp_increase, mp_increase: purchased.mp_increase));
+                def: purchased.def, hp_increase: purchased.hp_increase, mp_increase: purchased.mp_increase));
           } else {
             existingItem.quantity += 1;
           }
@@ -487,7 +322,7 @@ class RpgGame {
           await Future.delayed(Duration(seconds: 1));
         }
       }
-      inventory.removeWhere((item) => item.quantity == 0 && item.name != "gold");
+      player.inventory.removeWhere((item) => item.quantity == 0 && item.name != "gold");
     }
   }
 
@@ -497,7 +332,6 @@ class RpgGame {
       print("---------------------");
       print("마을 사람들의 이야기 (퀘스트 목록):");
 
-      // 완료되지 않은 퀘스트만 표시
       List<Quest> availableQuests = questList.where((q) => !q.is_completed).toList();
       if (availableQuests.isEmpty) {
         print("현재 수락할 수 있는 퀘스트가 없습니다.");
@@ -527,9 +361,10 @@ class RpgGame {
             int currentKills = killedMonsters[selectedQuest.monster_name] ?? 0;
             if (currentKills >= selectedQuest.monster_kill_count) {
               selectedQuest.is_completed = true;
-              selectedQuest.is_accepted = false; // 완료 시 수주 상태 해제
-              inventory[0].quantity += selectedQuest.reward_gold;
+              selectedQuest.is_accepted = false;
+              player.inventory[0].quantity += selectedQuest.reward_gold;
               print("${selectedQuest.quest_name} 퀘스트 완료! 보상 ${selectedQuest.reward_gold}골드를 받았습니다.");
+
             } else {
               print("아직 ${selectedQuest.monster_name}을 ${selectedQuest.monster_kill_count}마리 처치하지 못했습니다. (현재: $currentKills)");
             }
@@ -547,7 +382,6 @@ class RpgGame {
             print("${selectedQuest.quest_name}은 이미 수주 중입니다!");
           } else {
             selectedQuest.is_accepted = true;
-            selectedQuest.is_accepted = false; // 완료 시 수주 상태를 해제하여 다음 인덱스에 다른 퀘스트가 왔을 때 자동 수주 방지.
             print("${selectedQuest.quest_name} 퀘스트를 수락했습니다. ${selectedQuest.monster_name}을 ${selectedQuest.monster_kill_count}마리 처치하세요!");
           }
         } else {
@@ -558,32 +392,32 @@ class RpgGame {
     }
   }
 
-  void status_on() {
+  void statusOn() {
     bool inStatus = true;
     while (inStatus) {
       print("---------------------");
-      print("현재 hp ($hp_now / $hp_max)");
-      print("현재 mp ($mp_now / $mp_max)");
-      print("공격력: $total_atk | 방어력: $total_def");
+      print("현재 hp (${player.hpNow} / ${player.hpMax})");
+      print("현재 mp (${player.mpNow} / ${player.mpMax})");
+      print("공격력: ${player.totalAtk} | 방어력: ${player.totalDef}");
       print("--------------------------");
       print("보유 아이템");
-      for (Item item in inventory) {
+      for (Item item in player.inventory) {
         String wearableText = item.wearable ? " | 장착 가능" : "";
         String consumableText = item.isConsumable ? " | 소비 가능" : "";
         print("${item.name} | ${item.quantity}개 | ${item.description}$wearableText$consumableText");
       }
       print("--------------------------");
       print("장착 중인 아이템");
-      if (equippedItems.isEmpty) {
+      if (player.equippedItems.isEmpty) {
         print("없음");
       } else {
-        for (Item item in equippedItems) {
+        for (Item item in player.equippedItems) {
           print("${item.name} | ${item.quantity}개 | ${item.description}");
         }
       }
       print("--------------------------");
       print("보유 스킬");
-      for (Skill skill in skills) {
+      for (Skill skill in player.skills) {
         print("${skill.skill_name} | ${skill.skill_description} | ${skill.skill_mp_cost} mp 사용");
       }
       print("--------------------------");
@@ -599,7 +433,7 @@ class RpgGame {
           String itemName = parts.sublist(1, parts.length - 1).join(" ");
           int? unequipCount = int.tryParse(parts.last);
           if (unequipCount != null) {
-            unequipItem(itemName, unequipCount);
+            player.unequipItem(itemName, unequipCount);
           } else {
             print("개수를 숫자로 입력해주세요.");
           }
@@ -612,7 +446,7 @@ class RpgGame {
           String itemName = parts.sublist(1, parts.length - 1).join(" ");
           int? equipCount = int.tryParse(parts.last);
           if (equipCount != null) {
-            equipItem(itemName, equipCount);
+            player.equipItem(itemName, equipCount);
           } else {
             print("개수를 숫자로 입력해주세요.");
           }
@@ -623,11 +457,52 @@ class RpgGame {
         List<String> parts = input.split(" ");
         if (parts.length >= 2) {
           String itemName = parts.sublist(1).join(" ");
-          useItem(itemName);
+          player.useItem(itemName);
         } else {
           print("형식이 잘못되었습니다. '사용 [아이템 이름]'로 입력해주세요.");
         }
       }
+    }
+  }
+  // 5자리 알파벳 난수 생성
+  String generatePlayerId() {
+    const String letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    Random random = Random();
+    return List.generate(5, (_) => letters[random.nextInt(letters.length)]).join();
+  }
+  Future<void> saveGameRecord() async {
+    final file = File('game_record.csv');
+    bool cthulhuDefeated = killedMonsters.containsKey("외신 크툴루") && killedMonsters["외신 크툴루"]! > 0;
+
+    // monster.dart에서 몬스터 이름 동적으로 가져오기
+    List<String> monsterNames = [
+      ...monsterList.map((m) => m.name),
+      ...bossList.map((b) => b.name),
+    ].toSet().toList(); // 중복 제거
+
+    // CSV 헤더
+    String csvHeader = "PlayerID,HP,MP,MaxHP,MaxMP,Attack,Defense,${monsterNames.join(',')},CthulhuDefeated\n";
+
+    // 플레이어 ID 생성
+    String playerId = generatePlayerId();
+
+    // CSV 데이터
+    String csvData = "플레이어 $playerId,${player.hpNow},${player.mpNow},${player.hpMax},${player.mpMax},${player.totalAtk},${player.totalDef}";
+    for (String monster in monsterNames) {
+      csvData += ",${killedMonsters[monster] ?? 0}";
+    }
+    csvData += ",$cthulhuDefeated\n";
+
+    // 파일 처리
+    try {
+      if (!await file.exists()) {
+        await file.writeAsString(csvHeader + csvData);
+      } else {
+        await file.writeAsString(csvData, mode: FileMode.append); // 추가 모드
+      }
+      print("게임 기록이 'game_record.csv' 파일에 저장되었습니다.");
+    } catch (e) {
+      print("기록 저장 중 오류 발생: $e");
     }
   }
 
@@ -661,11 +536,20 @@ class RpgGame {
           await quest();
           break;
         case 4:
-          status_on();
+          statusOn();
           break;
         case 5:
-          running = false;
-          print("게임을 종료합니다.");
+          print("정말 종료하시겠습니까? 당신의 일대기는 영원히 기록될 것입니다.");
+          print("9를 한번 더 누르면 종료됩니다. (그 외는 취소)");
+          int? confirmChoice = int.tryParse(stdin.readLineSync() ?? '');
+          if (confirmChoice == 9) {
+            await saveGameRecord(); // 종료 전 기록 저장
+            running = false;
+            print("게임을 종료합니다.");
+          } else {
+            print("종료가 취소되었습니다.");
+            await Future.delayed(Duration(seconds: 1));
+          }
           break;
       }
     }
