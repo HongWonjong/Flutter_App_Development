@@ -8,6 +8,7 @@ import 'quest.dart';
 import 'player.dart';
 import '../functions/monster_skill.dart';
 import '../data/monster_list.dart';
+import '../functions/monster_health_bar.dart';
 
 class RpgGame {
   Player player; // 플레이어 인스턴스
@@ -18,28 +19,9 @@ class RpgGame {
 
 
   RpgGame()
-      : player = Player( // 시작 시 플레이어의 기본적인 인벤토리와 스킬셋. 체력/마나는 기본값으로 100이다.
-    inventory: [
-      // "gold"는 다른 아이템들과 달리 개수가 0이 되어도 사라지지 않는다. 화폐 거래 시스템은 인벤토리의 0번째 리스트를 기준으로 이루어지기 때문...
-      // 따라서 gold의 인덱스가 바뀌어버리면 거래 시스템이 제대로 작동하지 않는다.
-      Item("gold", false, 1, false, 50, "이 작은 콘솔 세상의 기본 거래 단위입니다."),
-      Item("진짜_그냥_나뭇가지", false, 1, true, 1, "이건 왜 들고 계신거죠?", atk: 3),
-      Item("빨간_포션", true, 10, false, 1, hp: 50, "제픔 설명: 타우린, 고농축 카페인, 합성 착향 색소, 아르기닌 500mg 포함"),
-    ],
-    equippedItems: [], // 현재 장착한 아이템
+  // 시작 시 플레이어의 기본적인 세팅값은 다 입력되므로 입력은 불필요하다.
+  : player = Player();
 
-    skills: [
-      Skill("광분", "일시적으로 공격력을 증가시킵니다.", 10, false, 10, false, true, false), // 최종보스의 디버프도 없애줌.
-      Skill("방패 올리기", "방패를 들어 방어력을 일시적으로 증가시킵니다. (방패가 있어야 사용 가능)", 10, false, 10, false, true, false),
-    ],
-  );
-  String getHealthBar(int currentHp, int maxHp) { // 몬스터 체력 표시용
-    const int barLength = 10;
-    int filledBlocks = ((currentHp / maxHp) * barLength).round();
-    filledBlocks = filledBlocks.clamp(0, barLength);
-    String bar = "█" * filledBlocks + "□" * (barLength - filledBlocks);
-    return bar;
-  }
 
   Future<void> dungeon() async { // 보스 파이트를 제외한 10스테이지는 이 곳에서 진행된다.
     print("---------------------");
@@ -124,7 +106,7 @@ class RpgGame {
 
         if (monsterHp > 0) {
           if (currentMonster.skill != null) {
-            // 패시브 스킬 (continue 없이 공격 진행)
+            // 패시브 스킬 (continue를 사용하지 않으므로 패시브 스킬 사용 후 일반 공격이 진행)
             if (currentMonster.name == "트롤") {
               currentMonster.skill!(this, currentMonster);
               monsterHp = (monsterHp + 15).clamp(0, monsterMaxHp);
@@ -142,7 +124,7 @@ class RpgGame {
               monsterDef += 10;
             }
             // 액티브 스킬 (공격 대신 발동, continue로 다음 턴 이동)
-            else if (currentMonster.name == "웨어울프" && random.nextDouble() < 0.5) {
+            else if (currentMonster.name == "웨어울프" && random.nextDouble() < 0.5) { //스킬 발동 확률은 50%
               currentMonster.skill!(this, currentMonster);
               await Future.delayed(Duration(seconds: 1));
               continue;

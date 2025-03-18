@@ -17,9 +17,9 @@ void hardenedClaws(RpgGame game, Monster monster) {
   game.player.hpNow -= totalDamage;
 }
 
-// 트롤은 매 턴 시작 시 HP를 15 회복한다.
+// 트롤은 매 턴 시작 시 HP를 20 회복한다.
 void regenerate(RpgGame game, Monster monster) {
-  int healAmount = 15;
+  int healAmount = 20;
   print("${monster.name}의 상처가 빠르게 재생됩니다! HP가 $healAmount 회복되었습니다.");
   // HP 회복은 dungeon 메서드에서 직접 처리해야 함 (monster.hp는 final이므로)
 }

@@ -1,33 +1,25 @@
 import 'item.dart';
 import 'skill.dart';
+import '../data/player_stats.dart';
+import '../data/player_initial_data.dart';
 
 class Player {
-  int hpNow;
-  int hpMax;
-  int mpNow;
-  int mpMax;
-  int baseAtk;
-  int baseDef;
+  int hpNow = defaultPlayerStats['hpNow']!;
+  int hpMax = defaultPlayerStats['hpMax']!;
+  int mpNow = defaultPlayerStats['mpNow']!;
+  int mpMax = defaultPlayerStats['mpMax']!;
+  int baseAtk = defaultPlayerStats['baseAtk']!;
+  int baseDef = defaultPlayerStats['baseDef']!;
   int buffAtk = 0;
   int buffDef = 0;
   int itemAtk = 0;
   int itemDef = 0;
 
-  List<Item> inventory;
-  List<Item> equippedItems;
-  List<Skill> skills;
+  List<Item> inventory = initialInventory;
+  List<Item> equippedItems = initialEquippedItems;
+  List<Skill> skills = initialSkills;
 
-  Player({
-    this.hpNow = 100,
-    this.hpMax = 100,
-    this.mpNow = 100,
-    this.mpMax = 100,
-    this.baseAtk = 10,
-    this.baseDef = 10,
-    required this.inventory,
-    required this.equippedItems,
-    required this.skills,
-  });
+  Player();
 
   int get totalAtk => baseAtk + buffAtk + itemAtk;
   int get totalDef => baseDef + buffDef + itemDef;
