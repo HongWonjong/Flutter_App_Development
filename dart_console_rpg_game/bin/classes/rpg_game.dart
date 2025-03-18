@@ -5,7 +5,9 @@ import 'merchant.dart';
 import 'skill.dart';
 import 'monster.dart';
 import 'quest.dart';
-import 'player.dart'; // 새로 추가
+import 'player.dart';
+import '../functions/monster_skill.dart';
+import '../data/monster_list.dart';
 
 class RpgGame {
   Player player; // 플레이어 인스턴스
