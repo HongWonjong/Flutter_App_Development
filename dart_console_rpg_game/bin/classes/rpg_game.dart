@@ -10,16 +10,22 @@ import 'player.dart'; // 새로 추가
 class RpgGame {
   Player player; // 플레이어 인스턴스
   List<Item> merchantsItem = Merchants().merchants_item;
+
+  // 그 동안 죽인 몬스터들은 이름-토벌 횟수의 키-값으로 저장된다. 퀘스트 수주나 종료 시 기록을 남길 때 사용한다.
   Map<String, int> killedMonsters = {};
+
 
   RpgGame()
       : player = Player( // 시작 시 플레이어의 기본적인 인벤토리와 스킬셋. 체력/마나는 기본값으로 100이다.
     inventory: [
+      // "gold"는 다른 아이템들과 달리 개수가 0이 되어도 사라지지 않는다. 화폐 거래 시스템은 인벤토리의 0번째 리스트를 기준으로 이루어지기 때문...
+      // 따라서 gold의 인덱스가 바뀌어버리면 거래 시스템이 제대로 작동하지 않는다.
       Item("gold", false, 1, false, 50, "이 작은 콘솔 세상의 기본 거래 단위입니다."),
       Item("진짜_그냥_나뭇가지", false, 1, true, 1, "이건 왜 들고 계신거죠?", atk: 3),
       Item("빨간_포션", true, 10, false, 1, hp: 50, "제픔 설명: 타우린, 고농축 카페인, 합성 착향 색소, 아르기닌 500mg 포함"),
     ],
-    equippedItems: [],
+    equippedItems: [], // 현재 장착한 아이템
+
     skills: [
       Skill("광분", "일시적으로 공격력을 증가시킵니다.", 10, false, 10, false, true, false), // 최종보스의 디버프도 없애줌.
       Skill("방패 올리기", "방패를 들어 방어력을 일시적으로 증가시킵니다. (방패가 있어야 사용 가능)", 10, false, 10, false, true, false),
@@ -52,7 +58,7 @@ class RpgGame {
       }).toList();
 
       if (availableMonsters.isEmpty) {
-        availableMonsters = [monsterList[0]]; // 해당 스테이지 레벨 구간에 해당하는 몬스터가 없다면 대신 커여운 슬라임을 보내주도록 하자.
+        availableMonsters = [monsterList[0]]; // 해당 스테이지 레벨 구간에 해당하는 몬스터가 없다면 오류 처리용으로 커여운 슬라임을 보내주도록 하자.
       }
 
       // 해당 레벨 구간에 출현 가능한 몬스터들 중 하나를 랜덤으로 소환한다.
