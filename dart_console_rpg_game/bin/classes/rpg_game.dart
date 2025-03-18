@@ -13,7 +13,7 @@ class RpgGame {
   Map<String, int> killedMonsters = {};
 
   RpgGame()
-      : player = Player(
+      : player = Player( // 시작 시 플레이어의 기본적인 인벤토리와 스킬셋. 체력/마나는 기본값으로 100이다.
     inventory: [
       Item("gold", false, 1, false, 50, "이 작은 콘솔 세상의 기본 거래 단위입니다."),
       Item("진짜_그냥_나뭇가지", false, 1, true, 1, "이건 왜 들고 계신거죠?", atk: 3),
@@ -21,12 +21,19 @@ class RpgGame {
     ],
     equippedItems: [],
     skills: [
-      Skill("광분", "일시적으로 공격력을 증가시킵니다.", 10, false, 10, false, true, false),
+      Skill("광분", "일시적으로 공격력을 증가시킵니다.", 10, false, 10, false, true, false), // 최종보스의 디버프도 없애줌.
       Skill("방패 올리기", "방패를 들어 방어력을 일시적으로 증가시킵니다. (방패가 있어야 사용 가능)", 10, false, 10, false, true, false),
     ],
   );
+  String getHealthBar(int currentHp, int maxHp) { // 몬스터 체력 표시용
+    const int barLength = 10;
+    int filledBlocks = ((currentHp / maxHp) * barLength).round();
+    filledBlocks = filledBlocks.clamp(0, barLength);
+    String bar = "█" * filledBlocks + "□" * (barLength - filledBlocks);
+    return bar;
+  }
 
-  Future<void> dungeon() async {
+  Future<void> dungeon() async { // 보스 파이트를 제외한 10스테이지는 이 곳에서 진행된다.
     print("---------------------");
     print("던전에 입장했습니다!");
     await Future.delayed(Duration(seconds: 1));
@@ -45,31 +52,32 @@ class RpgGame {
       }).toList();
 
       if (availableMonsters.isEmpty) {
-        availableMonsters = [monsterList[0]];
+        availableMonsters = [monsterList[0]]; // 해당 스테이지 레벨 구간에 해당하는 몬스터가 없다면 대신 커여운 슬라임을 보내주도록 하자.
       }
 
+      // 해당 레벨 구간에 출현 가능한 몬스터들 중 하나를 랜덤으로 소환한다.
       Monster currentMonster = availableMonsters[random.nextInt(availableMonsters.length)];
       int monsterHp = currentMonster.hp;
       int monsterMaxHp = currentMonster.hp;
       int monsterAtk = currentMonster.atk;
       int monsterDef = currentMonster.def;
-      print(" ");
+      print(" "); // 각 스테이지를 구별하기 위한 두 줄 띄어놓기.
       print(" ");
 
-      print("스테이지 $stage: ${currentMonster.name}이 나타났습니다! 체력: ${player.getHealthBar(monsterHp, monsterMaxHp)} ($monsterHp/$monsterMaxHp)");
+      print("스테이지 $stage: ${currentMonster.name}이 나타났습니다! 체력: ${getHealthBar(monsterHp, monsterMaxHp)} ($monsterHp/$monsterMaxHp)");
       print("몬스터 설명: ${currentMonster.description}");
       await Future.delayed(Duration(seconds: 1));
 
       while (player.hpNow > 0 && monsterHp > 0) {
-        print("당신 HP: ${player.hpNow}, 공격력: ${player.totalAtk}, 방어력: ${player.totalDef}");
-        print("몬스터 체력: ${player.getHealthBar(monsterHp, monsterMaxHp)} ($monsterHp/$monsterMaxHp)");
+        print("당신의 HP/MP: ${player.hpNow}/${player.mpNow}, 공격력: ${player.totalAtk}, 방어력: ${player.totalDef}");
+        print("몬스터 체력: ${getHealthBar(monsterHp, monsterMaxHp)} ($monsterHp/$monsterMaxHp)");
         print("1. 공격 | 2. ${player.skills[0].skill_name} | 3. ${player.skills[1].skill_name} | 4. 도망가기 | 5. 아이템 사용");
         int? choice = int.tryParse(stdin.readLineSync() ?? '');
 
         if (choice == 1) {
           monsterHp -= player.totalAtk;
           monsterHp = monsterHp.clamp(0, monsterMaxHp);
-          print("몬스터에게 ${player.totalAtk} 데미지를 입혔습니다! (남은 체력: ${player.getHealthBar(monsterHp, monsterMaxHp)})");
+          print("몬스터에게 ${player.totalAtk} 데미지를 입혔습니다! (남은 체력: ${getHealthBar(monsterHp, monsterMaxHp)})");
           await Future.delayed(Duration(seconds: 1));
         } else if (choice == 2) {
           player.useSkill(player.skills[0]);
@@ -105,13 +113,14 @@ class RpgGame {
         }
 
         if (monsterHp > 0) {
-          if (currentMonster.skill != null) {
+          if (currentMonster.skill != null) { // 미노타우르스의 경우 continue를 사용하지 않으므로 광폭화 패턴 후 바로 공격한다.
             if (currentMonster.name == "미노타우르스" &&
                 monsterHp < monsterMaxHp * 0.5 &&
                 !currentMonster.skill_used) {
               currentMonster.skill!(this, currentMonster);
               monsterAtk += 20;
               monsterDef += 10;
+              // 웨어울프는 30% 확률로 플레이어 방어력의 절반만큼 추가 피해를 주는 스킬을 사용한 후, 일반 공격을 스킵한다.
             } else if (currentMonster.name == "웨어울프" &&
                 random.nextDouble() < 0.3) {
               currentMonster.skill!(this, currentMonster);
@@ -120,9 +129,9 @@ class RpgGame {
             }
           }
 
-          int damage = (monsterAtk - player.totalDef).clamp(0, monsterAtk);
+          int damage = (monsterAtk - player.totalDef).clamp(0, monsterAtk); // 몬스터가 스킬을 안 쓸 경우의 기본 데미지 계산
           player.hpNow -= damage;
-          print("몬스터가 공격! $damage 데미지를 입었습니다. (HP: ${player.hpNow})");
+          print("${currentMonster.name}가 공격! $damage 데미지를 입었습니다. (HP: ${player.hpNow})");
           await Future.delayed(Duration(seconds: 1));
         } else {
           print("${currentMonster.name}을 처치했습니다! 보상: ${stage * 10}골드");
@@ -138,7 +147,7 @@ class RpgGame {
         }
 
         if (player.hpNow <= 0) {
-          print("사망했습니다... 골드가 반으로 줄어듭니다.");
+          print("사망했습니다... 골드가 반으로 줄어듭니다."); // 사망하면 마을로 골드 절반을 잃고 돌아간다.
           player.inventory[0].quantity ~/= 2;
           player.hpNow = player.hpMax;
           player.buffAtk = 0;
@@ -150,12 +159,12 @@ class RpgGame {
     }
 
     if (stage > maxStage) {
-      print("던전 10 스테이지를 모두 클리어하자, 눈 앞에 커다란 문이 나타납니다.");
+      print("던전 10 스테이지를 모두 클리어하자, 눈 앞에 커다란 문이 나타납니다."); //  보스 스테이지 앞에 왔을 경우
       await Future.delayed(Duration(seconds: 2));
       print("커다란 문 뒤에서 형언할 수 없는 무언가의 존재감이 느껴진다..");
       await Future.delayed(Duration(seconds: 2));
       print("입장하시겠습니까?");
-      print("1: 들어간다. | 2: 돌아간다. (그 외는 자동으로 돌아감)");
+      print("1: 들어간다. | 2: 돌아간다. (그 외를 누르면 마을로 돌아갑니다.)");
       int? choice = int.tryParse(stdin.readLineSync() ?? '');
 
       if (choice == 1) {
@@ -175,27 +184,29 @@ class RpgGame {
     print("---------------------");
     print("어두운 방 한 가운데에 무언가 거대한 것의 실루엣이 꿈틀거린다."); // 보스 소개 문구
     await Future.delayed(Duration(seconds: 2));
-    print("Y’AI ’NG’NGAH, YOG-SOTHOTH H’EE—L’GEB F’AI THRODOG UAAAH");
+    print("Y’AI ’NG’NGAH, YOG-SOTHOTH H’EE—L’GEB F’AI THRODOG UAAAH"); // 크툴루 나무위키에서 긁어 옴.
     await Future.delayed(Duration(seconds: 2));
     print("불길한 목소리의 중얼거림이 방 안을 가득 채운다.");
+    await Future.delayed(Duration(seconds: 2));
     print("OGTHROD AI’F GEB’L—EE’H YOG-SOTHOTH ‘NGAH’NG AI’Y ZHRO!");
     await Future.delayed(Duration(seconds: 2));
     print("따라할 수 조차 없는 찬양들이 외신을 둘러싸고 시끄럽게 울려퍼진다.");
+    await Future.delayed(Duration(seconds: 1));
+    print("${boss.name}가 나타났습니다! 체력: ${getHealthBar(bossHp, bossMaxHp)} ($bossHp/$bossMaxHp)");
     await Future.delayed(Duration(seconds: 2));
-    print("${boss.name}가 나타났습니다! 체력: ${player.getHealthBar(bossHp, bossMaxHp)} ($bossHp/$bossMaxHp)");
     print("${boss.description}");
     await Future.delayed(Duration(seconds: 2));
 
     while (player.hpNow > 0 && bossHp > 0) {
       print("당신 HP: ${player.hpNow}, 공격력: ${player.totalAtk}, 방어력: ${player.totalDef}");
-      print("보스 체력: ${player.getHealthBar(bossHp, bossMaxHp)} ($bossHp/$bossMaxHp)");
+      print("보스 체력: ${getHealthBar(bossHp, bossMaxHp)} ($bossHp/$bossMaxHp)"); //
       print("1. 공격 | 2. 스킬 사용 (광분) | 3. 스킬 사용 (방패 올리기) | 4. 도망가기 | 5. 아이템 사용");
       int? choice = int.tryParse(stdin.readLineSync() ?? '');
 
       if (choice == 1) {
         bossHp -= player.totalAtk;
         bossHp = bossHp.clamp(0, bossMaxHp);
-        print("보스에게 ${player.totalAtk} 데미지를 입혔습니다! (남은 체력: ${player.getHealthBar(bossHp, bossMaxHp)})");
+        print("보스에게 ${player.totalAtk} 데미지를 입혔습니다! (남은 체력: ${getHealthBar(bossHp, bossMaxHp)})");
         await Future.delayed(Duration(seconds: 1));
       } else if (choice == 2) {
         player.useSkill(player.skills[0]);
