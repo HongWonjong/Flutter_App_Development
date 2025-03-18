@@ -69,8 +69,8 @@ void tentaclePush(RpgGame game, BossMonster boss) async {
 
 final List<Monster> monsterList = [
   Monster("슬라임", 20, 11, 2, "끈적끈적하다.", 1),
-  Monster("고블린", 40, 13, 4, "초등학생과 대등하거나 그 이상이다.", 3),
-  Monster("웨어울프", 70, 15, 8, "갑옷을 부숴버리는 날카로운 발톱 공격을 하는 괴수다.", 5, skill: hardenedClaws),
+  Monster("고블린", 40, 13, 4, "약하다.", 3),
+  Monster("웨어울프", 70, 15, 8, "갑옷을 부수는 경화된 발톱으로 공격을 하는 괴수다.", 5, skill: hardenedClaws),
   Monster("미노타우르스", 100, 20, 12, "분노 할수록 강해지는 괴물이다.", 8, skill: berserk),
 ];
 
@@ -81,7 +81,7 @@ final List<BossMonster> bossList = [
     250,
     25,
     15,
-    "형언할 수 없는 존재감이 느껴지는 고대의 신이다. 눈을 마주친 것 만으로도 용기가 녹아내린다.",
+    "형언할 수 없는 존재감이 느껴지는 고대의 신이다. 눈을 마주칠 수 없다.",
     11,
     [indescribableGaze, tentaclePush, justAttack],
   ),

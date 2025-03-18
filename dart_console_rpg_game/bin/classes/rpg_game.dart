@@ -66,6 +66,38 @@ class RpgGame {
       print("${skill.skill_name} 사용! HP가 $hp_now로 회복되었습니다.");
     }
   }
+  void useItem(String itemName) {
+    Item? item = inventory.firstWhere(
+          (item) => item.name == itemName && item.isConsumable && item.quantity > 0,
+      orElse: () => Item("", false, 0, false, 0, ""),
+    );
+
+    if (item.name.isEmpty) {
+      print("해당 이름의 소비 가능한 아이템이 없거나 수량이 부족합니다.");
+      return;
+    }
+
+
+    if (item.hp > 0) {
+      hp_now = (hp_now + item.hp).clamp(0, hp_max).toInt();
+      print("${item.name}을 사용했습니다! HP가 $hp_now로 회복되었습니다.");
+    }
+    if (item.mp > 0) {
+      mp_now = (mp_now + item.mp).clamp(0, mp_max).toInt();
+      print("${item.name}을 사용했습니다! MP가 $mp_now로 회복되었습니다.");
+    }
+    if (item.atk > 0 || item.def > 0) {
+      buff_atk += item.atk;
+      buff_def += item.def;
+      print("${item.name}을 사용했습니다! 공격력: $total_atk, 방어력: $total_def");
+    }
+
+
+    item.quantity -= 1;
+    if (item.quantity == 0 && item.name != "gold") {
+      inventory.remove(item);
+    }
+  }
 
   void equipItem(String itemName, int equipCount) {
     Item? item = inventory.firstWhere(
@@ -183,7 +215,7 @@ class RpgGame {
       while (hp_now > 0 && monsterHp > 0) {
         print("당신 HP: $hp_now, 공격력: $total_atk, 방어력: $total_def");
         print("몬스터 체력: ${getHealthBar(monsterHp, monsterMaxHp)} ($monsterHp/$monsterMaxHp)");
-        print("1. 공격 | 2. ${skills[0]} | 3. ${skills[1]} | 4. 도망가기");
+        print("1. 공격 | 2. ${skills[0].skill_name} | 3. ${skills[1].skill_name} | 4. 도망가기 | 5. 아이템 사용");
         int? choice = int.tryParse(stdin.readLineSync() ?? '');
 
         if (choice == 1) {
@@ -192,34 +224,54 @@ class RpgGame {
           print("몬스터에게 $total_atk 데미지를 입혔습니다! (남은 체력: ${getHealthBar(monsterHp, monsterMaxHp)})");
           await Future.delayed(Duration(seconds: 1));
         } else if (choice == 2) {
-          useSkill(skills[2]);
+          useSkill(skills[0]); // 광분
           await Future.delayed(Duration(seconds: 1));
         } else if (choice == 3) {
-          useSkill(skills[1]);
+          useSkill(skills[1]); // 방패 올리기
           await Future.delayed(Duration(seconds: 1));
         } else if (choice == 4) {
           print("도망쳤습니다...");
           await Future.delayed(Duration(seconds: 1));
           return;
+        } else if (choice == 5) {
+          // 소비 아이템 목록 표시
+          List<Item> consumables = inventory.where((item) => item.isConsumable && item.quantity > 0).toList();
+          if (consumables.isEmpty) {
+            print("소비 가능한 아이템이 없습니다.");
+            await Future.delayed(Duration(seconds: 1));
+          } else {
+            print("---------------------");
+            print("소비 가능 아이템:");
+            for (Item item in consumables) {
+              print("${item.name} | ${item.quantity}개");
+            }
+            print("---------------------");
+            print("사용할 아이템 이름을 입력하세요 (취소하려면 '취소' 입력):");
+            String? itemName = stdin.readLineSync();
+            if (itemName != null && itemName.toLowerCase() != "취소") {
+              useItem(itemName);
+            } else {
+              print("아이템 사용을 취소했습니다.");
+            }
+            await Future.delayed(Duration(seconds: 1));
+          }
         }
 
         if (monsterHp > 0) {
-
           if (currentMonster.skill != null) {
             if (currentMonster.name == "미노타우르스" &&
-                monsterHp < monsterMaxHp * 0.5 && // 미노타우스르의 체력이 절반 미만으로 깎이면 광폭화 패턴
+                monsterHp < monsterMaxHp * 0.5 &&
                 !currentMonster.skill_used) {
               currentMonster.skill!(this, currentMonster);
               monsterAtk += 20;
               monsterDef += 10;
             } else if (currentMonster.name == "웨어울프" &&
-                random.nextDouble() < 0.3) { // 강화 공격은 30% 확률로 발동됨.
+                random.nextDouble() < 0.3) {
               currentMonster.skill!(this, currentMonster);
               await Future.delayed(Duration(seconds: 1));
               continue;
             }
           }
-
 
           int damage = (monsterAtk - total_def).clamp(0, monsterAtk);
           hp_now -= damage;
@@ -284,7 +336,7 @@ class RpgGame {
     while (hp_now > 0 && bossHp > 0) {
       print("당신 HP: $hp_now, 공격력: $total_atk, 방어력: $total_def");
       print("보스 체력: ${getHealthBar(bossHp, bossMaxHp)} ($bossHp/$bossMaxHp)");
-      print("1. 공격 | 2. 스킬 사용 (광분) | 3. 스킬 사용 (방패 올리기) | 4. 도망가기");
+      print("1. 공격 | 2. 스킬 사용 (광분) | 3. 스킬 사용 (방패 올리기) | 4. 도망가기 | 5. 아이템 사용");
       int? choice = int.tryParse(stdin.readLineSync() ?? '');
 
       if (choice == 1) {
@@ -302,10 +354,32 @@ class RpgGame {
         print("도망쳤습니다...");
         await Future.delayed(Duration(seconds: 1));
         return;
+      } else if (choice == 5) {
+
+        List<Item> consumables = inventory.where((item) => item.isConsumable && item.quantity > 0).toList();
+        if (consumables.isEmpty) {
+          print("소비 가능한 아이템이 없습니다.");
+          await Future.delayed(Duration(seconds: 1));
+        } else {
+          print("---------------------");
+          print("소비 가능 아이템:");
+          for (Item item in consumables) {
+            print("${item.name} | ${item.quantity}개");
+          }
+          print("---------------------");
+          print("사용할 아이템 이름을 입력하세요 (취소하려면 '취소' 입력):");
+          String? itemName = stdin.readLineSync();
+          if (itemName != null && itemName.toLowerCase() != "취소") {
+            useItem(itemName);
+          } else {
+            print("아이템 사용을 취소했습니다.");
+          }
+          await Future.delayed(Duration(seconds: 1));
+        }
       }
 
       if (bossHp > 0) {
-        // 보스 스킬 랜덤 사용
+
         int skillIndex = random.nextInt(boss.bossSkills.length);
         boss.bossSkills[skillIndex](this, boss);
         await Future.delayed(Duration(seconds: 2));
@@ -406,8 +480,9 @@ class RpgGame {
       print("--------------------------");
       print("보유 아이템");
       for (Item item in inventory) {
-        String wearableText = item.wearable ? " | 장착 가능 |" : "";
-        print("${item.name} | ${item.quantity}개 | ${item.description}$wearableText");
+        String wearableText = item.wearable ? " | 장착 가능" : "";
+        String consumableText = item.isConsumable ? " | 소비 가능" : "";
+        print("${item.name} | ${item.quantity}개 | ${item.description}$wearableText$consumableText");
       }
       print("--------------------------");
       print("장착 중인 아이템");
@@ -425,7 +500,8 @@ class RpgGame {
       }
       print("--------------------------");
 
-      print("나가려면 9를 눌러주세요. (아이템 장착: '장착 [이름] [개수]', 해제: '해제 [이름] [개수]')");
+      print("나가려면 9를 눌러주세요.");
+      print("(아이템 장착: '장착 [이름] [개수]', 해제: '해제 [이름] [개수]', 사용: '사용 [이름]')");
       String? input = stdin.readLineSync();
       if (input == "9") {
         inStatus = false;
@@ -454,6 +530,14 @@ class RpgGame {
           }
         } else {
           print("형식이 잘못되었습니다. '장착 [아이템 이름] [개수]'로 입력해주세요.");
+        }
+      } else if (input != null && input.startsWith("사용 ")) {
+        List<String> parts = input.split(" ");
+        if (parts.length >= 2) {
+          String itemName = parts.sublist(1).join(" ");
+          useItem(itemName);
+        } else {
+          print("형식이 잘못되었습니다. '사용 [아이템 이름]'로 입력해주세요.");
         }
       }
     }
