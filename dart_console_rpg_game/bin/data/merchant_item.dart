@@ -1,6 +1,6 @@
 import '../classes/item.dart';
 
-List<Item> item = [
+List<Item> item = [ // 상인이 팔 아이템 리스트. 어차피 품절 로직은 없으므로 수량은 다 1로 해놓을 것이다.
   Item("카타나", false, 50, true, 1, atk: 10, "3자루를 들어서 해적 사냥꾼이 되어보자."),
   Item("나무_방패", false, 30, true, 1, def: 10, "나무 방패를 쓰면 \\\"방패 들기\\\" 이라는 스킬을 쓸 수 있다."),
   Item("빨간_포션", true, 10, false, 1, hp: 50, "제픔 설명: 타우린, 고농축 카페인, 합성 착향 색소, 아르기닌 500mg 포함"),

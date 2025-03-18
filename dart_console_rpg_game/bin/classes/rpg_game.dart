@@ -353,7 +353,7 @@ class RpgGame {
             orElse: () => Item("", false, 0, false, 0, ""),
           );
           if (existingItem.name.isEmpty) {
-            player.inventory.add(Item(purchased.name, purchased.isConsumable, purchased.price, purchased.wearable, 1,
+            player.inventory.add(Item(purchased.name, purchased.isConsumable, purchased.price, purchased.isWearable, 1,
                 purchased.description, hp: purchased.hp, mp: purchased.mp, atk: purchased.atk,
                 def: purchased.def, hp_increase: purchased.hp_increase, mp_increase: purchased.mp_increase));
           } else {
@@ -446,7 +446,7 @@ class RpgGame {
       print("--------------------------");
       print("보유 아이템");
       for (Item item in player.inventory) {
-        String wearableText = item.wearable ? " | 장착 가능" : "";
+        String wearableText = item.isWearable ? " | 장착 가능" : "";
         String consumableText = item.isConsumable ? " | 소비 가능" : "";
         print("${item.name} | ${item.quantity}개 | ${item.description}$wearableText$consumableText");
       }

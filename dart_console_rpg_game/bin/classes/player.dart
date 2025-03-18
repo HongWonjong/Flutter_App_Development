@@ -102,7 +102,7 @@ class Player {
 
   void equipItem(String itemName, int equipCount) {
     Item? item = inventory.firstWhere(
-          (item) => item.name == itemName && item.wearable && item.quantity > 0,
+          (item) => item.name == itemName && item.isWearable && item.quantity > 0,
       orElse: () => Item("", false, 0, false, 0, ""),
     );
 
@@ -116,7 +116,7 @@ class Player {
       return;
     }
 
-    Item equipped = Item(item.name, item.isConsumable, item.price, item.wearable, equipCount, item.description,
+    Item equipped = Item(item.name, item.isConsumable, item.price, item.isWearable, equipCount, item.description,
         hp: item.hp, mp: item.mp, atk: item.atk, def: item.def);
     item.quantity -= equipCount;
 
