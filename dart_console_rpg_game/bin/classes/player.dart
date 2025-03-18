@@ -38,8 +38,8 @@ class Player {
       print("MP가 부족합니다.");
       return;
     }
-    if (skill.skill_name == "방패 올리기") {
-      if (!inventory.any((item) => item.name == "나무_방패") && !equippedItems.any((item) => item.name == "나무_방패")) {
+    if (skill.skill_name == "방패 올리기") { // 방패를 장착하고 있어야만 사용할 수 있다.
+      if (!equippedItems.any((item) => item.name == "나무_방패")) {
         print("나무 방패가 없어 방패 올리기 스킬을 사용할 수 없습니다.");
         return;
       }
