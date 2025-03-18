@@ -30,12 +30,13 @@ void berserk(RpgGame game, Monster monster) {
 
 // hardenedClaws 는 웨어울프의 특수 전용기로, 플레이어의 방어력의 절반 만큼을 자신의 이번 공격에 합산하여 공격한다. 맞으면 아프다.
 void hardenedClaws(RpgGame game, Monster monster) {
-  int extraDamage = (game.player.totalDef ~/ 2); // Player의 totalDef 사용
-  int totalDamage = monster.atk + extraDamage;
+  int extraDamage = (game.player.totalDef ~/ 2);
+  int baseDamage = monster.atk + extraDamage;
+  int totalDamage = (baseDamage - game.player.totalDef).clamp(0, baseDamage);
   print("${monster.name}가 발톱을 순간적으로 경화해서 방어구를 꿰뚫는 공격을 날립니다, 총 피해: $totalDamage");
-  game.player.hpNow -= totalDamage.clamp(0, totalDamage); // Player의 hpNow 감소
+  game.player.hpNow -= totalDamage;
 }
-// 새로 추가된 스킬들
+
 // 트롤은 매 턴 시작 시 HP를 15 회복한다.
 void regenerate(RpgGame game, Monster monster) {
   int healAmount = 15;
@@ -45,9 +46,10 @@ void regenerate(RpgGame game, Monster monster) {
 
 // 마법사 유령은 공격력의 1.5배 데미지의 파이어볼을 날릴 수 있다.
 void fireball(RpgGame game, Monster monster) {
-  int damage = (monster.atk * 1.5).toInt();
-  print("${monster.name}가 불타는 파이어볼을 날립니다! $damage 데미지!");
-  game.player.hpNow -= damage.clamp(0, damage);
+  int baseDamage = (monster.atk * 1.5).toInt();
+  int totalDamage = (baseDamage - game.player.totalDef).clamp(0, baseDamage);
+  print("${monster.name}가 불타는 파이어볼을 날립니다! $totalDamage 데미지!");
+  game.player.hpNow -= totalDamage;
 }
 
 // 살인거북이는 전투 시작 시 무조건 방어력 15 증가하는 껍질 숨기 기술을 쓰고 시작한다.
@@ -59,9 +61,10 @@ void shellHide(RpgGame game, Monster monster) {
 // 거대 전갈은 스킬 사용 시 플레이어 방어력만큼 데미지 추가
 void tailSting(RpgGame game, Monster monster) {
   int extraDamage = game.player.totalDef;
-  int totalDamage = monster.atk + extraDamage;
+  int baseDamage = monster.atk + extraDamage;
+  int totalDamage = (baseDamage - game.player.totalDef).clamp(0, baseDamage);
   print("${monster.name}가 독침으로 찔렀습니다! 플레이어 방어력을 뚫고 $totalDamage 데미지!");
-  game.player.hpNow -= totalDamage.clamp(0, totalDamage);
+  game.player.hpNow -= totalDamage;
 }
 
 
@@ -77,10 +80,11 @@ void indescribableGaze(RpgGame game, BossMonster boss) {
 // 크툴루는 일반 공격도 그냥 스킬에 넣었다. 그냥 좀 쎄게 팰 뿐..
 void justAttack(RpgGame game, BossMonster boss) {
   Random random = Random();
-  int atkMultiple = random.nextInt(50) + 100; // 1배 ~ 1.5배
-  int damage = boss.atk * atkMultiple ~/ 100;
-  game.player.hpNow -= damage; // Player의 hpNow 감소
-  print("${boss.name}의 일격! $damage 데미지!");
+  int atkMultiple = random.nextInt(50) + 100;
+  int baseDamage = boss.atk * atkMultiple ~/ 100;
+  int totalDamage = (baseDamage - game.player.totalDef).clamp(0, baseDamage);
+  print("${boss.name}의 일격! $totalDamage 데미지!");
+  game.player.hpNow -= totalDamage;
 }
 
 // 크툴루의 다단 히트 공격이다. 3~5번 타격하고, 연타가 이어질수록 아프다.
@@ -115,8 +119,8 @@ final List<BossMonster> bossList = [
   BossMonster(
     "외신 크툴루",
     250,
-    25,
-    15,
+    30,
+    20,
     "형언할 수 없는 존재감이 느껴지는 고대의 신이다. 눈을 마주칠 수 없다.",
     11,
     [indescribableGaze, tentaclePush, justAttack],

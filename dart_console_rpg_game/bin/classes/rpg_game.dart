@@ -71,8 +71,8 @@ class RpgGame {
       while (player.hpNow > 0 && monsterHp > 0) {
         print("당신의 HP/MP: ${player.hpNow}/${player.mpNow}, 공격력: ${player.totalAtk}, 방어력: ${player.totalDef}");
         print("몬스터 체력: ${getHealthBar(monsterHp, monsterMaxHp)} ($monsterHp/$monsterMaxHp)");
-        print("몬스터 공/방: ${monsterAtk}/${monsterDef}");
-        print("몬스터 스킬: ${currentMonster.skill != null ? currentMonster.skill.toString() : '없음'}");
+        print("몬스터 공/방: ATK: ${monsterAtk} / DEF: ${monsterDef}");
+        print("몬스터 스킬: ${currentMonster.skill != null ? "스킬 보유" : '없음'}");
         print("1. 공격 | 2. ${player.skills[0].skill_name} | 3. ${player.skills[1].skill_name} | 4. 도망가기 | 5. 아이템 사용");
         int? choice = int.tryParse(stdin.readLineSync() ?? '');
 
@@ -202,6 +202,9 @@ class RpgGame {
     BossMonster boss = bossList[0];
     int bossHp = boss.hp;
     int bossMaxHp = boss.hp;
+    int bossAtk = boss.atk;
+    int bossDef = boss.def;
+    List<Skill> bossSkills = boss.bossSkills.map((skill) => Skill(skill.toString(), "", 0, false, 0, false, false, false)).toList();
     Random random = Random();
     print("---------------------");
     print("어두운 방 한 가운데에 무언가 거대한 것의 실루엣이 꿈틀거린다."); // 보스 소개 문구
@@ -222,6 +225,7 @@ class RpgGame {
     while (player.hpNow > 0 && bossHp > 0) {
       print("당신 HP: ${player.hpNow}, 공격력: ${player.totalAtk}, 방어력: ${player.totalDef}");
       print("보스 체력: ${getHealthBar(bossHp, bossMaxHp)} ($bossHp/$bossMaxHp)"); //
+      print("몬스터 공/방: ATK: ${bossAtk} / DEF: ${bossDef}");
       print("1. 공격 | 2. 스킬 사용 (광분) | 3. 스킬 사용 (방패 올리기) | 4. 도망가기 | 5. 아이템 사용");
       int? choice = int.tryParse(stdin.readLineSync() ?? '');
 
