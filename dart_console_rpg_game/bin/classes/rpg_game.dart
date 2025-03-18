@@ -4,6 +4,7 @@ import 'item.dart';
 import 'merchant.dart';
 import 'skill.dart';
 import 'monster.dart';
+import 'quest.dart';
 
 class RpgGame {
   int hp_now = 100;
@@ -16,6 +17,7 @@ class RpgGame {
   int buff_def = 0;
   int item_atk = 0;
   int item_def = 0;
+
   List<Item> merchants_item = Merchants().merchants_item;
   List<Item> inventory = [
     Item("gold", false, 1, false, 50, "이 작은 콘솔 세상의 기본 거래 단위입니다."),
@@ -23,6 +25,9 @@ class RpgGame {
     Item("빨간_포션", true, 10, false, 1, hp: 50, "제픔 설명: 타우린, 고농축 카페인, 합성 착향 색소, 아르기닌 500mg 포함"),
   ];
   List<Item> equippedItems = []; // 사용자가 직접 장착할 수 있는 아이템들은 여기에 장착할 수 있다. 칼을 여러개 장착 할 수도 있도록 해둠.
+
+  Map<String, int> killedMonsters = {}; // 몬스터 이름과 처치 횟수를 저장하여 퀘스트, 기록 등에 사용.
+
 
   List<Skill> skills = [
     Skill("광분", "일시적으로 공격력을 증가시킵니다.", 10, false, 10, false, true, false),
@@ -290,16 +295,24 @@ class RpgGame {
           await Future.delayed(Duration(seconds: 1));
         } else {
           print("${currentMonster.name}을 처치했습니다! 보상: ${stage * 10}골드");
-          inventory[0].quantity += stage * 10;
-          stage++;
+
+          // 몬스터 처치 카운트를 업데이트한다.
+          if (killedMonsters.containsKey(currentMonster.name)) {
+            killedMonsters[currentMonster.name] = killedMonsters[currentMonster.name]! + 1;
+          } else {
+            killedMonsters[currentMonster.name] = 1;
+          }
+
+          inventory[0].quantity += stage * 10; // 각 스테이지를 깼을 때의 기본 보상은 요 정도로 해보자.
+          stage++; // 다음 ㄱㄱ
           await Future.delayed(Duration(seconds: 1));
           break;
         }
 
         if (hp_now <= 0) {
           print("사망했습니다... 골드가 반으로 줄어듭니다.");
-          inventory[0].quantity ~/= 2;
-          hp_now = hp_max;
+          inventory[0].quantity ~/= 2; // 사망 시 골드는 반으로 나눴을 때의 정수 부분.
+          hp_now = hp_max; // 죽고 나면 체력은 회복시켜주자.
           buff_atk = 0;
           buff_def = 0;
           await Future.delayed(Duration(seconds: 2));
@@ -478,8 +491,71 @@ class RpgGame {
     }
   }
 
-  void quest() {
-    // 아직 구현 안 함
+  Future<void> quest() async {
+    bool inQuest = true;
+    while (inQuest) {
+      print("---------------------");
+      print("마을 사람들의 이야기 (퀘스트 목록):");
+
+      // 완료되지 않은 퀘스트만 표시
+      List<Quest> availableQuests = questList.where((q) => !q.is_completed).toList();
+      if (availableQuests.isEmpty) {
+        print("현재 수락할 수 있는 퀘스트가 없습니다.");
+      } else {
+        for (int i = 0; i < availableQuests.length; i++) {
+          Quest q = availableQuests[i];
+          int currentKills = killedMonsters[q.monster_name] ?? 0;
+          String status = q.is_accepted ? " [수주 중]" : "";
+          print("$i. ${q.quest_name}$status | ${q.quest_description}");
+          print("   목표: ${q.monster_name} ${q.monster_kill_count}마리 처치 (현재: $currentKills/${q.monster_kill_count})");
+          print("   보상: ${q.reward_gold}골드");
+        }
+      }
+      print("---------------------");
+      print("퀘스트를 선택하세요 (번호 입력) / 보상 받기: '완료 [번호]' / 나가기: 9");
+
+      String? input = stdin.readLineSync();
+      if (input == "9") {
+        inQuest = false;
+        print("마을로 돌아갑니다.");
+      } else if (input != null && input.startsWith("완료 ")) {
+        List<String> parts = input.split(" ");
+        if (parts.length == 2) {
+          int? questIndex = int.tryParse(parts[1]);
+          if (questIndex != null && questIndex >= 0 && questIndex < availableQuests.length) {
+            Quest selectedQuest = availableQuests[questIndex];
+            int currentKills = killedMonsters[selectedQuest.monster_name] ?? 0;
+            if (currentKills >= selectedQuest.monster_kill_count) {
+              selectedQuest.is_completed = true;
+              selectedQuest.is_accepted = false; // 완료 시 수주 상태 해제
+              inventory[0].quantity += selectedQuest.reward_gold;
+              print("${selectedQuest.quest_name} 퀘스트 완료! 보상 ${selectedQuest.reward_gold}골드를 받았습니다.");
+            } else {
+              print("아직 ${selectedQuest.monster_name}을 ${selectedQuest.monster_kill_count}마리 처치하지 못했습니다. (현재: $currentKills)");
+            }
+          } else {
+            print("잘못된 퀘스트 번호입니다.");
+          }
+        } else {
+          print("형식이 잘못되었습니다. '완료 [번호]'로 입력해주세요.");
+        }
+      } else {
+        int? choice = int.tryParse(input ?? '');
+        if (choice != null && choice >= 0 && choice < availableQuests.length) {
+          Quest selectedQuest = availableQuests[choice];
+          if (selectedQuest.is_accepted) {
+            print("${selectedQuest.quest_name}은 이미 수주 중입니다!");
+          } else {
+            selectedQuest.is_accepted = true;
+            selectedQuest.is_accepted = false; // 완료 시 수주 상태를 해제하여 다음 인덱스에 다른 퀘스트가 왔을 때 자동 수주 방지.
+            print("${selectedQuest.quest_name} 퀘스트를 수락했습니다. ${selectedQuest.monster_name}을 ${selectedQuest.monster_kill_count}마리 처치하세요!");
+          }
+        } else {
+          print("잘못된 선택입니다.");
+        }
+      }
+      await Future.delayed(Duration(seconds: 1));
+    }
   }
 
   void status_on() {
@@ -582,7 +658,7 @@ class RpgGame {
           await shop();
           break;
         case 3:
-          quest();
+          await quest();
           break;
         case 4:
           status_on();
