@@ -71,13 +71,15 @@ class RpgGame {
       while (player.hpNow > 0 && monsterHp > 0) {
         print("당신의 HP/MP: ${player.hpNow}/${player.mpNow}, 공격력: ${player.totalAtk}, 방어력: ${player.totalDef}");
         print("몬스터 체력: ${getHealthBar(monsterHp, monsterMaxHp)} ($monsterHp/$monsterMaxHp)");
+        print("몬스터 공/방: ${monsterAtk}/${monsterDef}");
+        print("몬스터 스킬: ${currentMonster.skill != null ? currentMonster.skill.toString() : '없음'}");
         print("1. 공격 | 2. ${player.skills[0].skill_name} | 3. ${player.skills[1].skill_name} | 4. 도망가기 | 5. 아이템 사용");
         int? choice = int.tryParse(stdin.readLineSync() ?? '');
 
         if (choice == 1) {
-          monsterHp -= player.totalAtk;
+          monsterHp -= (player.totalAtk - monsterDef); // 플레이어가 공격하면 몬스터의 방어력만큼 데미지가 감소하겠지.
           monsterHp = monsterHp.clamp(0, monsterMaxHp);
-          print("몬스터에게 ${player.totalAtk} 데미지를 입혔습니다! (남은 체력: ${getHealthBar(monsterHp, monsterMaxHp)})");
+          print("몬스터에게 ${player.totalAtk - monsterDef} 데미지를 입혔습니다! (남은 체력: ${getHealthBar(monsterHp, monsterMaxHp)})");
           await Future.delayed(Duration(seconds: 1));
         } else if (choice == 2) {
           player.useSkill(player.skills[0]);
@@ -113,23 +115,43 @@ class RpgGame {
         }
 
         if (monsterHp > 0) {
-          if (currentMonster.skill != null) { // 미노타우르스의 경우 continue를 사용하지 않으므로 광폭화 패턴 후 바로 공격한다.
-            if (currentMonster.name == "미노타우르스" &&
+          if (currentMonster.skill != null) {
+            // 패시브 스킬 (continue 없이 공격 진행)
+            if (currentMonster.name == "트롤") {
+              currentMonster.skill!(this, currentMonster);
+              monsterHp = (monsterHp + 15).clamp(0, monsterMaxHp);
+              print("현재 몬스터 체력: $monsterHp/$monsterMaxHp");
+            }
+            else if (currentMonster.name == "살인거북이" && !currentMonster.skill_used) {
+              currentMonster.skill!(this, currentMonster);
+              monsterDef += 15;
+            }
+            else if (currentMonster.name == "미노타우르스" &&
                 monsterHp < monsterMaxHp * 0.5 &&
                 !currentMonster.skill_used) {
               currentMonster.skill!(this, currentMonster);
               monsterAtk += 20;
               monsterDef += 10;
-              // 웨어울프는 30% 확률로 플레이어 방어력의 절반만큼 추가 피해를 주는 스킬을 사용한 후, 일반 공격을 스킵한다.
-            } else if (currentMonster.name == "웨어울프" &&
-                random.nextDouble() < 0.3) {
+            }
+            // 액티브 스킬 (공격 대신 발동, continue로 다음 턴 이동)
+            else if (currentMonster.name == "웨어울프" && random.nextDouble() < 0.5) {
+              currentMonster.skill!(this, currentMonster);
+              await Future.delayed(Duration(seconds: 1));
+              continue;
+            }
+            else if (currentMonster.name == "마법사 유령" && random.nextDouble() < 0.5) {
+              currentMonster.skill!(this, currentMonster);
+              await Future.delayed(Duration(seconds: 1));
+              continue;
+            }
+            else if (currentMonster.name == "거대 전갈" && random.nextDouble() < 0.5) {
               currentMonster.skill!(this, currentMonster);
               await Future.delayed(Duration(seconds: 1));
               continue;
             }
           }
 
-          int damage = (monsterAtk - player.totalDef).clamp(0, monsterAtk); // 몬스터가 스킬을 안 쓸 경우의 기본 데미지 계산
+          int damage = (monsterAtk - player.totalDef).clamp(0, monsterAtk);
           player.hpNow -= damage;
           print("${currentMonster.name}가 공격! $damage 데미지를 입었습니다. (HP: ${player.hpNow})");
           await Future.delayed(Duration(seconds: 1));
