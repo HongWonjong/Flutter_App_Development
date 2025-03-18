@@ -13,7 +13,9 @@ class Item{
   final String description; // 설명
 
    Item(this.name, this.isConsumable, this.price, this.isWearable, this.quantity, this.description,{
-  this.hp = 0, // {}로 감싼 부분은 명시적으로 넣지 않아도 자동으로 설정해 둔 기본 값이 들어가는 매개변수들이다.
+     // {}로 감싼 부분은 명시적으로 넣지 않아도 자동으로 설정해 둔 기본 값이 들어간다. 이것을 우리는 명명된 매개변수라고 부르며,
+     // {}는 명명된 매개변수를 정의하는 문법이다.
+  this.hp = 0,
   this.mp = 0,
   this.atk = 0,
   this.def = 0,

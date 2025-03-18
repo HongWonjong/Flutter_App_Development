@@ -261,12 +261,12 @@ class RpgGame {
         int skillIndex = random.nextInt(boss.bossSkills.length);
         var selectedSkill = boss.bossSkills[skillIndex];
 
-        // 비동기 스킬(tentaclePush)일 경우 await로 대기
+        // 비동기 스킬(tentaclePush)일 경우 await로 대기한다. 다단 히트는 매 히트 사이에 딜레이가 있어야 두들겨 맞는 즐거움이 있기 때문.
         if (selectedSkill == tentaclePush) {
           await selectedSkill(this, boss);
         } else {
           selectedSkill(this, boss);
-          await Future.delayed(Duration(seconds: 2)); // 동기 스킬은 기본 딜레이
+          await Future.delayed(Duration(seconds: 2)); // 동기 스킬은 기본 딜레이만 부여
         }
       } else {
         print("${boss.name}를 물리쳤습니다! 보상: 500골드");
@@ -291,17 +291,17 @@ class RpgGame {
   Future<void> shop() async {
     print("---------------------");
     if (player.inventory[0].quantity < 100) {
-      print("대장장이: 아이고 손님요 반갑...뭐고 이 100골드도 없는 걸베이 쉐리는? 바쁘니까 말 걸지 마래이");
+      print("상인: 아이고 손님 반갑...뭐고 이 100골드도 없는 걸베이 쉐리는? 바쁘니까 말 걸지 마래이");
       await Future.delayed(Duration(seconds: 1));
-      print("나레이션: 아무래도 아직 거지와는 상대해주지 않는 듯 하다..");
+      print("나레이션: 아무래도 아직 거지와는 상대해주지 않는 듯 하다..100골드를 모아 와보자.");
     } else if (player.inventory[0].quantity >= 100 && player.inventory[0].quantity < 250) {
       print("대장장이: 어 그래 왔나. 여 새로 갈아놓은 칼 있으니까 함 보고.");
       await Future.delayed(Duration(seconds: 1));
-      print("나레이션: 이제 손님 취급은 해 주는 듯 하다.");
+      print("나레이션: 이제 손님 취급은 해 주는 듯 하다. 200골드를 모아와보자.");
     } else if (player.inventory[0].quantity >= 200) {
       print("대장장이: 아이고 어서 오세요 손님~ 커피라도 한잔 타다 드릴까요?");
       await Future.delayed(Duration(seconds: 1));
-      print("나레이션: 수상하게 친절해졌다.");
+      print("나레이션: 친절해졌다.");
     }
     await Future.delayed(Duration(seconds: 1));
     await shopMenu();
