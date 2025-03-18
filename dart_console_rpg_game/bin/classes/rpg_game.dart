@@ -173,7 +173,7 @@ class RpgGame {
     int bossMaxHp = boss.hp;
     Random random = Random();
     print("---------------------");
-    print("어두운 방 한 가운데에 무언가 거대한 것의 실루엣이 꿈틀거린다.");
+    print("어두운 방 한 가운데에 무언가 거대한 것의 실루엣이 꿈틀거린다."); // 보스 소개 문구
     await Future.delayed(Duration(seconds: 2));
     print("Y’AI ’NG’NGAH, YOG-SOTHOTH H’EE—L’GEB F’AI THRODOG UAAAH");
     await Future.delayed(Duration(seconds: 2));
@@ -464,7 +464,7 @@ class RpgGame {
       }
     }
   }
-  // 5자리 알파벳 난수 생성
+  // 5자리 알파벳 난수로 플레이어의 저장 시 이름을 랜덤 생성함. 오락실처럼
   String generatePlayerId() {
     const String letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     Random random = Random();
@@ -474,31 +474,26 @@ class RpgGame {
     final file = File('game_record.csv');
     bool cthulhuDefeated = killedMonsters.containsKey("외신 크툴루") && killedMonsters["외신 크툴루"]! > 0;
 
-    // monster.dart에서 몬스터 이름 동적으로 가져오기
     List<String> monsterNames = [
       ...monsterList.map((m) => m.name),
       ...bossList.map((b) => b.name),
-    ].toSet().toList(); // 중복 제거
+    ].toSet().toList();
 
-    // CSV 헤더
     String csvHeader = "PlayerID,HP,MP,MaxHP,MaxMP,Attack,Defense,${monsterNames.join(',')},CthulhuDefeated\n";
 
-    // 플레이어 ID 생성
     String playerId = generatePlayerId();
 
-    // CSV 데이터
     String csvData = "플레이어 $playerId,${player.hpNow},${player.mpNow},${player.hpMax},${player.mpMax},${player.totalAtk},${player.totalDef}";
     for (String monster in monsterNames) {
       csvData += ",${killedMonsters[monster] ?? 0}";
     }
     csvData += ",$cthulhuDefeated\n";
 
-    // 파일 처리
     try {
       if (!await file.exists()) {
         await file.writeAsString(csvHeader + csvData);
       } else {
-        await file.writeAsString(csvData, mode: FileMode.append); // 추가 모드
+        await file.writeAsString(csvData, mode: FileMode.append);
       }
       print("게임 기록이 'game_record.csv' 파일에 저장되었습니다.");
     } catch (e) {
@@ -543,7 +538,7 @@ class RpgGame {
           print("9를 한번 더 누르면 종료됩니다. (그 외는 취소)");
           int? confirmChoice = int.tryParse(stdin.readLineSync() ?? '');
           if (confirmChoice == 9) {
-            await saveGameRecord(); // 종료 전 기록 저장
+            await saveGameRecord();
             running = false;
             print("게임을 종료합니다.");
           } else {
