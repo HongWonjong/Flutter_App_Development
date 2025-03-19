@@ -291,15 +291,15 @@ class RpgGame {
   Future<void> shop() async {
     print("---------------------");
     if (player.inventory[0].quantity < 100) {
-      print("상인: 아이고 손님 반갑...뭐고 이 100골드도 없는 걸베이 쉐리는? 바쁘니까 말 걸지 마래이");
+      print("상인: 아이고 손님 반갑...뭐야 거지잖아?");
       await Future.delayed(Duration(seconds: 1));
       print("나레이션: 아무래도 아직 거지와는 상대해주지 않는 듯 하다..100골드를 모아 와보자.");
     } else if (player.inventory[0].quantity >= 100 && player.inventory[0].quantity < 250) {
-      print("대장장이: 어 그래 왔나. 여 새로 갈아놓은 칼 있으니까 함 보고.");
+      print("상인: 어 그래 왔나. 여 새로 갈아놓은 칼 있으니까 함 보고.");
       await Future.delayed(Duration(seconds: 1));
       print("나레이션: 이제 손님 취급은 해 주는 듯 하다. 200골드를 모아와보자.");
     } else if (player.inventory[0].quantity >= 200) {
-      print("대장장이: 아이고 어서 오세요 손님~ 커피라도 한잔 타다 드릴까요?");
+      print("상인: 아이고 어서 오세요 손님~ 커피라도 한잔 타다 드릴까요?");
       await Future.delayed(Duration(seconds: 1));
       print("나레이션: 친절해졌다.");
     }
@@ -418,7 +418,7 @@ class RpgGame {
     }
   }
 
-  void statusOn() {
+  void statusOn() { // 인벤토리, 플레이어 상태, 장비칸을 구분하지 않고 뭉쳐놨다.
     bool inStatus = true;
     while (inStatus) {
       print("---------------------");
@@ -535,8 +535,8 @@ class RpgGame {
       print("1. 던전으로 모험을 떠난다.");
       print("2. 상인에게 아이템을 구매하러 간다.");
       print("3. 사람들의 이야기를 듣는다.(퀘스트)");
-      print("4. 현재 내 상태를 확인한다.");
-      print("5. 게임을 종료한다.");
+      print("4. 내 상태 확인");
+      print("5. 게임 종료");
       print("---------------------");
       int? choice = int.tryParse(stdin.readLineSync() ?? '');
 

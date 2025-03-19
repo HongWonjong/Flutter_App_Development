@@ -10,9 +10,9 @@ class Player {
   int mpMax = defaultPlayerStats['mpMax']!;
   int baseAtk = defaultPlayerStats['baseAtk']!;
   int baseDef = defaultPlayerStats['baseDef']!;
-  int buffAtk = 0;
+  int buffAtk = 0; // 매 스테이지, 스킬 사용으로 인한 증감 수치
   int buffDef = 0;
-  int itemAtk = 0;
+  int itemAtk = 0; // 아이템으로 인한 증가 수치
   int itemDef = 0;
 
   List<Item> inventory = initialInventory;
