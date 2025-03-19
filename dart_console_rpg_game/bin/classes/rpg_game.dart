@@ -46,7 +46,7 @@ class RpgGame {
 
       // 해당 레벨 구간에 출현 가능한 몬스터들 중 하나를 랜덤으로 소환한다.
       Monster currentMonster = availableMonsters[random.nextInt(availableMonsters.length)];
-      int monsterHp = currentMonster.hp;
+      int monsterHp = currentMonster.hp; // 몬스터 인스턴스의 데이터를 직접 건드리지 않도록 변수에 저장하여 사용한다.
       int monsterMaxHp = currentMonster.hp;
       int monsterAtk = currentMonster.atk;
       int monsterDef = currentMonster.def;
@@ -343,7 +343,7 @@ class RpgGame {
           print("나레이션: ${purchased.name}를 구매했습니다.");
           await Future.delayed(Duration(seconds: 1));
         } else {
-          print("나레이션: 돈이 부족합니다.");
+          print("나레이션: $player_name은 돈이 부족합니다.");
           await Future.delayed(Duration(seconds: 1));
         }
       }
@@ -417,9 +417,11 @@ class RpgGame {
     }
   }
 
-  void statusOn() { // 인벤토리, 플레이어 상태, 장비칸을 구분하지 않고 뭉쳐놨다.
+  Future<void> statusOn() async{ // 인벤토리, 플레이어 상태, 장비칸을 구분하지 않고 뭉쳐놨다.
+    print("$player_name은 가방을 꺼내서 뒤적거려봅니다...");
     bool inStatus = true;
     while (inStatus) {
+      await Future.delayed(Duration(seconds: 1));
       print("---------------------");
       print("현재 hp (${player.hpNow} / ${player.hpMax})");
       print("현재 mp (${player.mpNow} / ${player.mpMax})");
@@ -525,11 +527,11 @@ class RpgGame {
     bool running = true;
     while (running) {
       print("---------------------");
-      print("당신은 사람들로 북적이는 마을의 한가운데 서 있습니다. 무엇을 하시겠습니까?");
+      print("$player_name은 사람들로 북적이는 마을의 한가운데 서 있습니다. 무엇을 하시겠습니까?");
       print("1. 던전으로 모험을 떠난다.");
       print("2. 상인에게 아이템을 구매하러 간다.");
       print("3. 사람들의 이야기를 듣는다.(퀘스트)");
-      print("4. 내 상태 확인");
+      print("4. $player_name의 상태 확인");
       print("5. 게임 종료");
       print("---------------------");
       int? choice = int.tryParse(stdin.readLineSync() ?? '');
@@ -551,10 +553,10 @@ class RpgGame {
           await quest();
           break;
         case 4:
-          statusOn();
+          await statusOn();
           break;
         case 5:
-          print("정말 종료하시겠습니까? 당신의 일대기는 영원히 기록될 것입니다.");
+          print("정말 종료하시겠습니까? $player_name의 일대기는 영원히 기록될 것입니다.");
           print("9를 한번 더 누르면 종료됩니다. (그 외는 취소)");
           int? confirmChoice = int.tryParse(stdin.readLineSync() ?? '');
           if (confirmChoice == 9) {
