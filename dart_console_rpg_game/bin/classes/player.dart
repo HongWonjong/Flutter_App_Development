@@ -14,12 +14,13 @@ class Player {
   int buffDef = 0;
   int itemAtk = 0; // 아이템으로 인한 증가 수치
   int itemDef = 0;
+  String name;
 
   List<Item> inventory = initialInventory;
   List<Item> equippedItems = initialEquippedItems;
   List<Skill> skills = initialSkills;
 
-  Player();
+  Player(this.name);
 
   int get totalAtk => baseAtk + buffAtk + itemAtk;
   int get totalDef => baseDef + buffDef + itemDef;
@@ -27,7 +28,7 @@ class Player {
 
   void useSkill(Skill skill) {
     if (mpNow < skill.skill_mp_cost) {
-      print("MP가 부족합니다.");
+      print("${this.name}의 MP가 부족합니다.");
       return;
     }
     if (skill.skill_name == "방패 올리기") { // 방패를 장착하고 있어야만 사용할 수 있다.
@@ -37,19 +38,19 @@ class Player {
       }
       mpNow -= skill.skill_mp_cost;
       buffDef = skill.skill_damage_calculation.toInt();
-      print("${skill.skill_name} 사용! 방어력이 $totalDef로 증가했습니다.");
+      print("${this.name}가 ${skill.skill_name} 사용! 방어력이 $totalDef로 증가했습니다.");
     } else if (skill.skill_name == "광분") {
       mpNow -= skill.skill_mp_cost;
       buffAtk = skill.skill_damage_calculation.toInt();
-      print("${skill.skill_name} 사용! 공격력이 $totalAtk로 증가했습니다.");
+      print("${this.name}가 ${skill.skill_name} 사용! 공격력이 $totalAtk로 증가했습니다.");
     } else if (skill.is_attack) {
       mpNow -= skill.skill_mp_cost;
       int damage = (totalAtk * skill.skill_damage_calculation).toInt();
-      print("${skill.skill_name} 사용! 데미지: $damage");
+      print("${this.name}가 ${skill.skill_name} 사용! 데미지: $damage");
     } else if (skill.is_heal) {
       mpNow -= skill.skill_mp_cost;
       hpNow = (hpNow + skill.skill_damage_calculation).clamp(0, hpMax).toInt();
-      print("${skill.skill_name} 사용! HP가 $hpNow로 회복되었습니다.");
+      print("${this.name}가 ${skill.skill_name} 사용! HP가 $hpNow로 회복되었습니다.");
     }
   }
 
@@ -66,24 +67,24 @@ class Player {
 
     if (item.hp > 0) {
       hpNow = (hpNow + item.hp).clamp(0, hpMax).toInt();
-      print("${item.name}을 사용했습니다! HP가 $hpNow로 회복되었습니다.");
+      print("${this.name}가 ${item.name}을 사용했습니다! HP가 $hpNow로 회복되었습니다.");
     }
     if (item.mp > 0) {
       mpNow = (mpNow + item.mp).clamp(0, mpMax).toInt();
-      print("${item.name}을 사용했습니다! MP가 $mpNow로 회복되었습니다.");
+      print("${this.name}가 ${item.name}을 사용했습니다! MP가 $mpNow로 회복되었습니다.");
     }
     if (item.atk > 0 || item.def > 0) {
       buffAtk += item.atk;
       buffDef += item.def;
-      print("${item.name}을 사용했습니다! 공격력: $totalAtk, 방어력: $totalDef");
+      print("${this.name}가 ${item.name}을 사용했습니다! 공격력: $totalAtk, 방어력: $totalDef");
     }
     if (item.hp_increase > 0) {
       hpMax += item.hp_increase;
-      print("${item.name}을 사용했습니다! 최대 HP: $hpMax");
+      print("${this.name}가 ${item.name}을 사용했습니다! 최대 HP: $hpMax");
     }
     if (item.mp_increase > 0) {
       mpMax += item.mp_increase;
-      print("${item.name}을 사용했습니다! 최대 MP: $mpMax");
+      print("${this.name}가 ${item.name}을 사용했습니다! 최대 MP: $mpMax");
     }
 
     item.quantity -= 1;

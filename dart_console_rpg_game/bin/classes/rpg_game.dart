@@ -11,21 +11,20 @@ import '../data/monster_list.dart';
 import '../functions/monster_health_bar.dart';
 
 class RpgGame {
-  Player player; // 플레이어 인스턴스
+  final String player_name;
+  Player player; // 초기화와 동시에 선언부에서 다른 변수를 참조할 수 없으므로 대신 생성자에서 초기화 리스트를 사용할 것이다.
   List<Item> merchantsItem = Merchants().merchants_item;
 
   // 그 동안 죽인 몬스터들은 이름-토벌 횟수의 키-값으로 저장된다. 퀘스트 수주나 종료 시 기록을 남길 때 사용한다.
   Map<String, int> killedMonsters = {};
 
 
-  RpgGame()
-  // 시작 시 플레이어의 기본적인 세팅값은 다 입력되므로 입력은 불필요하다.
-  : player = Player();
+  RpgGame(this.player_name) : player = Player(player_name);
 
 
   Future<void> dungeon() async { // 보스 파이트를 제외한 10스테이지는 이 곳에서 진행된다.
     print("---------------------");
-    print("던전에 입장했습니다!");
+    print("$player_name는 던전에 입장했습니다!");
     await Future.delayed(Duration(seconds: 1));
 
     Random random = Random();
@@ -59,7 +58,7 @@ class RpgGame {
       await Future.delayed(Duration(seconds: 1));
 
       while (player.hpNow > 0 && monsterHp > 0) {
-        print("당신의 HP/MP: ${player.hpNow}/${player.mpNow}, 공격력: ${player.totalAtk}, 방어력: ${player.totalDef}");
+        print("$player_name의 HP/MP: ${player.hpNow}/${player.mpNow}, 공격력: ${player.totalAtk}, 방어력: ${player.totalDef}");
         print("몬스터 체력: ${getHealthBar(monsterHp, monsterMaxHp)} ($monsterHp/$monsterMaxHp)");
         print("몬스터 공/방: ATK: ${monsterAtk} / DEF: ${monsterDef}");
         print("몬스터 스킬: ${currentMonster.skill != null ? "스킬 보유" : '없음'}");
@@ -69,7 +68,7 @@ class RpgGame {
         if (choice == 1) {
           monsterHp -= (player.totalAtk - monsterDef); // 플레이어가 공격하면 몬스터의 방어력만큼 데미지가 감소하겠지.
           monsterHp = monsterHp.clamp(0, monsterMaxHp);
-          print("몬스터에게 ${player.totalAtk - monsterDef} 데미지를 입혔습니다! (남은 체력: ${getHealthBar(monsterHp, monsterMaxHp)})");
+          print("$player_name가 몬스터에게 ${player.totalAtk - monsterDef} 데미지를 입혔습니다! (남은 체력: ${getHealthBar(monsterHp, monsterMaxHp)})");
           await Future.delayed(Duration(seconds: 1));
         } else if (choice == 2) {
           player.useSkill(player.skills[0]);
@@ -78,7 +77,7 @@ class RpgGame {
           player.useSkill(player.skills[1]);
           await Future.delayed(Duration(seconds: 1));
         } else if (choice == 4) {
-          print("도망쳤습니다...");
+          print("$player_name는 도망쳤습니다...");
           await Future.delayed(Duration(seconds: 1));
           return;
         } else if (choice == 5) {
@@ -143,10 +142,10 @@ class RpgGame {
 
           int damage = (monsterAtk - player.totalDef).clamp(0, monsterAtk);
           player.hpNow -= damage;
-          print("${currentMonster.name}가 공격! $damage 데미지를 입었습니다. (HP: ${player.hpNow})");
+          print("$player_name를 ${currentMonster.name}가 공격! $damage 데미지를 입었습니다. (HP: ${player.hpNow})");
           await Future.delayed(Duration(seconds: 1));
         } else {
-          print("${currentMonster.name}을 처치했습니다! 보상: ${stage * 10}골드");
+          print("$player_name는 ${currentMonster.name}을 처치했습니다! 보상: ${stage * 10}골드");
           if (killedMonsters.containsKey(currentMonster.name)) {
             killedMonsters[currentMonster.name] = killedMonsters[currentMonster.name]! + 1;
           } else {
@@ -159,7 +158,7 @@ class RpgGame {
         }
 
         if (player.hpNow <= 0) {
-          print("사망했습니다... 골드가 반으로 줄어듭니다."); // 사망하면 마을로 골드 절반을 잃고 돌아간다.
+          print("$player_name는 사망했습니다... 골드가 반으로 줄어듭니다."); // 사망하면 마을로 골드 절반을 잃고 돌아간다.
           player.inventory[0].quantity ~/= 2;
           player.hpNow = player.hpMax;
           player.buffAtk = 0;
@@ -171,7 +170,7 @@ class RpgGame {
     }
 
     if (stage > maxStage) {
-      print("던전 10 스테이지를 모두 클리어하자, 눈 앞에 커다란 문이 나타납니다."); //  보스 스테이지 앞에 왔을 경우
+      print("$player_name가 던전 10 스테이지를 모두 클리어하자, 눈 앞에 커다란 문이 나타납니다."); //  보스 스테이지 앞에 왔을 경우
       await Future.delayed(Duration(seconds: 2));
       print("커다란 문 뒤에서 형언할 수 없는 무언가의 존재감이 느껴진다..");
       await Future.delayed(Duration(seconds: 2));
@@ -182,7 +181,7 @@ class RpgGame {
       if (choice == 1) {
         await fightBoss();
       } else {
-        print("마을로 돌아갑니다.");
+        print("$player_name는 마을로 돌아갑니다.");
         await Future.delayed(Duration(seconds: 2));
       }
     }
@@ -196,7 +195,7 @@ class RpgGame {
     int bossDef = boss.def;
     Random random = Random();
     print("---------------------");
-    print("어두운 방 한 가운데에 무언가 거대한 것의 실루엣이 꿈틀거린다."); // 보스 소개 문구
+    print("$player_name가 문을 열고 들어가자, 어두운 방 한 가운데에 무언가 거대한 것의 실루엣이 꿈틀거린다."); // 보스 소개 문구
     await Future.delayed(Duration(seconds: 2));
     print("Y’AI ’NG’NGAH, YOG-SOTHOTH H’EE—L’GEB F’AI THRODOG UAAAH"); // 크툴루 나무위키에서 긁어 옴.
     await Future.delayed(Duration(seconds: 2));
@@ -212,7 +211,7 @@ class RpgGame {
     await Future.delayed(Duration(seconds: 2));
 
     while (player.hpNow > 0 && bossHp > 0) {
-      print("당신 HP: ${player.hpNow}, 공격력: ${player.totalAtk}, 방어력: ${player.totalDef}");
+      print("$player_name의 HP/MP: ${player.hpNow}/${player.mpNow}, 공격력: ${player.totalAtk}, 방어력: ${player.totalDef}");
       print("보스 체력: ${getHealthBar(bossHp, bossMaxHp)} ($bossHp/$bossMaxHp)"); //
       print("몬스터 공/방: ATK: ${bossAtk} / DEF: ${bossDef}");
       print("1. 공격 | 2. 스킬 사용 (광분) | 3. 스킬 사용 (방패 올리기) | 4. 도망가기 | 5. 아이템 사용");
@@ -221,7 +220,7 @@ class RpgGame {
       if (choice == 1) {
         bossHp -= player.totalAtk;
         bossHp = bossHp.clamp(0, bossMaxHp);
-        print("보스에게 ${player.totalAtk} 데미지를 입혔습니다! (남은 체력: ${getHealthBar(bossHp, bossMaxHp)})");
+        print("$player_name은 보스에게 ${player.totalAtk} 데미지를 입혔습니다! (보스의 남은 체력: ${getHealthBar(bossHp, bossMaxHp)})");
         await Future.delayed(Duration(seconds: 1));
       } else if (choice == 2) {
         player.useSkill(player.skills[0]);
@@ -230,7 +229,7 @@ class RpgGame {
         player.useSkill(player.skills[1]);
         await Future.delayed(Duration(seconds: 1));
       } else if (choice == 4) {
-        print("도망쳤습니다...");
+        print("$player_name은 도망쳤습니다...");
         await Future.delayed(Duration(seconds: 1));
         return;
       } else if (choice == 5) {
@@ -269,7 +268,7 @@ class RpgGame {
           await Future.delayed(Duration(seconds: 2)); // 동기 스킬은 기본 딜레이만 부여
         }
       } else {
-        print("${boss.name}를 물리쳤습니다! 보상: 500골드");
+        print("$player_name은 ${boss.name}를 물리쳤습니다! 보상: 500골드");
         player.inventory[0].quantity += 500;
         print("마을로 돌아갑니다.");
         await Future.delayed(Duration(seconds: 2));
@@ -490,12 +489,7 @@ class RpgGame {
       }
     }
   }
-  // 5자리 알파벳 난수로 플레이어의 저장 시 이름을 랜덤 생성함. 오락실처럼
-  String generatePlayerId() {
-    const String letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    Random random = Random();
-    return List.generate(5, (_) => letters[random.nextInt(letters.length)]).join();
-  }
+
   Future<void> saveGameRecord() async {
     final file = File('game_record.csv');
     bool cthulhuDefeated = killedMonsters.containsKey("외신 크툴루") && killedMonsters["외신 크툴루"]! > 0;
@@ -507,7 +501,7 @@ class RpgGame {
 
     String csvHeader = "PlayerID,HP,MP,MaxHP,MaxMP,Attack,Defense,${monsterNames.join(',')},CthulhuDefeated\n";
 
-    String playerId = generatePlayerId();
+    String playerId = player_name;
 
     String csvData = "플레이어 $playerId,${player.hpNow},${player.mpNow},${player.hpMax},${player.mpMax},${player.totalAtk},${player.totalDef}";
     for (String monster in monsterNames) {
