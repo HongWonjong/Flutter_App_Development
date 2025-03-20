@@ -9,6 +9,7 @@ import 'player.dart';
 import '../functions/monster_skill.dart';
 import '../data/monster_list.dart';
 import '../functions/monster_health_bar.dart';
+import '../data/quest_list.dart';
 
 class RpgGame {
   final String player_name;
@@ -66,7 +67,7 @@ class RpgGame {
         int? choice = int.tryParse(stdin.readLineSync() ?? '');
 
         if (choice == 1) {
-          monsterHp -= (player.totalAtk - monsterDef); // 플레이어가 공격하면 몬스터의 방어력만큼 데미지가 감소하겠지.
+          monsterHp -= (player.totalAtk - monsterDef).clamp(0, player.totalAtk); // 플레이어가 공격하면 몬스터의 방어력만큼 데미지가 감소하겠지.
           monsterHp = monsterHp.clamp(0, monsterMaxHp);
           print("$player_name가 몬스터에게 ${player.totalAtk - monsterDef} 데미지를 입혔습니다! (남은 체력: ${getHealthBar(monsterHp, monsterMaxHp)})");
           await Future.delayed(Duration(seconds: 1));
